@@ -209,6 +209,9 @@
   .cover .placeholder-cover.physics{
     background:linear-gradient(135deg,#3b82c4,#1e4f78);
   }
+  .cover .placeholder-cover.english{
+    background:linear-gradient(135deg,#c94d4d,#7a2626);
+  }
 
   .badge{
     position:absolute;top:10px;right:10px;
@@ -732,7 +735,6 @@ function setSkipFirst(v){
   saveSettings();
   syncSkipFirstUI();
   if (state.pdf){
-    // Если включили skipFirst и мы на первой странице — уходим на 2-ю
     if (v && state.page === 1 && state.pdf.numPages > 1){
       goToPage(2, 1);
     } else {
@@ -762,6 +764,21 @@ const PRESET_BOOKS = [
     filenameHint: 'Физика_11_класс.pdf',
     matchAny: ['физика', 'мякишев', 'буховцев', 'чаругин', 'myakishev', 'physics'],
     theme: 'phys'
+  },
+  {
+    id: 'preset-eng11',
+    name: 'Английский язык. 11 класс',
+    author: 'О. В. Афанасьева, Д. Дули, И. В. Михеева, Б. Оби, В. Эванс',
+    url: 'https://share.google/6WhmHd6M84dPOdGHO',
+    filenameHint: 'Английский_11_класс.pdf',
+    matchAny: [
+      'english', 'английский',
+      'spotlight', 'starlight', 'rainbow',
+      'afanasyeva', 'афанасьева', 'mikheeva', 'михеева',
+      'vaulina', 'ваулина', 'kuzovlev', 'кузовлев',
+      'evans', 'эванс', 'dooley', 'дули'
+    ],
+    theme: 'eng'
   }
 ];
 
@@ -882,10 +899,16 @@ async function renderLibrary(){
   grid.appendChild(add);
 }
 
+function presetPlaceholderClass(preset){
+  if (preset.theme === 'phys') return 'physics';
+  if (preset.theme === 'eng') return 'english';
+  return '';
+}
+
 function renderPresetMatched(preset, book){
   const card = document.createElement('div');
   card.className = 'card matched';
-  const phClass = preset.theme === 'phys' ? 'physics' : '';
+  const phClass = presetPlaceholderClass(preset);
   card.innerHTML = `
     <div class="cover" data-cover>
       <div class="spine ok"></div>
@@ -912,7 +935,7 @@ function renderPresetMatched(preset, book){
 function renderPresetMissing(preset){
   const card = document.createElement('div');
   card.className = 'card missing';
-  const phClass = preset.theme === 'phys' ? 'physics' : '';
+  const phClass = presetPlaceholderClass(preset);
   card.innerHTML = `
     <div class="cover" data-cover>
       <div class="spine warn"></div>
@@ -1094,7 +1117,7 @@ async function downloadPresetByUrl(preset){
    ЧИТАЛКА
    ===================================================================== */
 const state = {
-  book: null, pdf: null, page: 1,   // page — РЕАЛЬНЫЙ номер страницы в PDF
+  book: null, pdf: null, page: 1,
   fit: 'page', manualScale: null,
   lastScale: 1, renderToken: 0,
   thumbCache: {}
@@ -1124,7 +1147,6 @@ function showScreen(name){
   document.getElementById(name).classList.add('active');
 }
 
-/* ---------- Виртуальная нумерация (учитывает skipFirst) ---------- */
 function isSkip(){ return settings.skipFirst; }
 function realToVirtual(rp){
   if (!isSkip()) return rp;
@@ -1140,11 +1162,9 @@ function virtualTotal(){
   return Math.max(1, state.pdf.numPages - 1);
 }
 function realMin(){
-  // Минимальная доступная реальная страница
   return isSkip() ? 2 : 1;
 }
 
-/* ---------- Обновление UI нижней панели ---------- */
 function updatePageUI(){
   if (!state.pdf) return;
   const vt = virtualTotal();
@@ -1160,7 +1180,6 @@ function updatePageUI(){
   els.next.disabled = state.page >= state.pdf.numPages;
   els.zonePrev.disabled = els.prev.disabled;
   els.zoneNext.disabled = els.next.disabled;
-  // Обновляем подпись «N стр.» в верхней панели
   els.sub.textContent = vt + ' стр.';
 }
 
