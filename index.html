@@ -27,6 +27,7 @@
     --shadow:0 8px 30px rgba(20,40,70,.10);
     --stage:#3a4453;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --header-h: 62px;
   }
   html[data-theme="dark"]{
     --bg:#0e1218; --panel:#1a2028; --text:#e6ebf2; --muted:#93a0b1;
@@ -39,15 +40,16 @@
     --stage:#c9b896; --ok-bg:#e3efd9; --warn-bg:#f6e8cd;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%}
+  html,body{height:100%;overscroll-behavior:none}
   body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);
        transition:background .25s,color .25s;overflow:hidden}
 
+  /* ---------- HEADER ---------- */
   header{
-    height:62px;display:flex;align-items:center;gap:12px;padding:0 16px;
+    height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0 16px;
     padding-top: env(safe-area-inset-top);
     background:var(--panel);border-bottom:1px solid var(--line);
-    position:relative;z-index:30;
+    position:fixed;top:0;left:0;right:0;z-index:30;
   }
   .logo{
     width:36px;height:36px;border-radius:10px;flex:none;
@@ -80,9 +82,86 @@
   .icon-btn:active{transform:scale(.94)}
   .icon-btn:disabled{opacity:.35;cursor:not-allowed}
 
-  .screen{position:absolute;inset:62px 0 0 0;display:none;overflow:auto}
+  /* ---------- SETTINGS POPOVER ---------- */
+  .settings-backdrop{
+    position:fixed;inset:0;z-index:40;display:none;
+    background:rgba(0,0,0,.15);
+  }
+  .settings-backdrop.open{display:block}
+
+  .settings-popover{
+    position:fixed;
+    top:calc(var(--header-h) + env(safe-area-inset-top) + 8px);
+    right:12px;
+    width:min(340px, calc(100vw - 24px));
+    background:var(--panel);border-radius:16px;
+    box-shadow:0 24px 60px rgba(0,0,0,.28), 0 0 0 1px var(--line);
+    z-index:50;padding:18px;
+    opacity:0;transform:translateY(-8px) scale(.96);pointer-events:none;
+    transition:opacity .18s, transform .18s;
+    transform-origin:top right;
+  }
+  .settings-popover.open{opacity:1;transform:none;pointer-events:auto}
+
+  .settings-title{
+    font-size:11.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--muted);margin:0 0 10px;
+  }
+  .settings-section + .settings-section{
+    margin-top:18px;padding-top:18px;border-top:1px solid var(--line);
+  }
+  .theme-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .theme-opt{
+    border:1.5px solid var(--line);background:transparent;
+    padding:12px 6px;border-radius:11px;cursor:pointer;
+    font-family:inherit;font-size:12px;font-weight:700;color:var(--text);
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    transition:.15s;
+  }
+  .theme-opt .em{font-size:22px;line-height:1}
+  .theme-opt:hover{border-color:var(--accent);color:var(--accent)}
+  .theme-opt.active{
+    border-color:var(--accent);background:rgba(15,155,142,.1);color:var(--accent);
+    box-shadow:0 4px 12px rgba(15,155,142,.15);
+  }
+
+  .switch-row{
+    display:flex;align-items:center;gap:12px;cursor:pointer;
+    padding:4px 0;user-select:none;
+  }
+  .switch-row > div:first-child{flex:1;min-width:0}
+  .switch-label{font-size:13.5px;font-weight:700;line-height:1.3}
+  .switch-desc{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+
+  .switch{
+    position:relative;width:44px;height:26px;flex:none;
+    background:var(--line);border-radius:99px;
+    transition:.2s;
+  }
+  .switch::after{
+    content:'';position:absolute;top:3px;left:3px;
+    width:20px;height:20px;border-radius:50%;
+    background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);
+    transition:.2s;
+  }
+  .switch.on{background:var(--accent)}
+  .switch.on::after{transform:translateX(18px)}
+
+  .switch-row input[type=checkbox]{display:none}
+
+  .settings-hint{
+    margin-top:10px;font-size:11px;color:var(--muted);line-height:1.4;
+  }
+
+  /* ---------- SCREENS ---------- */
+  .screen{
+    position:fixed;top:var(--header-h);left:0;right:0;bottom:0;
+    display:none;overflow:auto;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
   .screen.active{display:block}
 
+  /* ---------- LIBRARY ---------- */
   .hero{max-width:1200px;margin:0 auto;padding:34px 22px 8px}
   .hero h1{font-size:clamp(24px,3.4vw,34px);margin:0 0 8px;letter-spacing:-.7px}
   .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:640px;line-height:1.55}
@@ -168,6 +247,14 @@
   .add-card .t{font-size:14px;font-weight:700}
   .add-card .s{font-size:12px;line-height:1.45}
 
+  .empty{
+    max-width:640px;margin:20px auto 60px;padding:40px 30px;text-align:center;
+    border:2px dashed var(--line);border-radius:20px;background:var(--panel);
+  }
+  .empty .big{font-size:52px;margin-bottom:12px}
+  .empty h2{margin:0 0 8px;font-size:20px;letter-spacing:-.3px}
+  .empty p{margin:0 0 20px;color:var(--muted);font-size:14px;line-height:1.55}
+
   .drop-overlay{
     position:fixed;inset:0;background:rgba(15,155,142,.14);
     backdrop-filter:blur(6px);z-index:200;display:none;
@@ -181,11 +268,13 @@
   }
   .drop-overlay .box .ico{font-size:52px}
 
-  #reader.active{display:flex;flex-direction:column;height:100%;overflow:hidden}
-  #reader{position:absolute;inset:62px 0 0 0}
+  /* ---------- READER ---------- */
+  #reader{position:fixed;top:var(--header-h);left:0;right:0;bottom:0;
+          padding-bottom:0 !important}
+  #reader.active{display:flex;flex-direction:column;overflow:hidden}
 
   .rbar{
-    display:flex;align-items:center;gap:9px;padding:9px 14px;flex:none;
+    display:flex;align-items:center;gap:9px;padding:9px 14px;flex:0 0 auto;
     background:var(--panel);border-bottom:1px solid var(--line);z-index:10;
   }
   .rbar .rtitle{
@@ -195,9 +284,12 @@
   .rbar .rsub{font-size:11.5px;color:var(--muted);white-space:nowrap}
 
   .stage{
-    flex:1;position:relative;overflow:auto;background:var(--stage);
+    flex:1 1 auto;
+    min-height:0;
+    position:relative;overflow:auto;background:var(--stage);
     display:grid;place-items:center;padding:24px;
     transition:background .25s;
+    -webkit-overflow-scrolling:touch;
   }
   #pageWrap{display:flex;align-items:center;justify-content:center;transform-origin:center}
   #pageCanvas{
@@ -218,10 +310,12 @@
   .navzone:disabled{display:none}
 
   .rfoot{
-    flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;
+    flex:0 0 auto;
+    display:flex;align-items:center;gap:10px;padding:10px 14px;
     padding-bottom: max(10px, env(safe-area-inset-bottom));
     background:var(--panel);border-top:1px solid var(--line);
-    position:relative;
+    position:relative;z-index:9;
+    box-shadow:0 -4px 14px rgba(0,0,0,.06);
   }
   .rfoot .page-input{
     width:56px;padding:8px 8px;border-radius:9px;border:1px solid var(--line);
@@ -233,7 +327,7 @@
   .rfoot .total{font-size:13px;font-weight:700;color:var(--muted);
     font-variant-numeric:tabular-nums;min-width:38px;}
 
-  .slider-wrap{flex:1;position:relative;height:36px;display:flex;align-items:center}
+  .slider-wrap{flex:1;position:relative;height:36px;display:flex;align-items:center;min-width:0}
   .slider{
     width:100%;-webkit-appearance:none;appearance:none;height:8px;border-radius:99px;
     background:var(--line);outline:none;cursor:pointer;
@@ -277,6 +371,7 @@
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  /* ---------- МОДАЛКА-СЕТКА ---------- */
   .thumbs-modal{
     position:fixed;inset:0;z-index:300;
     background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
@@ -330,9 +425,15 @@
     background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
     border-top-color:transparent;
   }
+  .thumb .thumb-cover-tag{
+    position:absolute;top:6px;left:6px;font-size:9.5px;font-weight:800;
+    background:rgba(214,139,26,.92);color:#fff;padding:3px 6px;border-radius:5px;
+    letter-spacing:.4px;z-index:2;
+  }
 
   .toast{
-    position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);
+    position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));
+    left:50%;transform:translateX(-50%) translateY(90px);
     background:var(--text);color:var(--panel);padding:12px 20px;border-radius:11px;
     font-size:13.5px;font-weight:600;z-index:500;opacity:0;transition:.3s;
     box-shadow:0 10px 30px rgba(0,0,0,.28);pointer-events:none;max-width:90vw;text-align:center;
@@ -369,9 +470,41 @@
   <div class="brand">Книги<small>читайте и листайте учебники</small></div>
   <div class="spacer"></div>
   <button class="btn ghost icon-btn" id="btnInstall" title="Установить приложение" style="display:none">⬇</button>
-  <button class="btn ghost icon-btn" id="btnTheme" title="Сменить тему">🌙</button>
+  <button class="btn ghost icon-btn" id="btnSettings" title="Настройки">⚙</button>
   <button class="btn" id="btnAdd"><span>＋</span> Добавить PDF</button>
 </header>
+
+<!-- Настройки -->
+<div class="settings-backdrop" id="settingsBackdrop"></div>
+<div class="settings-popover" id="settingsPop" role="dialog" aria-label="Настройки">
+  <div class="settings-section">
+    <div class="settings-title">Тема оформления</div>
+    <div class="theme-options">
+      <button class="theme-opt" data-theme-val="0">
+        <span class="em">☀</span><span>Светлая</span>
+      </button>
+      <button class="theme-opt" data-theme-val="1">
+        <span class="em">🌙</span><span>Тёмная</span>
+      </button>
+      <button class="theme-opt" data-theme-val="2">
+        <span class="em">📖</span><span>Сепия</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-title">Чтение</div>
+    <label class="switch-row" for="setSkipFirst">
+      <div>
+        <div class="switch-label">Пропускать 1-ю страницу</div>
+        <div class="switch-desc">Если первая страница PDF — обложка, система не будет её считать. Открыв «страницу 256», вы увидите 256-ю страницу книги.</div>
+      </div>
+      <div class="switch" id="switchSkipFirst"></div>
+      <input type="checkbox" id="setSkipFirst">
+    </label>
+    <div class="settings-hint" id="skipFirstHint">Применяется ко всем книгам.</div>
+  </div>
+</div>
 
 <section class="screen active" id="library">
   <div class="hero">
@@ -523,9 +656,93 @@ function fmtSize(bytes){
 function escapeHtml(s){return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));}
 
 /* =====================================================================
+   НАСТРОЙКИ
+   ===================================================================== */
+const THEMES = ['light','dark','sepia'];
+const settings = {
+  themeIdx: +(localStorage.getItem('lib-theme') ?? 0),
+  skipFirst: localStorage.getItem('lib-skip-first') === '1'
+};
+
+function saveSettings(){
+  localStorage.setItem('lib-theme', settings.themeIdx);
+  localStorage.setItem('lib-skip-first', settings.skipFirst ? '1' : '0');
+}
+
+function applyTheme(){
+  document.documentElement.dataset.theme = THEMES[settings.themeIdx];
+  document.querySelectorAll('.theme-opt').forEach(el=>{
+    el.classList.toggle('active', +el.dataset.themeVal === settings.themeIdx);
+  });
+}
+
+// Popover
+const settingsPop = document.getElementById('settingsPop');
+const settingsBackdrop = document.getElementById('settingsBackdrop');
+const btnSettings = document.getElementById('btnSettings');
+
+function openSettings(){
+  settingsPop.classList.add('open');
+  settingsBackdrop.classList.add('open');
+}
+function closeSettings(){
+  settingsPop.classList.remove('open');
+  settingsBackdrop.classList.remove('open');
+}
+btnSettings.addEventListener('click', e=>{
+  e.stopPropagation();
+  if (settingsPop.classList.contains('open')) closeSettings();
+  else openSettings();
+});
+settingsBackdrop.addEventListener('click', closeSettings);
+document.addEventListener('click', e=>{
+  if (!settingsPop.classList.contains('open')) return;
+  if (settingsPop.contains(e.target) || btnSettings.contains(e.target)) return;
+  closeSettings();
+});
+
+// Кнопки тем
+document.querySelectorAll('.theme-opt').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    settings.themeIdx = +el.dataset.themeVal;
+    saveSettings();
+    applyTheme();
+  });
+});
+
+// Тумблер «Пропускать 1-ю страницу»
+const setSkipFirstInput = document.getElementById('setSkipFirst');
+const switchSkipFirst = document.getElementById('switchSkipFirst');
+const skipFirstHint = document.getElementById('skipFirstHint');
+
+function syncSkipFirstUI(){
+  switchSkipFirst.classList.toggle('on', settings.skipFirst);
+  setSkipFirstInput.checked = settings.skipFirst;
+  skipFirstHint.textContent = settings.skipFirst
+    ? 'Нумерация сдвинута: первая страница книги = 2-я в PDF.'
+    : 'Применяется ко всем книгам.';
+}
+
+document.querySelector('.switch-row').addEventListener('click', (e)=>{
+  e.preventDefault();
+  setSkipFirst(settings.skipFirst ? false : true);
+});
+function setSkipFirst(v){
+  settings.skipFirst = v;
+  saveSettings();
+  syncSkipFirstUI();
+  if (state.pdf){
+    // Если включили skipFirst и мы на первой странице — уходим на 2-ю
+    if (v && state.page === 1 && state.pdf.numPages > 1){
+      goToPage(2, 1);
+    } else {
+      updatePageUI();
+    }
+  }
+}
+
+/* =====================================================================
    ПРЕДУСТАНОВЛЕННЫЕ УЧЕБНИКИ
-   Приложение само проверяет, есть ли уже такой файл в библиотеке.
-   Совпадение — по ключевым словам в имени файла.
    ===================================================================== */
 const PRESET_BOOKS = [
   {
@@ -565,23 +782,6 @@ function findMatchingSavedBook(savedBooks, preset){
 }
 
 /* =====================================================================
-   ТЕМА
-   ===================================================================== */
-const THEMES = ['light','dark','sepia'];
-const THEME_ICONS = {light:'🌙', dark:'☀', sepia:'🎨'};
-let themeIdx = +(localStorage.getItem('lib-theme') ?? 0);
-function applyTheme(){
-  document.documentElement.dataset.theme = THEMES[themeIdx];
-  document.getElementById('btnTheme').textContent = THEME_ICONS[THEMES[themeIdx]];
-  localStorage.setItem('lib-theme', themeIdx);
-}
-document.getElementById('btnTheme').onclick = ()=>{
-  themeIdx = (themeIdx + 1) % THEMES.length;
-  applyTheme();
-};
-applyTheme();
-
-/* =====================================================================
    PWA: install prompt
    ===================================================================== */
 let deferredPrompt = null;
@@ -593,7 +793,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   btnInstall.style.display = 'grid';
 });
 
-btnInstall.onclick = async () => {
+btnInstall.addEventListener('click', async () => {
   if (!deferredPrompt){
     toast('Откройте меню браузера → «Установить приложение».', 4000);
     return;
@@ -603,7 +803,7 @@ btnInstall.onclick = async () => {
   if (outcome === 'accepted') toast('Спасибо! Приложение установлено');
   deferredPrompt = null;
   btnInstall.style.display = 'none';
-};
+});
 
 window.addEventListener('appinstalled', () => {
   toast('Приложение установлено');
@@ -615,7 +815,6 @@ window.addEventListener('appinstalled', () => {
    ===================================================================== */
 const grid = document.getElementById('grid');
 
-// SVG-заглушка для пресетов (когда нет обложки)
 const PRESET_SVG = `
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none">
   <path d="M256 140 C230 120 180 118 130 132 L130 372 C180 358 230 362 256 380 Z" fill="#ffffff" opacity="0.95"/>
@@ -634,7 +833,6 @@ async function renderLibrary(){
   grid.innerHTML = '';
   document.querySelectorAll('#library .empty').forEach(e=>e.remove());
 
-  // Ищем для каждого пресета — есть ли уже подходящая книга
   const usedIds = new Set();
   const presetMatches = new Map();
   for (const preset of PRESET_BOOKS){
@@ -646,22 +844,13 @@ async function renderLibrary(){
   }
 
   const items = [];
-
-  // Сначала пресеты
   for (const preset of PRESET_BOOKS){
     const matched = presetMatches.get(preset.id);
-    if (matched){
-      items.push({ kind: 'preset-matched', preset, book: matched });
-    } else {
-      items.push({ kind: 'preset', preset });
-    }
+    if (matched) items.push({ kind: 'preset-matched', preset, book: matched });
+    else items.push({ kind: 'preset', preset });
   }
-
-  // Потом остальные сохранённые книги
   for (const b of savedBooks){
-    if (!usedIds.has(b.id)){
-      items.push({ kind: 'saved', book: b });
-    }
+    if (!usedIds.has(b.id)) items.push({ kind: 'saved', book: b });
   }
 
   if (items.length === 0){
@@ -693,7 +882,6 @@ async function renderLibrary(){
   grid.appendChild(add);
 }
 
-/* ---------- Пресет: файл уже в библиотеке ---------- */
 function renderPresetMatched(preset, book){
   const card = document.createElement('div');
   card.className = 'card matched';
@@ -721,7 +909,6 @@ function renderPresetMatched(preset, book){
   grid.appendChild(card);
 }
 
-/* ---------- Пресет: файл ещё не добавлен ---------- */
 function renderPresetMissing(preset){
   const card = document.createElement('div');
   card.className = 'card missing';
@@ -749,7 +936,6 @@ function renderPresetMissing(preset){
   grid.appendChild(card);
 }
 
-/* ---------- Обычная сохранённая книга ---------- */
 function renderSavedBook(book){
   const card = document.createElement('div');
   card.className = 'card';
@@ -785,7 +971,6 @@ function renderSavedBook(book){
    ВЫБОР ФАЙЛА ДЛЯ ПРЕСЕТА
    ===================================================================== */
 let pickingPreset = null;
-
 function pickPresetFile(preset){
   pickingPreset = preset;
   toast('Выберите файл: ' + preset.filenameHint, 4500);
@@ -843,18 +1028,14 @@ async function addFile(file, presetContext = null){
     };
     await dbPut(book);
 
-    // Проверяем — не совпадает ли файл с каким-то пресетом
     const matchedPreset = presetContext || PRESET_BOOKS.find(p => {
       const terms = (p.matchAny || []).map(normalizeForMatch);
       const n = normalizeForMatch(cleanName);
       return terms.some(t => n.includes(t));
     });
 
-    if (matchedPreset){
-      toast('Учебник «' + matchedPreset.name + '» добавлен в библиотеку', 3200);
-    } else {
-      toast('Книга добавлена: ' + cleanName);
-    }
+    if (matchedPreset) toast('Учебник «' + matchedPreset.name + '» добавлен в библиотеку', 3200);
+    else toast('Книга добавлена: ' + cleanName);
 
     renderLibrary();
   } catch(err){
@@ -863,7 +1044,6 @@ async function addFile(file, presetContext = null){
   }
 }
 
-/* ---------- Drag & Drop ---------- */
 const dropOverlay = document.getElementById('dropOverlay');
 let dragDepth = 0;
 window.addEventListener('dragenter', e=>{
@@ -914,7 +1094,7 @@ async function downloadPresetByUrl(preset){
    ЧИТАЛКА
    ===================================================================== */
 const state = {
-  book: null, pdf: null, page: 1,
+  book: null, pdf: null, page: 1,   // page — РЕАЛЬНЫЙ номер страницы в PDF
   fit: 'page', manualScale: null,
   lastScale: 1, renderToken: 0,
   thumbCache: {}
@@ -944,6 +1124,46 @@ function showScreen(name){
   document.getElementById(name).classList.add('active');
 }
 
+/* ---------- Виртуальная нумерация (учитывает skipFirst) ---------- */
+function isSkip(){ return settings.skipFirst; }
+function realToVirtual(rp){
+  if (!isSkip()) return rp;
+  return Math.max(1, rp - 1);
+}
+function virtualToReal(vp){
+  if (!isSkip()) return vp;
+  return vp + 1;
+}
+function virtualTotal(){
+  if (!state.pdf) return 1;
+  if (!isSkip()) return state.pdf.numPages;
+  return Math.max(1, state.pdf.numPages - 1);
+}
+function realMin(){
+  // Минимальная доступная реальная страница
+  return isSkip() ? 2 : 1;
+}
+
+/* ---------- Обновление UI нижней панели ---------- */
+function updatePageUI(){
+  if (!state.pdf) return;
+  const vt = virtualTotal();
+  const vp = realToVirtual(state.page);
+  els.pageTotal.textContent = vt;
+  els.pageInput.value = vp;
+  els.slider.min = 1;
+  els.slider.max = vt;
+  els.slider.value = vp;
+  updateSliderFill();
+  const rmin = realMin();
+  els.prev.disabled = state.page <= rmin;
+  els.next.disabled = state.page >= state.pdf.numPages;
+  els.zonePrev.disabled = els.prev.disabled;
+  els.zoneNext.disabled = els.next.disabled;
+  // Обновляем подпись «N стр.» в верхней панели
+  els.sub.textContent = vt + ' стр.';
+}
+
 async function openBook(id){
   const book = await dbGet(id);
   if (!book) { toast('Книга не найдена'); return; }
@@ -963,21 +1183,15 @@ async function openBook(id){
   }
 
   state.page = Math.min(Math.max(1, book.lastPage || 1), state.pdf.numPages);
+  if (isSkip() && state.page === 1 && state.pdf.numPages > 1) state.page = 2;
   state.manualScale = null;
   state.lastScale = 1;
   state.fit = 'page';
 
   els.title.textContent = book.name;
-  els.sub.textContent = state.pdf.numPages + ' стр.';
-  els.pageTotal.textContent = state.pdf.numPages;
-  els.slider.min = 1;
-  els.slider.max = state.pdf.numPages;
-  els.pageInput.value = state.page;
-  els.slider.value = state.page;
-  updateSliderFill();
 
   showScreen('reader');
-  requestAnimationFrame(()=> renderPage());
+  requestAnimationFrame(()=> requestAnimationFrame(()=> renderPage()));
 }
 
 function closeReader(){
@@ -1034,15 +1248,7 @@ async function renderPage(){
     if (token !== state.renderToken) return;
 
     state.lastScale = vp.width / base.width;
-
-    els.slider.value = state.page;
-    els.pageInput.value = state.page;
-    els.prev.disabled = state.page <= 1;
-    els.next.disabled = state.page >= state.pdf.numPages;
-    els.zonePrev.disabled = els.prev.disabled;
-    els.zoneNext.disabled = els.next.disabled;
-    updateSliderFill();
-
+    updatePageUI();
     els.loading.style.display = 'none';
   } catch(err){
     if (token !== state.renderToken) return;
@@ -1058,14 +1264,15 @@ function updateSliderFill(){
   els.slider.style.backgroundSize = pct + '% 100%';
 }
 
-async function goToPage(n, direction){
+async function goToPage(realN, direction){
   if (!state.pdf) return;
-  n = Math.round(n);
-  if (isNaN(n)) return;
-  n = Math.max(1, Math.min(state.pdf.numPages, n));
-  if (n === state.page) return;
+  realN = Math.round(realN);
+  if (isNaN(realN)) return;
+  const rmin = realMin();
+  realN = Math.max(rmin, Math.min(state.pdf.numPages, realN));
+  if (realN === state.page) return;
 
-  const dir = direction ?? (n > state.page ? 1 : -1);
+  const dir = direction ?? (realN > state.page ? 1 : -1);
   const wrap = els.wrap;
 
   wrap.classList.add('animating');
@@ -1074,7 +1281,7 @@ async function goToPage(n, direction){
 
   await new Promise(r=>setTimeout(r, 160));
 
-  state.page = n;
+  state.page = realN;
   await renderPage();
 
   wrap.classList.remove('animating');
@@ -1089,7 +1296,11 @@ async function goToPage(n, direction){
 }
 
 const nextPage = ()=> goToPage(state.page + 1, 1);
-const prevPage = ()=> goToPage(state.page - 1, -1);
+const prevPage = ()=>{
+  const rmin = realMin();
+  if (state.page <= rmin) return;
+  goToPage(state.page - 1, -1);
+};
 
 els.next.onclick = nextPage;
 els.prev.onclick = prevPage;
@@ -1115,9 +1326,9 @@ els.slider.addEventListener('input', e=>{
   showBubbleForSlider();
 });
 els.slider.addEventListener('change', e=>{
-  const target = +e.target.value;
+  const virtualVal = +e.target.value;
   hideBubble();
-  goToPage(target);
+  goToPage(virtualToReal(virtualVal));
 });
 els.slider.addEventListener('pointerdown', showBubbleForSlider);
 els.slider.addEventListener('pointerup', hideBubble);
@@ -1125,22 +1336,28 @@ els.slider.addEventListener('pointercancel', hideBubble);
 els.slider.addEventListener('blur', hideBubble);
 
 els.pageInput.onchange = e => {
-  const n = +e.target.value.replace(/\D/g,'');
-  if (n) goToPage(n);
-  else e.target.value = state.page;
+  let vv = +e.target.value.replace(/\D/g,'');
+  if (!vv){ e.target.value = realToVirtual(state.page); return; }
+  const vt = virtualTotal();
+  vv = Math.max(1, Math.min(vt, vv));
+  goToPage(virtualToReal(vv));
 };
 els.pageInput.onkeydown = e => { if (e.key === 'Enter') e.target.blur(); };
 
 document.addEventListener('keydown', e=>{
+  if (settingsPop.classList.contains('open')){
+    if (e.key === 'Escape') closeSettings();
+    return;
+  }
   if (document.getElementById('thumbsModal').classList.contains('open')){
-    if (e.key === 'Escape'){ closeThumbs(); }
+    if (e.key === 'Escape') closeThumbs();
     return;
   }
   if (!els.reader.classList.contains('active')) return;
   if (document.activeElement === els.pageInput) return;
   if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); nextPage(); }
   else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prevPage(); }
-  else if (e.key === 'Home'){ e.preventDefault(); goToPage(1, -1); }
+  else if (e.key === 'Home'){ e.preventDefault(); goToPage(realMin(), -1); }
   else if (e.key === 'End'){ e.preventDefault(); goToPage(state.pdf.numPages, 1); }
   else if (e.key === 'Escape'){ closeReader(); }
   else if (e.key === '+' || e.key === '='){ zoom(1.2); }
@@ -1208,15 +1425,19 @@ function openThumbs(){
   if (!state.pdf) return;
   thumbsModal.classList.add('open');
   thumbsGrid.innerHTML = '';
-  thumbsCnt.textContent = `${state.page} / ${state.pdf.numPages}`;
+  thumbsCnt.textContent = `${realToVirtual(state.page)} / ${virtualTotal()}`;
 
   for (let i = 1; i <= state.pdf.numPages; i++){
+    const isCover = (i === 1 && isSkip());
     const card = document.createElement('button');
     card.className = 'thumb' + (i === state.page ? ' current' : '');
     card.dataset.page = i;
     card.innerHTML = `
-      <div class="thumb-canvas-wrap"><div class="thumb-placeholder">Стр. ${i}</div></div>
-      <div class="thumb-num">${i}</div>
+      <div class="thumb-canvas-wrap">
+        ${isCover ? '<div class="thumb-cover-tag">ОБЛОЖКА</div>' : ''}
+        <div class="thumb-placeholder">Стр. ${realToVirtual(i)}</div>
+      </div>
+      <div class="thumb-num">${realToVirtual(i)}</div>
     `;
     card.addEventListener('click', ()=>{
       closeThumbs();
@@ -1263,7 +1484,9 @@ async function renderThumb(card, pageNum){
     if (!card.isConnected) return;
     const wrap = card.querySelector('.thumb-canvas-wrap');
     if (!wrap) return;
+    const tag = wrap.querySelector('.thumb-cover-tag');
     wrap.innerHTML = '';
+    if (tag) wrap.appendChild(tag);
     const img = new Image();
     img.src = dataUrl;
     img.style.maxWidth = '100%';
@@ -1283,10 +1506,10 @@ document.getElementById('thumbsClose').onclick = closeThumbs;
 thumbsModal.addEventListener('click', e=>{ if (e.target === thumbsModal) closeThumbs(); });
 
 const origGoToPage = goToPage;
-goToPage = async function(n, direction){
-  await origGoToPage(n, direction);
+goToPage = async function(realN, direction){
+  await origGoToPage(realN, direction);
   if (thumbsModal.classList.contains('open')){
-    thumbsCnt.textContent = `${state.page} / ${state.pdf.numPages}`;
+    thumbsCnt.textContent = `${realToVirtual(state.page)} / ${virtualTotal()}`;
     thumbsGrid.querySelectorAll('.thumb').forEach(el=>{
       el.classList.toggle('current', +el.dataset.page === state.page);
     });
@@ -1296,6 +1519,8 @@ goToPage = async function(n, direction){
 /* =====================================================================
    СТАРТ
    ===================================================================== */
+applyTheme();
+syncSkipFirstUI();
 renderLibrary();
 
 /* PWA: регистрация Service Worker */
