@@ -1,0 +1,20 @@
+{
+  "name": "Книги",
+  "short_name": "Книги",
+  "description": "Читайте школьные учебники постранично.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f9b8e",
+  "theme_color": "#0f9b8e",
+  "lang": "ru",
+  "dir": "ltr",
+  "categories": ["education", "books"],
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

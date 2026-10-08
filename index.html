@@ -3,24 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Школьная библиотека</title>
+<title>Книги</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0f9b8e">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Библиотека">
-<meta name="description" content="Читайте школьные учебники постранично прямо в браузере.">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Книги">
+<meta name="description" content="Читайте школьные учебники постранично.">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
   :root{
     --bg:#eef1f6; --panel:#ffffff; --text:#1c2431; --muted:#6b7787;
     --line:#dde3ec; --accent:#0f9b8e; --accent-2:#0b6e66;
+    --ok:#22a06b; --ok-bg:#e6f6ee;
+    --warn:#d68b1a; --warn-bg:#fdf3e0;
     --shadow:0 8px 30px rgba(20,40,70,.10);
     --stage:#3a4453;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -28,19 +31,18 @@
   html[data-theme="dark"]{
     --bg:#0e1218; --panel:#1a2028; --text:#e6ebf2; --muted:#93a0b1;
     --line:#2a323d; --shadow:0 8px 30px rgba(0,0,0,.45);
-    --stage:#080b0f;
+    --stage:#080b0f; --ok-bg:#123024; --warn-bg:#33260e;
   }
   html[data-theme="sepia"]{
     --bg:#efe6d5; --panel:#fbf5e9; --text:#3a3227; --muted:#8a7c66;
     --line:#e0d3bb; --shadow:0 8px 30px rgba(120,100,70,.15);
-    --stage:#c9b896;
+    --stage:#c9b896; --ok-bg:#e3efd9; --warn-bg:#f6e8cd;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
   body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);
        transition:background .25s,color .25s;overflow:hidden}
 
-  /* ---------- HEADER ---------- */
   header{
     height:62px;display:flex;align-items:center;gap:12px;padding:0 16px;
     padding-top: env(safe-area-inset-top);
@@ -67,7 +69,7 @@
   .btn:active{transform:scale(.97)}
   .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none}
   .btn.ghost:hover{border-color:var(--accent);color:var(--accent);filter:none}
-  .btn.danger{background:linear-gradient(135deg,#e05252,#b83434);box-shadow:0 4px 14px rgba(200,60,60,.3)}
+  .btn.ok{background:linear-gradient(135deg,#22a06b,#178a58);box-shadow:0 4px 14px rgba(34,160,107,.3)}
 
   .icon-btn{
     width:38px;height:38px;border-radius:10px;border:1px solid var(--line);
@@ -77,13 +79,10 @@
   .icon-btn:hover{background:var(--bg);border-color:var(--accent);color:var(--accent)}
   .icon-btn:active{transform:scale(.94)}
   .icon-btn:disabled{opacity:.35;cursor:not-allowed}
-  .icon-btn.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
 
-  /* ---------- SCREENS ---------- */
   .screen{position:absolute;inset:62px 0 0 0;display:none;overflow:auto}
   .screen.active{display:block}
 
-  /* ---------- LIBRARY ---------- */
   .hero{max-width:1200px;margin:0 auto;padding:34px 22px 8px}
   .hero h1{font-size:clamp(24px,3.4vw,34px);margin:0 0 8px;letter-spacing:-.7px}
   .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:640px;line-height:1.55}
@@ -100,6 +99,8 @@
     position:relative;
   }
   .card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(20,40,70,.18)}
+  .card.matched{border-color:rgba(34,160,107,.5)}
+  .card.missing{border-color:rgba(214,139,26,.4)}
 
   .cover{
     aspect-ratio:3/4;background:var(--bg);position:relative;overflow:hidden;
@@ -110,6 +111,8 @@
     position:absolute;left:0;top:0;bottom:0;width:7px;
     background:linear-gradient(180deg,var(--accent),var(--accent-2));opacity:.85;
   }
+  .cover .spine.ok{background:linear-gradient(180deg,#22a06b,#178a58)}
+  .cover .spine.warn{background:linear-gradient(180deg,#e1a43a,#b17517)}
   .cover .overlay{
     position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55));
     opacity:0;transition:opacity .2s;display:flex;align-items:flex-end;padding:14px;color:#fff;
@@ -117,12 +120,38 @@
   }
   .cover:hover .overlay{opacity:1}
 
+  .cover .placeholder-cover{
+    position:absolute;inset:0;
+    background:linear-gradient(135deg,#12b8a8,#0b6e66);
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.9);
+  }
+  .cover .placeholder-cover svg{width:56%;height:56%;opacity:.9}
+  .cover .placeholder-cover.physics{
+    background:linear-gradient(135deg,#3b82c4,#1e4f78);
+  }
+
+  .badge{
+    position:absolute;top:10px;right:10px;
+    font-size:10.5px;font-weight:800;letter-spacing:.4px;
+    padding:5px 9px;border-radius:7px;
+    box-shadow:0 4px 12px rgba(0,0,0,.18);
+    display:flex;align-items:center;gap:4px;
+  }
+  .badge.ok{background:#22a06b;color:#fff}
+  .badge.warn{background:#e1a43a;color:#fff}
+
   .card-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:4px;flex:1}
   .card-body h3{margin:0;font-size:15px;letter-spacing:-.2px;line-height:1.25;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .card-body .meta{font-size:12px;color:var(--muted)}
-  .card-actions{display:flex;gap:7px;margin-top:12px}
-  .card-actions .btn{flex:1;justify-content:center;padding:9px 10px;font-size:12.5px}
+  .card-body .meta{font-size:12px;color:var(--muted);line-height:1.4}
+  .card-body .hint{
+    font-size:11.5px;color:var(--warn);background:var(--warn-bg);
+    padding:7px 9px;border-radius:7px;margin-top:6px;line-height:1.35;
+  }
+  .card-body .hint.ok{color:var(--ok);background:var(--ok-bg)}
+  .card-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+  .card-actions .btn{flex:1;justify-content:center;padding:9px 10px;font-size:12.5px;min-width:0}
   .card-actions .icon-btn{width:36px;height:36px;font-size:14px}
 
   .add-card{
@@ -139,14 +168,6 @@
   .add-card .t{font-size:14px;font-weight:700}
   .add-card .s{font-size:12px;line-height:1.45}
 
-  .empty{
-    max-width:640px;margin:20px auto 60px;padding:40px 30px;text-align:center;
-    border:2px dashed var(--line);border-radius:20px;background:var(--panel);
-  }
-  .empty .big{font-size:52px;margin-bottom:12px}
-  .empty h2{margin:0 0 8px;font-size:20px;letter-spacing:-.3px}
-  .empty p{margin:0 0 20px;color:var(--muted);font-size:14px;line-height:1.55}
-
   .drop-overlay{
     position:fixed;inset:0;background:rgba(15,155,142,.14);
     backdrop-filter:blur(6px);z-index:200;display:none;
@@ -160,7 +181,6 @@
   }
   .drop-overlay .box .ico{font-size:52px}
 
-  /* ---------- READER ---------- */
   #reader.active{display:flex;flex-direction:column;height:100%;overflow:hidden}
   #reader{position:absolute;inset:62px 0 0 0}
 
@@ -179,10 +199,7 @@
     display:grid;place-items:center;padding:24px;
     transition:background .25s;
   }
-  #pageWrap{
-    display:flex;align-items:center;justify-content:center;
-    transform-origin:center;
-  }
+  #pageWrap{display:flex;align-items:center;justify-content:center;transform-origin:center}
   #pageCanvas{
     display:block;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35);
     border-radius:4px;will-change:transform,opacity;
@@ -200,16 +217,11 @@
   .navzone.r{right:0;background:linear-gradient(270deg,rgba(0,0,0,.18),transparent)}
   .navzone:disabled{display:none}
 
-  /* ---------- FOOTER ---------- */
   .rfoot{
     flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;
     padding-bottom: max(10px, env(safe-area-inset-bottom));
     background:var(--panel);border-top:1px solid var(--line);
     position:relative;
-  }
-  .rfoot .pgnum{
-    font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;
-    min-width:96px;text-align:center;color:var(--muted);
   }
   .rfoot .page-input{
     width:56px;padding:8px 8px;border-radius:9px;border:1px solid var(--line);
@@ -218,14 +230,10 @@
   }
   .rfoot .page-input:focus{border-color:var(--accent)}
   .rfoot .sep{color:var(--muted);font-size:13px}
-  .rfoot .total{
-    font-size:13px;font-weight:700;color:var(--muted);
-    font-variant-numeric:tabular-nums;min-width:38px;
-  }
+  .rfoot .total{font-size:13px;font-weight:700;color:var(--muted);
+    font-variant-numeric:tabular-nums;min-width:38px;}
 
-  .slider-wrap{
-    flex:1;position:relative;height:36px;display:flex;align-items:center;
-  }
+  .slider-wrap{flex:1;position:relative;height:36px;display:flex;align-items:center}
   .slider{
     width:100%;-webkit-appearance:none;appearance:none;height:8px;border-radius:99px;
     background:var(--line);outline:none;cursor:pointer;
@@ -235,14 +243,12 @@
   .slider::-webkit-slider-thumb{
     -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
     background:var(--accent);cursor:grab;border:3px solid var(--panel);
-    box-shadow:0 2px 10px rgba(15,155,142,.55);
-    transition:transform .1s;
+    box-shadow:0 2px 10px rgba(15,155,142,.55);transition:transform .1s;
   }
   .slider:active::-webkit-slider-thumb{cursor:grabbing;transform:scale(1.15)}
   .slider::-moz-range-thumb{
     width:22px;height:22px;border-radius:50%;background:var(--accent);
-    cursor:grab;border:3px solid var(--panel);
-    box-shadow:0 2px 10px rgba(15,155,142,.55);
+    cursor:grab;border:3px solid var(--panel);box-shadow:0 2px 10px rgba(15,155,142,.55);
   }
 
   .bubble{
@@ -251,8 +257,7 @@
     padding:5px 11px;border-radius:8px;font-size:12.5px;font-weight:800;
     font-variant-numeric:tabular-nums;
     pointer-events:none;transform:translateX(-50%) scale(.85);opacity:0;
-    transition:opacity .12s, transform .12s;
-    white-space:nowrap;z-index:20;
+    transition:opacity .12s, transform .12s;white-space:nowrap;z-index:20;
     box-shadow:0 4px 14px rgba(0,0,0,.25);
   }
   .bubble::after{
@@ -272,12 +277,10 @@
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ---------- MODAL GRID ---------- */
   .thumbs-modal{
     position:fixed;inset:0;z-index:300;
     background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
-    display:none;flex-direction:column;
-    animation:fadeIn .18s ease;
+    display:none;flex-direction:column;animation:fadeIn .18s ease;
   }
   .thumbs-modal.open{display:flex}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -298,18 +301,12 @@
   .thumbs-head h3{margin:0;font-size:16px;letter-spacing:-.3px;font-weight:800}
   .thumbs-head .cnt{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 
-  .thumbs-body{
-    flex:1;overflow:auto;padding:18px;
-  }
-  .thumbs-grid{
-    display:grid;gap:14px;
-    grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  }
+  .thumbs-body{flex:1;overflow:auto;padding:18px}
+  .thumbs-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 
   .thumb{
     background:var(--bg);border-radius:10px;overflow:hidden;
-    border:2px solid transparent;cursor:pointer;
-    transition:.15s;position:relative;padding:0;
+    border:2px solid transparent;cursor:pointer;transition:.15s;position:relative;padding:0;
     display:flex;flex-direction:column;
   }
   .thumb:hover{border-color:var(--accent);transform:translateY(-2px);
@@ -319,9 +316,7 @@
     aspect-ratio:3/4;background:#fff;position:relative;
     display:grid;place-items:center;overflow:hidden;
   }
-  .thumb-canvas-wrap canvas{
-    max-width:100%;max-height:100%;display:block;
-  }
+  .thumb-canvas-wrap canvas{max-width:100%;max-height:100%;display:block}
   .thumb-placeholder{
     position:absolute;inset:0;display:grid;place-items:center;
     color:var(--muted);font-size:11px;
@@ -336,7 +331,6 @@
     border-top-color:transparent;
   }
 
-  /* ---------- TOAST ---------- */
   .toast{
     position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);
     background:var(--text);color:var(--panel);padding:12px 20px;border-radius:11px;
@@ -353,7 +347,6 @@
     .navzone{display:none}
     .stage{padding:8px}
     .rfoot{gap:6px;padding:8px 10px}
-    .rfoot .pgnum{display:none}
     .rfoot .page-input{width:48px;padding:7px 6px;font-size:13px}
     .hero{padding:22px 16px 6px}
     .grid{padding:18px 16px 50px;gap:16px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
@@ -372,23 +365,22 @@
 <body>
 
 <header>
-  <div class="logo">Б</div>
-  <div class="brand">Школьная библиотека<small>читайте и листайте учебники</small></div>
+  <div class="logo">К</div>
+  <div class="brand">Книги<small>читайте и листайте учебники</small></div>
   <div class="spacer"></div>
+  <button class="btn ghost icon-btn" id="btnInstall" title="Установить приложение" style="display:none">⬇</button>
   <button class="btn ghost icon-btn" id="btnTheme" title="Сменить тему">🌙</button>
   <button class="btn" id="btnAdd"><span>＋</span> Добавить PDF</button>
 </header>
 
-<!-- ============ LIBRARY ============ -->
 <section class="screen active" id="library">
   <div class="hero">
-    <h1>Мои учебники</h1>
-    <p>Перетащите PDF-файл учебника прямо в окно или нажмите «Добавить PDF». Книга сохранится в браузере — потом можно открыть её и читать постранично.</p>
+    <h1>Мои книги</h1>
+    <p>Учебники можно добавить один раз — приложение найдёт их в вашей библиотеке по названию и больше не будет просить повторно.</p>
   </div>
   <div class="grid" id="grid"></div>
 </section>
 
-<!-- ============ READER ============ -->
 <section class="screen" id="reader">
   <div class="rbar">
     <button class="icon-btn" id="btnBack" title="К библиотеке">←</button>
@@ -421,17 +413,14 @@
     <input class="page-input" id="pageInput" type="text" inputmode="numeric" value="1">
     <span class="sep">/</span>
     <span class="total" id="pageTotal">—</span>
-
     <div class="slider-wrap">
       <div class="bubble" id="bubble">1</div>
       <input type="range" class="slider" id="slider" min="1" max="1" value="1">
     </div>
-
     <button class="icon-btn" id="nextBtn" title="Следующая (→)">›</button>
   </div>
 </section>
 
-<!-- ============ MODAL GRID ============ -->
 <div class="thumbs-modal" id="thumbsModal">
   <div class="thumbs-panel">
     <div class="thumbs-head">
@@ -518,7 +507,7 @@ async function dbGet(id){
 /* =====================================================================
    УТИЛИТЫ
    ===================================================================== */
-function toast(msg, ms=2200){
+function toast(msg, ms=2400){
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
@@ -526,11 +515,54 @@ function toast(msg, ms=2200){
   el._t = setTimeout(()=>el.classList.remove('show'), ms);
 }
 function fmtSize(bytes){
+  if (bytes == null) return '—';
   if (bytes < 1024) return bytes + ' Б';
   if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' КБ';
   return (bytes/1048576).toFixed(1) + ' МБ';
 }
-function escapeHtml(s){return s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));}
+
+/* =====================================================================
+   ПРЕДУСТАНОВЛЕННЫЕ УЧЕБНИКИ
+   Приложение само проверяет, есть ли уже такой файл в библиотеке.
+   Совпадение — по ключевым словам в имени файла.
+   ===================================================================== */
+const PRESET_BOOKS = [
+  {
+    id: 'preset-soc11',
+    name: 'Обществознание. 11 класс',
+    author: 'Л. Н. Боголюбов (ред.)',
+    url: 'https://share.google/sOP0fqwrPDpHAj9sj',
+    filenameHint: '11_Obschestvoznanie_L.N._Bogolyubov.pdf',
+    matchAny: ['obschestvoznanie', 'обществознание', 'bogolyubov', 'боголюбов'],
+    theme: 'soc'
+  },
+  {
+    id: 'preset-phys11',
+    name: 'Физика. 11 класс',
+    author: 'Г. Я. Мякишев, Б. Б. Буховцев, В. М. Чаругин',
+    url: 'https://share.google/P6ARVA8qyMjuyEXWX',
+    filenameHint: 'Физика_11_класс.pdf',
+    matchAny: ['физика', 'мякишев', 'буховцев', 'чаругин', 'myakishev', 'physics'],
+    theme: 'phys'
+  }
+];
+
+function normalizeForMatch(s){
+  return String(s || '').toLowerCase()
+    .replace(/\.pdf$/i, '')
+    .replace(/[^a-zа-яё0-9]+/gi, '');
+}
+
+function findMatchingSavedBook(savedBooks, preset){
+  const terms = (preset.matchAny || []).map(normalizeForMatch).filter(Boolean);
+  if (!terms.length) return null;
+  for (const b of savedBooks){
+    const n = normalizeForMatch(b.name);
+    if (terms.some(t => n.includes(t))) return b;
+  }
+  return null;
+}
 
 /* =====================================================================
    ТЕМА
@@ -550,25 +582,96 @@ document.getElementById('btnTheme').onclick = ()=>{
 applyTheme();
 
 /* =====================================================================
+   PWA: install prompt
+   ===================================================================== */
+let deferredPrompt = null;
+const btnInstall = document.getElementById('btnInstall');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  btnInstall.style.display = 'grid';
+});
+
+btnInstall.onclick = async () => {
+  if (!deferredPrompt){
+    toast('Откройте меню браузера → «Установить приложение».', 4000);
+    return;
+  }
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') toast('Спасибо! Приложение установлено');
+  deferredPrompt = null;
+  btnInstall.style.display = 'none';
+};
+
+window.addEventListener('appinstalled', () => {
+  toast('Приложение установлено');
+  btnInstall.style.display = 'none';
+});
+
+/* =====================================================================
    БИБЛИОТЕКА
    ===================================================================== */
 const grid = document.getElementById('grid');
 
+// SVG-заглушка для пресетов (когда нет обложки)
+const PRESET_SVG = `
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <path d="M256 140 C230 120 180 118 130 132 L130 372 C180 358 230 362 256 380 Z" fill="#ffffff" opacity="0.95"/>
+  <path d="M256 140 C282 120 332 118 382 132 L382 372 C332 358 282 362 256 380 Z" fill="#ffffff" opacity="0.8"/>
+  <line x1="256" y1="140" x2="256" y2="380" stroke="#000" stroke-width="6" opacity="0.15"/>
+  <line x1="160" y1="200" x2="230" y2="196" stroke="#000" stroke-width="8" stroke-linecap="round" opacity="0.2"/>
+  <line x1="160" y1="232" x2="230" y2="228" stroke="#000" stroke-width="8" stroke-linecap="round" opacity="0.2"/>
+  <line x1="282" y1="196" x2="352" y2="200" stroke="#000" stroke-width="8" stroke-linecap="round" opacity="0.15"/>
+  <line x1="282" y1="228" x2="352" y2="232" stroke="#000" stroke-width="8" stroke-linecap="round" opacity="0.15"/>
+</svg>`;
+
 async function renderLibrary(){
-  const books = await dbGetAll();
-  books.sort((a,b)=>b.addedAt - a.addedAt);
+  const savedBooks = await dbGetAll();
+  savedBooks.sort((a,b)=>b.addedAt - a.addedAt);
 
   grid.innerHTML = '';
   document.querySelectorAll('#library .empty').forEach(e=>e.remove());
 
-  if (books.length === 0){
+  // Ищем для каждого пресета — есть ли уже подходящая книга
+  const usedIds = new Set();
+  const presetMatches = new Map();
+  for (const preset of PRESET_BOOKS){
+    const m = findMatchingSavedBook(savedBooks, preset);
+    if (m){
+      presetMatches.set(preset.id, m);
+      usedIds.add(m.id);
+    }
+  }
+
+  const items = [];
+
+  // Сначала пресеты
+  for (const preset of PRESET_BOOKS){
+    const matched = presetMatches.get(preset.id);
+    if (matched){
+      items.push({ kind: 'preset-matched', preset, book: matched });
+    } else {
+      items.push({ kind: 'preset', preset });
+    }
+  }
+
+  // Потом остальные сохранённые книги
+  for (const b of savedBooks){
+    if (!usedIds.has(b.id)){
+      items.push({ kind: 'saved', book: b });
+    }
+  }
+
+  if (items.length === 0){
     grid.style.display = 'none';
     const empty = document.createElement('div');
     empty.className = 'empty';
     empty.innerHTML = `
       <div class="big">📚</div>
       <h2>Библиотека пуста</h2>
-      <p>Перетащите сюда PDF-файл учебника, или нажмите кнопку ниже, чтобы выбрать файл на устройстве.</p>
+      <p>Перетащите PDF-файл учебника сюда или нажмите кнопку ниже.</p>
       <button class="btn" id="emptyAdd"><span>＋</span> Добавить PDF</button>
     `;
     document.querySelector('#library .hero').after(empty);
@@ -577,35 +680,10 @@ async function renderLibrary(){
   }
   grid.style.display = 'grid';
 
-  for (const b of books){
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="cover" data-id="${b.id}">
-        <div class="spine"></div>
-        ${b.thumb ? `<img src="${b.thumb}" alt="">` : ''}
-        <div class="overlay">Открыть книгу →</div>
-      </div>
-      <div class="card-body">
-        <h3>${escapeHtml(b.name)}</h3>
-        <div class="meta">${b.pages} стр. · ${fmtSize(b.size)}</div>
-        <div class="card-actions">
-          <button class="btn" data-act="open">Читать</button>
-          <button class="icon-btn" data-act="download" title="Скачать">⬇</button>
-          <button class="icon-btn" data-act="del" title="Удалить">🗑</button>
-        </div>
-      </div>
-    `;
-    card.querySelector('.cover').onclick = ()=> openBook(b.id);
-    card.querySelector('[data-act="open"]').onclick = ()=> openBook(b.id);
-    card.querySelector('[data-act="download"]').onclick = ()=> downloadBook(b.id);
-    card.querySelector('[data-act="del"]').onclick = async ()=>{
-      if (!confirm(`Удалить «${b.name}» из библиотеки?`)) return;
-      await dbDelete(b.id);
-      toast('Книга удалена');
-      renderLibrary();
-    };
-    grid.appendChild(card);
+  for (const item of items){
+    if (item.kind === 'preset-matched') renderPresetMatched(item.preset, item.book);
+    else if (item.kind === 'preset') renderPresetMissing(item.preset);
+    else renderSavedBook(item.book);
   }
 
   const add = document.createElement('button');
@@ -615,18 +693,122 @@ async function renderLibrary(){
   grid.appendChild(add);
 }
 
+/* ---------- Пресет: файл уже в библиотеке ---------- */
+function renderPresetMatched(preset, book){
+  const card = document.createElement('div');
+  card.className = 'card matched';
+  const phClass = preset.theme === 'phys' ? 'physics' : '';
+  card.innerHTML = `
+    <div class="cover" data-cover>
+      <div class="spine ok"></div>
+      ${book.thumb ? `<img src="${book.thumb}" alt="">` : `<div class="placeholder-cover ${phClass}">${PRESET_SVG}</div>`}
+      <div class="badge ok">✓ В БИБЛИОТЕКЕ</div>
+      <div class="overlay">Читать →</div>
+    </div>
+    <div class="card-body">
+      <h3>${escapeHtml(preset.name)}</h3>
+      <div class="meta">${escapeHtml(preset.author)} · ${book.pages} стр. · ${fmtSize(book.size)}</div>
+      <div class="hint ok">✓ Учебник уже добавлен в библиотеку</div>
+      <div class="card-actions">
+        <button class="btn ok" data-act="open">Читать</button>
+        <button class="icon-btn" data-act="download" title="Скачать PDF">⬇</button>
+      </div>
+    </div>
+  `;
+  card.querySelector('[data-cover]').onclick = ()=> openBook(book.id);
+  card.querySelector('[data-act="open"]').onclick = ()=> openBook(book.id);
+  card.querySelector('[data-act="download"]').onclick = ()=> downloadBook(book.id);
+  grid.appendChild(card);
+}
+
+/* ---------- Пресет: файл ещё не добавлен ---------- */
+function renderPresetMissing(preset){
+  const card = document.createElement('div');
+  card.className = 'card missing';
+  const phClass = preset.theme === 'phys' ? 'physics' : '';
+  card.innerHTML = `
+    <div class="cover" data-cover>
+      <div class="spine warn"></div>
+      <div class="placeholder-cover ${phClass}">${PRESET_SVG}</div>
+      <div class="badge warn">НЕ ДОБАВЛЕН</div>
+      <div class="overlay">Добавить →</div>
+    </div>
+    <div class="card-body">
+      <h3>${escapeHtml(preset.name)}</h3>
+      <div class="meta">${escapeHtml(preset.author)} · рекомендуемый учебник</div>
+      <div class="hint">Файл не найден в библиотеке. Выберите его на устройстве или скачайте по ссылке.</div>
+      <div class="card-actions">
+        <button class="btn" data-act="pick">📁 Найти файл</button>
+        <button class="icon-btn" data-act="url" title="Скачать по ссылке">⬇</button>
+      </div>
+    </div>
+  `;
+  card.querySelector('[data-cover]').onclick = ()=> pickPresetFile(preset);
+  card.querySelector('[data-act="pick"]').onclick = ()=> pickPresetFile(preset);
+  card.querySelector('[data-act="url"]').onclick = ()=> downloadPresetByUrl(preset);
+  grid.appendChild(card);
+}
+
+/* ---------- Обычная сохранённая книга ---------- */
+function renderSavedBook(book){
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="cover" data-cover>
+      <div class="spine"></div>
+      ${book.thumb ? `<img src="${book.thumb}" alt="">` : ''}
+      <div class="overlay">Открыть книгу →</div>
+    </div>
+    <div class="card-body">
+      <h3>${escapeHtml(book.name)}</h3>
+      <div class="meta">${book.pages} стр. · ${fmtSize(book.size)}</div>
+      <div class="card-actions">
+        <button class="btn" data-act="open">Читать</button>
+        <button class="icon-btn" data-act="download" title="Скачать">⬇</button>
+        <button class="icon-btn" data-act="del" title="Удалить">🗑</button>
+      </div>
+    </div>
+  `;
+  card.querySelector('[data-cover]').onclick = ()=> openBook(book.id);
+  card.querySelector('[data-act="open"]').onclick = ()=> openBook(book.id);
+  card.querySelector('[data-act="download"]').onclick = ()=> downloadBook(book.id);
+  card.querySelector('[data-act="del"]').onclick = async ()=>{
+    if (!confirm(`Удалить «${book.name}» из библиотеки?`)) return;
+    await dbDelete(book.id);
+    toast('Книга удалена');
+    renderLibrary();
+  };
+  grid.appendChild(card);
+}
+
+/* =====================================================================
+   ВЫБОР ФАЙЛА ДЛЯ ПРЕСЕТА
+   ===================================================================== */
+let pickingPreset = null;
+
+function pickPresetFile(preset){
+  pickingPreset = preset;
+  toast('Выберите файл: ' + preset.filenameHint, 4500);
+  fileInput.click();
+}
+
 /* =====================================================================
    ДОБАВЛЕНИЕ PDF
    ===================================================================== */
 const fileInput = document.getElementById('fileInput');
-document.getElementById('btnAdd').onclick = ()=> fileInput.click();
+document.getElementById('btnAdd').onclick = ()=>{
+  pickingPreset = null;
+  fileInput.click();
+};
 fileInput.onchange = e => {
   const files = [...e.target.files];
   fileInput.value = '';
-  files.forEach(addFile);
+  const preset = pickingPreset;
+  pickingPreset = null;
+  files.forEach(f => addFile(f, preset));
 };
 
-async function addFile(file){
+async function addFile(file, presetContext = null){
   if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf'){
     toast('Это не PDF-файл: ' + file.name);
     return;
@@ -635,11 +817,9 @@ async function addFile(file){
   try {
     const data = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: data.slice(0) }).promise;
-    const pages = pdf.numPages;
     const page = await pdf.getPage(1);
     const base = page.getViewport({ scale: 1 });
-    const targetW = 500;
-    const vp = page.getViewport({ scale: targetW / base.width });
+    const vp = page.getViewport({ scale: 500 / base.width });
     const canvas = document.createElement('canvas');
     canvas.width = Math.floor(vp.width);
     canvas.height = Math.floor(vp.height);
@@ -649,14 +829,33 @@ async function addFile(file){
     await page.render({ canvasContext: ctx, viewport: vp }).promise;
     const thumb = canvas.toDataURL('image/jpeg', 0.78);
 
+    const cleanName = file.name.replace(/\.pdf$/i, '');
+
     const book = {
       id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
-      name: file.name.replace(/\.pdf$/i, ''),
-      size: file.size, pages, thumb, data,
-      addedAt: Date.now(), lastPage: 1
+      name: cleanName,
+      size: file.size,
+      pages: pdf.numPages,
+      thumb,
+      data,
+      addedAt: Date.now(),
+      lastPage: 1
     };
     await dbPut(book);
-    toast('Книга добавлена: ' + book.name);
+
+    // Проверяем — не совпадает ли файл с каким-то пресетом
+    const matchedPreset = presetContext || PRESET_BOOKS.find(p => {
+      const terms = (p.matchAny || []).map(normalizeForMatch);
+      const n = normalizeForMatch(cleanName);
+      return terms.some(t => n.includes(t));
+    });
+
+    if (matchedPreset){
+      toast('Учебник «' + matchedPreset.name + '» добавлен в библиотеку', 3200);
+    } else {
+      toast('Книга добавлена: ' + cleanName);
+    }
+
     renderLibrary();
   } catch(err){
     console.error(err);
@@ -664,6 +863,7 @@ async function addFile(file){
   }
 }
 
+/* ---------- Drag & Drop ---------- */
 const dropOverlay = document.getElementById('dropOverlay');
 let dragDepth = 0;
 window.addEventListener('dragenter', e=>{
@@ -682,7 +882,7 @@ window.addEventListener('dragleave', ()=>{
 window.addEventListener('drop', e=>{
   e.preventDefault(); dragDepth = 0; dropOverlay.classList.remove('on');
   if (!document.getElementById('library').classList.contains('active')) return;
-  [...(e.dataTransfer?.files || [])].forEach(addFile);
+  [...(e.dataTransfer?.files || [])].forEach(f => addFile(f));
 });
 
 /* =====================================================================
@@ -700,6 +900,14 @@ async function downloadBook(id){
   a.click();
   a.remove();
   setTimeout(()=>URL.revokeObjectURL(url), 4000);
+}
+
+async function downloadPresetByUrl(preset){
+  const openManually = confirm(
+    'Скачать «' + preset.name + '» по ссылке?\n\n' +
+    'Файл откроется в новой вкладке. После скачивания перетащите его в библиотеку.'
+  );
+  if (openManually) window.open(preset.url, '_blank');
 }
 
 /* =====================================================================
@@ -888,8 +1096,6 @@ els.prev.onclick = prevPage;
 els.zoneNext.onclick = nextPage;
 els.zonePrev.onclick = prevPage;
 
-let sliderRenderTimer = null;
-
 function showBubbleForSlider(){
   const min = +els.slider.min, max = +els.slider.max;
   const val = +els.slider.value;
@@ -901,37 +1107,29 @@ function showBubbleForSlider(){
   els.bubble.textContent = val;
   els.bubble.classList.add('show');
 }
-function hideBubble(){
-  els.bubble.classList.remove('show');
-}
+function hideBubble(){ els.bubble.classList.remove('show'); }
 
 els.slider.addEventListener('input', e=>{
-  const v = +e.target.value;
-  els.pageInput.value = v;
+  els.pageInput.value = e.target.value;
   updateSliderFill();
   showBubbleForSlider();
-  clearTimeout(sliderRenderTimer);
 });
-
 els.slider.addEventListener('change', e=>{
   const target = +e.target.value;
   hideBubble();
   goToPage(target);
 });
-
-els.slider.addEventListener('pointerdown', ()=>{ showBubbleForSlider(); });
-els.slider.addEventListener('pointerup',   ()=>{ hideBubble(); });
-els.slider.addEventListener('pointercancel', ()=>{ hideBubble(); });
-els.slider.addEventListener('blur', ()=>{ hideBubble(); });
+els.slider.addEventListener('pointerdown', showBubbleForSlider);
+els.slider.addEventListener('pointerup', hideBubble);
+els.slider.addEventListener('pointercancel', hideBubble);
+els.slider.addEventListener('blur', hideBubble);
 
 els.pageInput.onchange = e => {
   const n = +e.target.value.replace(/\D/g,'');
   if (n) goToPage(n);
   else e.target.value = state.page;
 };
-els.pageInput.onkeydown = e => {
-  if (e.key === 'Enter') e.target.blur();
-};
+els.pageInput.onkeydown = e => { if (e.key === 'Enter') e.target.blur(); };
 
 document.addEventListener('keydown', e=>{
   if (document.getElementById('thumbsModal').classList.contains('open')){
@@ -1017,15 +1215,12 @@ function openThumbs(){
     card.className = 'thumb' + (i === state.page ? ' current' : '');
     card.dataset.page = i;
     card.innerHTML = `
-      <div class="thumb-canvas-wrap">
-        <div class="thumb-placeholder">Стр. ${i}</div>
-      </div>
+      <div class="thumb-canvas-wrap"><div class="thumb-placeholder">Стр. ${i}</div></div>
       <div class="thumb-num">${i}</div>
     `;
     card.addEventListener('click', ()=>{
-      const target = i;
       closeThumbs();
-      goToPage(target);
+      goToPage(i);
     });
     thumbsGrid.appendChild(card);
   }
@@ -1034,17 +1229,11 @@ function openThumbs(){
   thumbsObserver = new IntersectionObserver((entries)=>{
     entries.forEach(entry=>{
       if (entry.isIntersecting){
-        const card = entry.target;
-        const pageNum = +card.dataset.page;
-        renderThumb(card, pageNum);
-        thumbsObserver.unobserve(card);
+        renderThumb(entry.target, +entry.target.dataset.page);
+        thumbsObserver.unobserve(entry.target);
       }
     });
-  }, {
-    root: document.getElementById('thumbsBody'),
-    rootMargin: '400px 0px',
-    threshold: 0.01
-  });
+  }, { root: document.getElementById('thumbsBody'), rootMargin: '400px 0px', threshold: 0.01 });
   [...thumbsGrid.children].forEach(c => thumbsObserver.observe(c));
 
   requestAnimationFrame(()=>{
@@ -1060,8 +1249,7 @@ async function renderThumb(card, pageNum){
     if (!dataUrl){
       const page = await state.pdf.getPage(pageNum);
       const base = page.getViewport({ scale: 1 });
-      const targetW = 220;
-      const vp = page.getViewport({ scale: targetW / base.width });
+      const vp = page.getViewport({ scale: 220 / base.width });
       const c = document.createElement('canvas');
       c.width  = Math.floor(vp.width);
       c.height = Math.floor(vp.height);
@@ -1081,9 +1269,7 @@ async function renderThumb(card, pageNum){
     img.style.maxWidth = '100%';
     img.style.maxHeight = '100%';
     wrap.appendChild(img);
-  } catch(err){
-    console.warn('thumb error', pageNum, err);
-  }
+  } catch(err){ console.warn('thumb error', pageNum, err); }
 }
 
 function closeThumbs(){
@@ -1094,9 +1280,7 @@ function closeThumbs(){
 
 document.getElementById('btnGrid').onclick = openThumbs;
 document.getElementById('thumbsClose').onclick = closeThumbs;
-thumbsModal.addEventListener('click', e=>{
-  if (e.target === thumbsModal) closeThumbs();
-});
+thumbsModal.addEventListener('click', e=>{ if (e.target === thumbsModal) closeThumbs(); });
 
 const origGoToPage = goToPage;
 goToPage = async function(n, direction){
@@ -1114,9 +1298,7 @@ goToPage = async function(n, direction){
    ===================================================================== */
 renderLibrary();
 
-/* =====================================================================
-   PWA: РЕГИСТРАЦИЯ SERVICE WORKER
-   ===================================================================== */
+/* PWA: регистрация Service Worker */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
