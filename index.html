@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Книги</title>
-
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -16,536 +14,531 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Книги">
 <meta name="description" content="Читайте школьные учебники постранично.">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
-  :root{
-    --bg:#eef1f6; --panel:#ffffff; --text:#1c2431; --muted:#6b7787;
-    --line:#dde3ec; --accent:#0f9b8e; --accent-2:#0b6e66;
-    --ok:#22a06b; --ok-bg:#e6f6ee;
-    --warn:#d68b1a; --warn-bg:#fdf3e0;
-    --shadow:0 8px 30px rgba(20,40,70,.10);
-    --stage:#3a4453;
-    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --header-h: 62px;
-  }
-  html[data-theme="dark"]{
-    --bg:#0e1218; --panel:#1a2028; --text:#e6ebf2; --muted:#93a0b1;
-    --line:#2a323d; --shadow:0 8px 30px rgba(0,0,0,.45);
-    --stage:#080b0f; --ok-bg:#123024; --warn-bg:#33260e;
-  }
-  html[data-theme="sepia"]{
-    --bg:#efe6d5; --panel:#fbf5e9; --text:#3a3227; --muted:#8a7c66;
-    --line:#e0d3bb; --shadow:0 8px 30px rgba(120,100,70,.15);
-    --stage:#c9b896; --ok-bg:#e3efd9; --warn-bg:#f6e8cd;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%;overscroll-behavior:none}
-  body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);
-       transition:background .25s,color .25s;overflow:hidden}
+:root{
+  --bg:#eef1f6;--panel:#ffffff;--text:#1c2431;--muted:#6b7787;
+  --line:#dde3ec;--accent:#0f9b8e;--accent-2:#0b6e66;
+  --ok:#22a06b;--ok-bg:#e6f6ee;--warn:#d68b1a;--warn-bg:#fdf3e0;
+  --admin:#8b5cf6;--admin-2:#6d28d9;--admin-bg:rgba(139,92,246,.1);
+  --shadow:0 8px 30px rgba(20,40,70,.10);--stage:#3a4453;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --serif:Georgia,'Times New Roman',serif;
+  --header-h:62px;
+}
+html[data-theme="dark"]{--bg:#0e1218;--panel:#1a2028;--text:#e6ebf2;--muted:#93a0b1;
+  --line:#2a323d;--shadow:0 8px 30px rgba(0,0,0,.45);--stage:#080b0f;
+  --ok-bg:#123024;--warn-bg:#33260e;--admin-bg:rgba(139,92,246,.18)}
+html[data-theme="sepia"]{--bg:#efe6d5;--panel:#fbf5e9;--text:#3a3227;--muted:#8a7c66;
+  --line:#e0d3bb;--shadow:0 8px 30px rgba(120,100,70,.15);--stage:#c9b896;
+  --ok-bg:#e3efd9;--warn-bg:#f6e8cd;--admin-bg:rgba(139,92,246,.15)}
+html[data-theme="academy"]{--bg:#0f1622;--panel:#182132;--text:#f4ead5;--muted:#8a96b0;
+  --line:#2a3548;--accent:#c9a961;--accent-2:#a08346;
+  --shadow:0 8px 30px rgba(0,0,0,.55);--stage:#0a1119;
+  --ok-bg:#1b2a1f;--warn-bg:#2c2415;--admin-bg:rgba(201,169,97,.15)}
+html[data-theme="academy"] body{font-family:var(--serif)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);
+  transition:background .25s,color .25s;overflow:hidden}
 
-  /* ---------- HEADER ---------- */
-  header{
-    height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0 16px;
-    padding-top: env(safe-area-inset-top);
-    background:var(--panel);border-bottom:1px solid var(--line);
-    position:fixed;top:0;left:0;right:0;z-index:30;
-  }
-  .logo{
-    width:36px;height:36px;border-radius:10px;flex:none;
-    background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    display:grid;place-items:center;color:#fff;font-weight:800;font-size:17px;
-    box-shadow:0 4px 14px rgba(15,155,142,.35);
-  }
-  .brand{font-weight:800;font-size:16px;letter-spacing:-.2px;line-height:1.1}
-  .brand small{display:block;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.3px;margin-top:1px}
-  .spacer{flex:1}
+header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0 16px;
+  padding-top:env(safe-area-inset-top);background:var(--panel);border-bottom:1px solid var(--line);
+  position:fixed;top:0;left:0;right:0;z-index:30}
+.logo{width:36px;height:36px;border-radius:10px;flex:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:grid;place-items:center;color:#fff;font-weight:800;font-size:17px;
+  box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 40%,transparent);
+  transition:transform .18s;user-select:none}
+.logo:hover{transform:scale(1.06)}
+.logo:active{transform:scale(.92)}
+.brand{font-weight:800;font-size:16px;letter-spacing:-.2px;line-height:1.1;min-width:0}
+.brand small{display:block;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.3px;margin-top:1px}
+.brand .bt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.spacer{flex:1}
+.btn{border:none;border-radius:10px;padding:9px 14px;font-family:inherit;font-weight:600;
+  font-size:13.5px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;display:inline-flex;align-items:center;gap:7px;transition:.15s;
+  box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 35%,transparent);white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent);filter:none}
+.btn.ok{background:linear-gradient(135deg,#22a06b,#178a58)}
+.btn.admin{background:linear-gradient(135deg,var(--admin),var(--admin-2));box-shadow:0 4px 14px rgba(139,92,246,.3)}
+.btn.danger{background:linear-gradient(135deg,#e05252,#b83434)}
+.icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);
+  background:transparent;color:var(--text);cursor:pointer;display:grid;place-items:center;
+  font-size:16px;transition:.15s;flex:none;font-family:inherit}
+.icon-btn:hover{background:var(--bg);border-color:var(--accent);color:var(--accent)}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn:disabled{opacity:.35;cursor:not-allowed}
+.icon-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
 
-  .btn{
-    border:none;border-radius:10px;padding:9px 14px;font-family:inherit;font-weight:600;
-    font-size:13.5px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    color:#fff;display:inline-flex;align-items:center;gap:7px;transition:.15s;
-    box-shadow:0 4px 14px rgba(15,155,142,.28);white-space:nowrap;
-  }
-  .btn:hover{filter:brightness(1.08)}
-  .btn:active{transform:scale(.97)}
-  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none}
-  .btn.ghost:hover{border-color:var(--accent);color:var(--accent);filter:none}
-  .btn.ok{background:linear-gradient(135deg,#22a06b,#178a58);box-shadow:0 4px 14px rgba(34,160,107,.3)}
+.settings-backdrop{position:fixed;inset:0;z-index:40;display:none;background:rgba(0,0,0,.15)}
+.settings-backdrop.open{display:block}
+.settings-popover{position:fixed;top:calc(var(--header-h) + env(safe-area-inset-top) + 8px);
+  right:12px;width:min(340px,calc(100vw - 24px));max-height:calc(100vh - var(--header-h) - 40px);
+  overflow-y:auto;background:var(--panel);border-radius:16px;
+  box-shadow:0 24px 60px rgba(0,0,0,.28),0 0 0 1px var(--line);z-index:50;padding:18px;
+  opacity:0;transform:translateY(-8px) scale(.96);pointer-events:none;transition:.18s;
+  transform-origin:top right}
+.settings-popover.open{opacity:1;transform:none;pointer-events:auto}
+.settings-title{font-size:11.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--muted);margin:0 0 10px}
+.settings-section + .settings-section{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.theme-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.theme-opt{border:1.5px solid var(--line);background:transparent;padding:12px 6px;border-radius:11px;
+  cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;color:var(--text);
+  display:flex;flex-direction:column;align-items:center;gap:5px;transition:.15s}
+.theme-opt .em{font-size:22px;line-height:1}
+.theme-opt:hover{border-color:var(--accent);color:var(--accent)}
+.theme-opt.active{border-color:var(--accent);background:var(--admin-bg);color:var(--accent)}
+.seg-options{display:flex;gap:6px;flex-wrap:wrap}
+.seg-opt{flex:1;min-width:52px;border:1.5px solid var(--line);background:transparent;
+  padding:10px 6px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:12.5px;
+  font-weight:700;color:var(--text);transition:.15s;text-align:center}
+.seg-opt:hover{border-color:var(--accent);color:var(--accent)}
+.seg-opt.active{border-color:var(--accent);background:var(--admin-bg);color:var(--accent)}
+.switch-row{display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;user-select:none}
+.switch-row > div:first-child{flex:1;min-width:0}
+.switch-label{font-size:13.5px;font-weight:700;line-height:1.3}
+.switch-desc{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.switch{position:relative;width:44px;height:26px;flex:none;background:var(--line);
+  border-radius:99px;transition:.2s}
+.switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;
+  border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:.2s}
+.switch.on{background:var(--accent)}
+.switch.on::after{transform:translateX(18px)}
+.switch-row input[type=checkbox]{display:none}
+.settings-hint{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.4}
+.accent-palette{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.accent-pick{aspect-ratio:1;border-radius:50%;border:2px solid transparent;cursor:pointer;
+  transition:.15s;position:relative}
+.accent-pick:hover{transform:scale(1.08)}
+.accent-pick.active{border-color:var(--text);box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--text)}
+.admin-status{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:var(--admin-bg);border-radius:10px;margin-bottom:10px;
+  font-size:12.5px;font-weight:700;color:var(--admin)}
+.admin-status .dot{width:8px;height:8px;border-radius:50%;background:var(--admin);
+  box-shadow:0 0 10px var(--admin);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.5;transform:scale(.8)}}
 
-  .icon-btn{
-    width:38px;height:38px;border-radius:10px;border:1px solid var(--line);
-    background:transparent;color:var(--text);cursor:pointer;display:grid;place-items:center;
-    font-size:16px;transition:.15s;flex:none;font-family:inherit;
-  }
-  .icon-btn:hover{background:var(--bg);border-color:var(--accent);color:var(--accent)}
-  .icon-btn:active{transform:scale(.94)}
-  .icon-btn:disabled{opacity:.35;cursor:not-allowed}
+.screen{position:fixed;top:var(--header-h);left:0;right:0;bottom:0;display:none;
+  overflow:auto;padding-bottom:env(safe-area-inset-bottom)}
+.screen.active{display:block}
+.hero{max-width:820px;margin:0 auto;padding:28px 22px 10px}
+.hero h1{font-size:clamp(24px,3.4vw,32px);margin:0 0 6px;letter-spacing:-.7px}
+.hero p{margin:0;color:var(--muted);font-size:14px;max-width:640px;line-height:1.5}
 
-  /* ---------- SETTINGS POPOVER ---------- */
-  .settings-backdrop{
-    position:fixed;inset:0;z-index:40;display:none;
-    background:rgba(0,0,0,.15);
-  }
-  .settings-backdrop.open{display:block}
+.tiles{max-width:820px;margin:0 auto;padding:10px 22px 60px;display:flex;flex-direction:column;gap:16px}
+.tile{display:flex;align-items:center;gap:20px;padding:24px;border-radius:20px;border:none;
+  cursor:pointer;font-family:inherit;color:#fff;text-align:left;position:relative;
+  overflow:hidden;transition:transform .18s,box-shadow .18s;
+  box-shadow:0 12px 36px rgba(20,40,70,.18);min-height:120px}
+.tile:hover{transform:translateY(-3px);box-shadow:0 20px 50px rgba(20,40,70,.28)}
+.tile:active{transform:scale(.985)}
+.tile[data-target="rec"]{background:linear-gradient(135deg,#8b5cf6 0%,#6d28d9 100%)}
+.tile[data-target="mine"]{background:linear-gradient(135deg,#12b8a8 0%,#0b6e66 100%)}
+.tile[data-target="bookmarks"]{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%)}
+.tile::before{content:'';position:absolute;top:-50%;right:-20%;width:70%;height:150%;
+  background:radial-gradient(circle,rgba(255,255,255,.22),transparent 60%);pointer-events:none}
+.tile-icon{font-size:44px;line-height:1;flex:none;width:72px;height:72px;border-radius:20px;
+  background:rgba(255,255,255,.18);display:grid;place-items:center;backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.22);position:relative;z-index:1}
+.tile-info{flex:1;min-width:0;position:relative;z-index:1}
+.tile-title{font-size:20px;font-weight:800;letter-spacing:-.4px;line-height:1.2;margin-bottom:4px}
+.tile-desc{font-size:12.5px;opacity:.88;line-height:1.4;font-weight:500}
+.tile-count{flex:none;font-size:34px;font-weight:900;letter-spacing:-1.5px;
+  background:rgba(255,255,255,.18);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:10px 16px;
+  font-variant-numeric:tabular-nums;position:relative;z-index:1;min-width:60px;text-align:center}
 
-  .settings-popover{
-    position:fixed;
-    top:calc(var(--header-h) + env(safe-area-inset-top) + 8px);
-    right:12px;
-    width:min(340px, calc(100vw - 24px));
-    background:var(--panel);border-radius:16px;
-    box-shadow:0 24px 60px rgba(0,0,0,.28), 0 0 0 1px var(--line);
-    z-index:50;padding:18px;
-    opacity:0;transform:translateY(-8px) scale(.96);pointer-events:none;
-    transition:opacity .18s, transform .18s;
-    transform-origin:top right;
-  }
-  .settings-popover.open{opacity:1;transform:none;pointer-events:auto}
+.grid-toolbar{max-width:820px;margin:0 auto;padding:0 22px 14px;display:flex;align-items:center;gap:10px}
+.count-pill{font-size:12px;font-weight:700;color:var(--muted);background:var(--panel);
+  padding:6px 12px;border-radius:9px;border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.search-input{flex:1;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);
+  background:var(--panel);color:var(--text);font-family:inherit;font-size:14px;outline:none;min-width:0}
+.search-input:focus{border-color:var(--accent)}
 
-  .settings-title{
-    font-size:11.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
-    color:var(--muted);margin:0 0 10px;
-  }
-  .settings-section + .settings-section{
-    margin-top:18px;padding-top:18px;border-top:1px solid var(--line);
-  }
-  .theme-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .theme-opt{
-    border:1.5px solid var(--line);background:transparent;
-    padding:12px 6px;border-radius:11px;cursor:pointer;
-    font-family:inherit;font-size:12px;font-weight:700;color:var(--text);
-    display:flex;flex-direction:column;align-items:center;gap:5px;
-    transition:.15s;
-  }
-  .theme-opt .em{font-size:22px;line-height:1}
-  .theme-opt:hover{border-color:var(--accent);color:var(--accent)}
-  .theme-opt.active{
-    border-color:var(--accent);background:rgba(15,155,142,.1);color:var(--accent);
-    box-shadow:0 4px 12px rgba(15,155,142,.15);
-  }
+.grid{max-width:820px;margin:0 auto;padding:0 22px 60px;display:grid;gap:18px;
+  grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:var(--panel);border-radius:16px;overflow:hidden;border:1px solid var(--line);
+  box-shadow:var(--shadow);display:flex;flex-direction:column;transition:.18s;position:relative;
+  transform-style:preserve-3d;perspective:800px}
+.card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(20,40,70,.18)}
+.card.matched{border-color:rgba(34,160,107,.5)}
+.card.rec{border-color:rgba(139,92,246,.25)}
+.card .cover{aspect-ratio:3/4;background:var(--bg);position:relative;overflow:hidden;
+  cursor:pointer;display:grid;place-items:center;transform-origin:center;
+  transition:transform .3s ease}
+.card:hover .cover{transform:rotateY(-6deg) rotateX(3deg) scale(1.02)}
+.card .cover img{width:100%;height:100%;object-fit:cover;display:block}
+.spine{position:absolute;left:0;top:0;bottom:0;width:7px;
+  background:linear-gradient(180deg,var(--accent),var(--accent-2));opacity:.85;z-index:2}
+.spine.ok{background:linear-gradient(180deg,#22a06b,#178a58)}
+.spine.admin{background:linear-gradient(180deg,var(--admin),var(--admin-2))}
+.overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55));
+  opacity:0;transition:opacity .2s;display:flex;align-items:flex-end;padding:14px;color:#fff;
+  font-size:12.5px;font-weight:600;z-index:3}
+.cover:hover .overlay{opacity:1}
+.placeholder-cover{position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.9)}
+.placeholder-cover svg{width:56%;height:56%;opacity:.9}
+.placeholder-cover.physics{background:linear-gradient(135deg,#3b82c4,#1e4f78)}
+.placeholder-cover.english{background:linear-gradient(135deg,#c94d4d,#7a2626)}
+.placeholder-cover.admin{background:linear-gradient(135deg,var(--admin),var(--admin-2))}
+.badge{position:absolute;top:10px;right:10px;font-size:10.5px;font-weight:800;letter-spacing:.4px;
+  padding:5px 9px;border-radius:7px;box-shadow:0 4px 12px rgba(0,0,0,.18);
+  display:flex;align-items:center;gap:4px;z-index:4}
+.badge.ok{background:#22a06b;color:#fff}
+.badge.rec{background:linear-gradient(135deg,var(--admin),var(--admin-2));color:#fff}
+.badge.bookmark{background:#f59e0b;color:#fff}
+.card-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card-body h3{margin:0;font-size:15px;letter-spacing:-.2px;line-height:1.25;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-body .meta{font-size:12px;color:var(--muted);line-height:1.4}
+.card-body .hint{font-size:11.5px;color:var(--warn);background:var(--warn-bg);
+  padding:7px 9px;border-radius:7px;margin-top:6px;line-height:1.35}
+.card-body .hint.ok{color:var(--ok);background:var(--ok-bg)}
+.card-body .hint.rec{color:var(--admin);background:var(--admin-bg)}
+.card-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.card-actions .btn{flex:1;justify-content:center;padding:9px 10px;font-size:12.5px;min-width:0}
+.card-actions .icon-btn{width:36px;height:36px;font-size:14px}
+.progress-bar{margin-top:8px;height:5px;background:var(--line);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  border-radius:99px;transition:width .4s ease}
+.progress-text{font-size:11px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.admin-tools{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.admin-tools button{flex:1;padding:7px 8px;border-radius:8px;border:1px solid var(--line);
+  background:transparent;color:var(--text);font-family:inherit;font-size:11.5px;font-weight:700;
+  cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.admin-tools button:hover{border-color:var(--admin);color:var(--admin);background:var(--admin-bg)}
+.admin-tools button.del:hover{border-color:#e05252;color:#e05252;background:rgba(224,82,82,.08)}
+.add-card{border:2px dashed var(--line);border-radius:16px;aspect-ratio:3/4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  cursor:pointer;color:var(--muted);transition:.18s;background:transparent;
+  font-family:inherit;padding:20px;text-align:center}
+.add-card:hover{border-color:var(--accent);color:var(--accent);background:var(--panel)}
+.add-card .plus{width:52px;height:52px;border-radius:50%;background:var(--panel);
+  border:1px solid var(--line);display:grid;place-items:center;font-size:24px;font-weight:300}
+.add-card .t{font-size:13.5px;font-weight:700}
+.add-card .s{font-size:11.5px;line-height:1.4}
+.section-empty{max-width:820px;margin:6px auto 60px;padding:30px 24px;text-align:center;
+  color:var(--muted);border:2px dashed var(--line);border-radius:16px;
+  font-size:13.5px;line-height:1.55;grid-column:1/-1}
+.section-empty b{color:var(--text)}
 
-  .switch-row{
-    display:flex;align-items:center;gap:12px;cursor:pointer;
-    padding:4px 0;user-select:none;
-  }
-  .switch-row > div:first-child{flex:1;min-width:0}
-  .switch-label{font-size:13.5px;font-weight:700;line-height:1.3}
-  .switch-desc{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.55);
+  backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:16px;
+  animation:fadeIn .18s ease}
+.modal.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-panel{background:var(--panel);border-radius:16px;width:min(480px,100%);
+  max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.5);
+  animation:slideUp .22s cubic-bezier(.2,.9,.3,1.1);padding:22px}
+@keyframes slideUp{from{transform:translateY(20px) scale(.98);opacity:.5}to{transform:none;opacity:1}}
+.modal-panel h3{margin:0 0 4px;font-size:18px;letter-spacing:-.3px;font-weight:800}
+.modal-panel .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.4}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.3px}
+.field input,.field textarea{width:100%;padding:10px 12px;border-radius:10px;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--text);
+  font-family:inherit;font-size:14px;outline:none;transition:.15s}
+.field input:focus,.field textarea:focus{border-color:var(--accent);background:var(--panel)}
+.field textarea{resize:vertical;min-height:60px}
+.field .help{font-size:11px;color:var(--muted);line-height:1.4;margin-top:2px}
+.field.pwd input{letter-spacing:3px;text-align:center;font-size:20px;font-weight:800}
+.theme-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.theme-pick{aspect-ratio:1;border-radius:10px;border:2px solid transparent;cursor:pointer;transition:.15s}
+.theme-pick:hover{transform:scale(1.05)}
+.theme-pick.active{border-color:var(--text);box-shadow:0 0 0 2px var(--panel)}
+.theme-pick[data-th="soc"]{background:linear-gradient(135deg,#12b8a8,#0b6e66)}
+.theme-pick[data-th="phys"]{background:linear-gradient(135deg,#3b82c4,#1e4f78)}
+.theme-pick[data-th="eng"]{background:linear-gradient(135deg,#c94d4d,#7a2626)}
+.theme-pick[data-th="admin"]{background:linear-gradient(135deg,var(--admin),var(--admin-2))}
+.modal-actions{display:flex;gap:8px;margin-top:18px}
+.modal-actions .btn{flex:1;justify-content:center}
 
-  .switch{
-    position:relative;width:44px;height:26px;flex:none;
-    background:var(--line);border-radius:99px;
-    transition:.2s;
-  }
-  .switch::after{
-    content:'';position:absolute;top:3px;left:3px;
-    width:20px;height:20px;border-radius:50%;
-    background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);
-    transition:.2s;
-  }
-  .switch.on{background:var(--accent)}
-  .switch.on::after{transform:translateX(18px)}
+#reader{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;padding-bottom:0 !important}
+#reader.active{display:flex;flex-direction:column;overflow:hidden}
+.rbar{display:flex;align-items:center;gap:9px;padding:9px 14px;flex:0 0 auto;
+  padding-top:calc(9px + env(safe-area-inset-top));
+  background:var(--panel);border-bottom:1px solid var(--line);z-index:10}
+.rbar .rtitle{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:340px}
+.rbar .rsub{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.stage{flex:1 1 auto;min-height:0;position:relative;overflow:auto;background:var(--stage);
+  display:grid;place-items:center;padding:24px;transition:background .25s;-webkit-overflow-scrolling:touch}
+#pageWrap{display:flex;align-items:center;justify-content:center;transform-origin:center;
+  animation:pageIn .35s cubic-bezier(.2,.9,.3,1);gap:2px}
+@keyframes pageIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+#pageWrap.animating{transition:transform .2s ease,opacity .2s ease}
+#pageCanvas,#pageCanvas2{display:block;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35);
+  border-radius:4px;will-change:transform,opacity}
+#pageWrap.two-page #pageCanvas{box-shadow:-6px 12px 40px rgba(0,0,0,.4)}
+#pageWrap.two-page #pageCanvas2{box-shadow:6px 12px 40px rgba(0,0,0,.4)}
+.navzone{position:absolute;top:0;bottom:0;width:80px;cursor:pointer;z-index:6;
+  display:grid;place-items:center;opacity:0;transition:opacity .18s;
+  border:none;background:transparent;color:rgba(255,255,255,.9);font-size:36px;font-family:inherit}
+.navzone:hover{opacity:1}
+.navzone.l{left:0;background:linear-gradient(90deg,rgba(0,0,0,.18),transparent)}
+.navzone.r{right:0;background:linear-gradient(270deg,rgba(0,0,0,.18),transparent)}
+.navzone:disabled{display:none}
+.rfoot{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+  padding-bottom:max(10px,env(safe-area-inset-bottom));
+  background:var(--panel);border-top:1px solid var(--line);position:relative;z-index:9;
+  box-shadow:0 -4px 14px rgba(0,0,0,.06)}
+.rfoot .page-input{width:56px;padding:8px;border-radius:9px;border:1px solid var(--line);
+  background:var(--bg);color:var(--text);text-align:center;font-family:inherit;
+  font-weight:700;font-size:13.5px;outline:none}
+.rfoot .page-input:focus{border-color:var(--accent)}
+.rfoot .sep{color:var(--muted);font-size:13px}
+.rfoot .total{font-size:13px;font-weight:700;color:var(--muted);
+  font-variant-numeric:tabular-nums;min-width:38px}
+.slider-wrap{flex:1;position:relative;height:36px;display:flex;align-items:center;min-width:0}
+.slider{width:100%;-webkit-appearance:none;appearance:none;height:8px;border-radius:99px;
+  background:var(--line);outline:none;cursor:pointer;
+  background-image:linear-gradient(var(--accent),var(--accent));
+  background-repeat:no-repeat;background-size:0% 100%}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+  background:var(--accent);cursor:grab;border:3px solid var(--panel);
+  box-shadow:0 2px 10px color-mix(in srgb,var(--accent) 60%,transparent);transition:transform .1s}
+.slider:active::-webkit-slider-thumb{cursor:grabbing;transform:scale(1.15)}
+.slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);
+  cursor:grab;border:3px solid var(--panel)}
+.bubble{position:absolute;bottom:calc(100% + 6px);left:0;background:var(--text);color:var(--panel);
+  padding:5px 11px;border-radius:8px;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;
+  pointer-events:none;transform:translateX(-50%) scale(.85);opacity:0;
+  transition:.12s;white-space:nowrap;z-index:20;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--text)}
+.bubble.show{opacity:1;transform:translateX(-50%) scale(1)}
+.loading{position:absolute;inset:0;display:grid;place-items:center;
+  color:rgba(255,255,255,.9);font-size:13.5px;font-weight:600;background:rgba(0,0,0,.35);z-index:8}
+.spinner{width:38px;height:38px;border:3px solid rgba(255,255,255,.25);
+  border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  .switch-row input[type=checkbox]{display:none}
+.thumbs-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55);
+  backdrop-filter:blur(4px);display:none;flex-direction:column;animation:fadeIn .18s ease}
+.thumbs-modal.open{display:flex}
+.thumbs-panel{margin:auto;background:var(--panel);border-radius:18px;
+  width:min(1200px,96vw);height:min(92vh,900px);display:flex;flex-direction:column;
+  overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5);
+  animation:slideUp .22s cubic-bezier(.2,.9,.3,1.1)}
+.thumbs-head{display:flex;align-items:center;gap:12px;padding:14px 18px;
+  border-bottom:1px solid var(--line);flex:none}
+.thumbs-head h3{margin:0;font-size:16px;letter-spacing:-.3px;font-weight:800}
+.thumbs-head .cnt{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.thumbs-body{flex:1;overflow:auto;padding:18px}
+.thumbs-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.thumb{background:var(--bg);border-radius:10px;overflow:hidden;border:2px solid transparent;
+  cursor:pointer;transition:.15s;position:relative;padding:0;display:flex;flex-direction:column;
+  font-family:inherit}
+.thumb:hover{border-color:var(--accent);transform:translateY(-2px);
+  box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 30%,transparent)}
+.thumb.current{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.thumb-canvas-wrap{aspect-ratio:3/4;background:#fff;position:relative;
+  display:grid;place-items:center;overflow:hidden}
+.thumb-canvas-wrap canvas{max-width:100%;max-height:100%;display:block}
+.thumb-placeholder{position:absolute;inset:0;display:grid;place-items:center;
+  color:var(--muted);font-size:11px}
+.thumb-num{padding:6px 8px;font-size:11.5px;font-weight:700;text-align:center;
+  color:var(--muted);background:var(--panel);font-variant-numeric:tabular-nums;
+  border-top:1px solid var(--line)}
+.thumb.current .thumb-num{background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;border-top-color:transparent}
+.thumb .thumb-cover-tag,.thumb .thumb-bm-tag{position:absolute;top:6px;font-size:9.5px;
+  font-weight:800;padding:3px 6px;border-radius:5px;letter-spacing:.4px;z-index:2}
+.thumb .thumb-cover-tag{left:6px;background:rgba(214,139,26,.92);color:#fff}
+.thumb .thumb-bm-tag{right:6px;background:#f59e0b;color:#fff}
 
-  .settings-hint{
-    margin-top:10px;font-size:11px;color:var(--muted);line-height:1.4;
-  }
+.toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;
+  transform:translateX(-50%) translateY(90px);background:var(--text);color:var(--panel);
+  padding:12px 20px;border-radius:11px;font-size:13.5px;font-weight:600;z-index:500;
+  opacity:0;transition:.3s;box-shadow:0 10px 30px rgba(0,0,0,.28);
+  pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* ---------- SCREENS ---------- */
-  .screen{
-    position:fixed;top:var(--header-h);left:0;right:0;bottom:0;
-    display:none;overflow:auto;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  .screen.active{display:block}
+#fxCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none}
+.fx-overlay{position:fixed;inset:0;z-index:9997;display:none;align-items:center;justify-content:center;
+  pointer-events:none;background:radial-gradient(circle at center,rgba(15,155,142,.4),rgba(0,0,0,.6));
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.fx-overlay.show{display:flex;animation:fxFade 2.6s ease forwards}
+@keyframes fxFade{0%{opacity:0}12%{opacity:1}82%{opacity:1}100%{opacity:0}}
+.fx-text{text-align:center;font-family:var(--sans);transform-origin:center}
+.fx-overlay.show .fx-text{animation:fxPop 2.6s cubic-bezier(.2,1.4,.35,1) forwards}
+@keyframes fxPop{0%{transform:scale(.25) rotate(-20deg);opacity:0}
+  18%{transform:scale(1.18) rotate(4deg);opacity:1}
+  30%{transform:scale(.98) rotate(-2deg)}45%{transform:scale(1.06) rotate(1.5deg)}
+  60%{transform:scale(1) rotate(0)}100%{transform:scale(1) rotate(0);opacity:1}}
+.fx-line1{display:block;font-size:clamp(38px,11vw,76px);font-weight:900;
+  letter-spacing:6px;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.65),0 0 40px rgba(15,155,142,.6);
+  margin-bottom:10px;text-align:center}
+.fx-line2{display:block;font-size:clamp(110px,32vw,220px);font-weight:900;line-height:1;
+  letter-spacing:-6px;background:linear-gradient(135deg,#ffdd33 0%,#ff3366 45%,#9966ff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 8px 40px rgba(255,80,150,.7));text-align:center}
+.cat-run{position:fixed;bottom:30px;font-size:60px;z-index:9997;pointer-events:none;
+  animation:catRun 3s linear forwards}
+@keyframes catRun{0%{left:-80px}100%{left:100vw}}
 
-  /* ---------- LIBRARY ---------- */
-  .hero{max-width:1200px;margin:0 auto;padding:34px 22px 8px}
-  .hero h1{font-size:clamp(24px,3.4vw,34px);margin:0 0 8px;letter-spacing:-.7px}
-  .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:640px;line-height:1.55}
+.drop-overlay{position:fixed;inset:0;background:rgba(15,155,142,.14);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:center;justify-content:center;pointer-events:none}
+.drop-overlay.on{display:flex}
+.drop-overlay .box{border:3px dashed var(--accent);border-radius:24px;padding:50px 60px;
+  background:var(--panel);color:var(--accent);font-size:20px;font-weight:800;
+  display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:var(--shadow)}
+.drop-overlay .box .ico{font-size:52px}
 
-  .grid{
-    max-width:1200px;margin:0 auto;padding:26px 22px 60px;
-    display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-  }
-
-  .card{
-    background:var(--panel);border-radius:16px;overflow:hidden;
-    border:1px solid var(--line);box-shadow:var(--shadow);
-    display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;
-    position:relative;
-  }
-  .card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(20,40,70,.18)}
-  .card.matched{border-color:rgba(34,160,107,.5)}
-  .card.missing{border-color:rgba(214,139,26,.4)}
-
-  .cover{
-    aspect-ratio:3/4;background:var(--bg);position:relative;overflow:hidden;
-    cursor:pointer;display:grid;place-items:center;
-  }
-  .cover img{width:100%;height:100%;object-fit:cover;display:block}
-  .cover .spine{
-    position:absolute;left:0;top:0;bottom:0;width:7px;
-    background:linear-gradient(180deg,var(--accent),var(--accent-2));opacity:.85;
-  }
-  .cover .spine.ok{background:linear-gradient(180deg,#22a06b,#178a58)}
-  .cover .spine.warn{background:linear-gradient(180deg,#e1a43a,#b17517)}
-  .cover .overlay{
-    position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55));
-    opacity:0;transition:opacity .2s;display:flex;align-items:flex-end;padding:14px;color:#fff;
-    font-size:12.5px;font-weight:600;
-  }
-  .cover:hover .overlay{opacity:1}
-
-  .cover .placeholder-cover{
-    position:absolute;inset:0;
-    background:linear-gradient(135deg,#12b8a8,#0b6e66);
-    display:flex;align-items:center;justify-content:center;
-    color:rgba(255,255,255,.9);
-  }
-  .cover .placeholder-cover svg{width:56%;height:56%;opacity:.9}
-  .cover .placeholder-cover.physics{
-    background:linear-gradient(135deg,#3b82c4,#1e4f78);
-  }
-  .cover .placeholder-cover.english{
-    background:linear-gradient(135deg,#c94d4d,#7a2626);
-  }
-
-  .badge{
-    position:absolute;top:10px;right:10px;
-    font-size:10.5px;font-weight:800;letter-spacing:.4px;
-    padding:5px 9px;border-radius:7px;
-    box-shadow:0 4px 12px rgba(0,0,0,.18);
-    display:flex;align-items:center;gap:4px;
-  }
-  .badge.ok{background:#22a06b;color:#fff}
-  .badge.warn{background:#e1a43a;color:#fff}
-
-  .card-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:4px;flex:1}
-  .card-body h3{margin:0;font-size:15px;letter-spacing:-.2px;line-height:1.25;
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .card-body .meta{font-size:12px;color:var(--muted);line-height:1.4}
-  .card-body .hint{
-    font-size:11.5px;color:var(--warn);background:var(--warn-bg);
-    padding:7px 9px;border-radius:7px;margin-top:6px;line-height:1.35;
-  }
-  .card-body .hint.ok{color:var(--ok);background:var(--ok-bg)}
-  .card-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
-  .card-actions .btn{flex:1;justify-content:center;padding:9px 10px;font-size:12.5px;min-width:0}
-  .card-actions .icon-btn{width:36px;height:36px;font-size:14px}
-
-  .add-card{
-    border:2px dashed var(--line);border-radius:16px;aspect-ratio:3/4;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
-    cursor:pointer;color:var(--muted);transition:.18s;background:transparent;font-family:inherit;
-    padding:20px;text-align:center;
-  }
-  .add-card:hover{border-color:var(--accent);color:var(--accent);background:var(--panel)}
-  .add-card .plus{
-    width:56px;height:56px;border-radius:50%;background:var(--panel);border:1px solid var(--line);
-    display:grid;place-items:center;font-size:26px;font-weight:300;
-  }
-  .add-card .t{font-size:14px;font-weight:700}
-  .add-card .s{font-size:12px;line-height:1.45}
-
-  .empty{
-    max-width:640px;margin:20px auto 60px;padding:40px 30px;text-align:center;
-    border:2px dashed var(--line);border-radius:20px;background:var(--panel);
-  }
-  .empty .big{font-size:52px;margin-bottom:12px}
-  .empty h2{margin:0 0 8px;font-size:20px;letter-spacing:-.3px}
-  .empty p{margin:0 0 20px;color:var(--muted);font-size:14px;line-height:1.55}
-
-  .drop-overlay{
-    position:fixed;inset:0;background:rgba(15,155,142,.14);
-    backdrop-filter:blur(6px);z-index:200;display:none;
-    align-items:center;justify-content:center;pointer-events:none;
-  }
-  .drop-overlay.on{display:flex}
-  .drop-overlay .box{
-    border:3px dashed var(--accent);border-radius:24px;padding:50px 60px;
-    background:var(--panel);color:var(--accent);font-size:20px;font-weight:800;
-    display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:var(--shadow);
-  }
-  .drop-overlay .box .ico{font-size:52px}
-
-  /* ---------- READER ---------- */
-  #reader{position:fixed;top:var(--header-h);left:0;right:0;bottom:0;
-          padding-bottom:0 !important}
-  #reader.active{display:flex;flex-direction:column;overflow:hidden}
-
-  .rbar{
-    display:flex;align-items:center;gap:9px;padding:9px 14px;flex:0 0 auto;
-    background:var(--panel);border-bottom:1px solid var(--line);z-index:10;
-  }
-  .rbar .rtitle{
-    font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;
-    text-overflow:ellipsis;max-width:340px;
-  }
-  .rbar .rsub{font-size:11.5px;color:var(--muted);white-space:nowrap}
-
-  .stage{
-    flex:1 1 auto;
-    min-height:0;
-    position:relative;overflow:auto;background:var(--stage);
-    display:grid;place-items:center;padding:24px;
-    transition:background .25s;
-    -webkit-overflow-scrolling:touch;
-  }
-  #pageWrap{display:flex;align-items:center;justify-content:center;transform-origin:center}
-  #pageCanvas{
-    display:block;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35);
-    border-radius:4px;will-change:transform,opacity;
-  }
-  #pageWrap.animating{transition:transform .2s ease, opacity .2s ease}
-
-  .navzone{
-    position:absolute;top:0;bottom:0;width:80px;cursor:pointer;z-index:6;
-    display:grid;place-items:center;opacity:0;transition:opacity .18s;
-    border:none;background:transparent;color:rgba(255,255,255,.9);font-size:36px;
-    font-family:inherit;
-  }
-  .navzone:hover{opacity:1}
-  .navzone.l{left:0;background:linear-gradient(90deg,rgba(0,0,0,.18),transparent)}
-  .navzone.r{right:0;background:linear-gradient(270deg,rgba(0,0,0,.18),transparent)}
-  .navzone:disabled{display:none}
-
-  .rfoot{
-    flex:0 0 auto;
-    display:flex;align-items:center;gap:10px;padding:10px 14px;
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
-    background:var(--panel);border-top:1px solid var(--line);
-    position:relative;z-index:9;
-    box-shadow:0 -4px 14px rgba(0,0,0,.06);
-  }
-  .rfoot .page-input{
-    width:56px;padding:8px 8px;border-radius:9px;border:1px solid var(--line);
-    background:var(--bg);color:var(--text);text-align:center;font-family:inherit;
-    font-weight:700;font-size:13.5px;outline:none;
-  }
-  .rfoot .page-input:focus{border-color:var(--accent)}
-  .rfoot .sep{color:var(--muted);font-size:13px}
-  .rfoot .total{font-size:13px;font-weight:700;color:var(--muted);
-    font-variant-numeric:tabular-nums;min-width:38px;}
-
-  .slider-wrap{flex:1;position:relative;height:36px;display:flex;align-items:center;min-width:0}
-  .slider{
-    width:100%;-webkit-appearance:none;appearance:none;height:8px;border-radius:99px;
-    background:var(--line);outline:none;cursor:pointer;
-    background-image:linear-gradient(var(--accent),var(--accent));
-    background-repeat:no-repeat;background-size:0% 100%;
-  }
-  .slider::-webkit-slider-thumb{
-    -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
-    background:var(--accent);cursor:grab;border:3px solid var(--panel);
-    box-shadow:0 2px 10px rgba(15,155,142,.55);transition:transform .1s;
-  }
-  .slider:active::-webkit-slider-thumb{cursor:grabbing;transform:scale(1.15)}
-  .slider::-moz-range-thumb{
-    width:22px;height:22px;border-radius:50%;background:var(--accent);
-    cursor:grab;border:3px solid var(--panel);box-shadow:0 2px 10px rgba(15,155,142,.55);
-  }
-
-  .bubble{
-    position:absolute;bottom:calc(100% + 6px);left:0;
-    background:var(--text);color:var(--panel);
-    padding:5px 11px;border-radius:8px;font-size:12.5px;font-weight:800;
-    font-variant-numeric:tabular-nums;
-    pointer-events:none;transform:translateX(-50%) scale(.85);opacity:0;
-    transition:opacity .12s, transform .12s;white-space:nowrap;z-index:20;
-    box-shadow:0 4px 14px rgba(0,0,0,.25);
-  }
-  .bubble::after{
-    content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
-    border:5px solid transparent;border-top-color:var(--text);
-  }
-  .bubble.show{opacity:1;transform:translateX(-50%) scale(1)}
-
-  .loading{
-    position:absolute;inset:0;display:grid;place-items:center;
-    color:rgba(255,255,255,.9);font-size:13.5px;font-weight:600;
-    background:rgba(0,0,0,.35);z-index:8;
-  }
-  .spinner{
-    width:38px;height:38px;border:3px solid rgba(255,255,255,.25);
-    border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  /* ---------- МОДАЛКА-СЕТКА ---------- */
-  .thumbs-modal{
-    position:fixed;inset:0;z-index:300;
-    background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
-    display:none;flex-direction:column;animation:fadeIn .18s ease;
-  }
-  .thumbs-modal.open{display:flex}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-  .thumbs-panel{
-    margin:auto;background:var(--panel);border-radius:18px;
-    width:min(1200px,96vw);height:min(92vh,900px);
-    display:flex;flex-direction:column;overflow:hidden;
-    box-shadow:0 30px 80px rgba(0,0,0,.5);
-    animation:slideUp .22s cubic-bezier(.2,.9,.3,1.1);
-  }
-  @keyframes slideUp{from{transform:translateY(20px) scale(.98);opacity:.5}to{transform:none;opacity:1}}
-
-  .thumbs-head{
-    display:flex;align-items:center;gap:12px;padding:14px 18px;
-    border-bottom:1px solid var(--line);flex:none;
-  }
-  .thumbs-head h3{margin:0;font-size:16px;letter-spacing:-.3px;font-weight:800}
-  .thumbs-head .cnt{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-
-  .thumbs-body{flex:1;overflow:auto;padding:18px}
-  .thumbs-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
-
-  .thumb{
-    background:var(--bg);border-radius:10px;overflow:hidden;
-    border:2px solid transparent;cursor:pointer;transition:.15s;position:relative;padding:0;
-    display:flex;flex-direction:column;
-  }
-  .thumb:hover{border-color:var(--accent);transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(15,155,142,.22)}
-  .thumb.current{border-color:var(--accent);box-shadow:0 0 0 3px rgba(15,155,142,.25)}
-  .thumb-canvas-wrap{
-    aspect-ratio:3/4;background:#fff;position:relative;
-    display:grid;place-items:center;overflow:hidden;
-  }
-  .thumb-canvas-wrap canvas{max-width:100%;max-height:100%;display:block}
-  .thumb-placeholder{
-    position:absolute;inset:0;display:grid;place-items:center;
-    color:var(--muted);font-size:11px;
-  }
-  .thumb-num{
-    padding:6px 8px;font-size:11.5px;font-weight:700;
-    text-align:center;color:var(--muted);background:var(--panel);
-    font-variant-numeric:tabular-nums;border-top:1px solid var(--line);
-  }
-  .thumb.current .thumb-num{
-    background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
-    border-top-color:transparent;
-  }
-  .thumb .thumb-cover-tag{
-    position:absolute;top:6px;left:6px;font-size:9.5px;font-weight:800;
-    background:rgba(214,139,26,.92);color:#fff;padding:3px 6px;border-radius:5px;
-    letter-spacing:.4px;z-index:2;
-  }
-
-  .toast{
-    position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));
-    left:50%;transform:translateX(-50%) translateY(90px);
-    background:var(--text);color:var(--panel);padding:12px 20px;border-radius:11px;
-    font-size:13.5px;font-weight:600;z-index:500;opacity:0;transition:.3s;
-    box-shadow:0 10px 30px rgba(0,0,0,.28);pointer-events:none;max-width:90vw;text-align:center;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-  @media (max-width:720px){
-    .brand small{display:none}
-    .rbar .rtitle{max-width:130px}
-    .rbar{gap:6px;padding:8px 10px}
-    .rbar .icon-btn{width:34px;height:34px;font-size:14px}
-    .navzone{display:none}
-    .stage{padding:8px}
-    .rfoot{gap:6px;padding:8px 10px}
-    .rfoot .page-input{width:48px;padding:7px 6px;font-size:13px}
-    .hero{padding:22px 16px 6px}
-    .grid{padding:18px 16px 50px;gap:16px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
-    .thumbs-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
-    .thumbs-body{padding:12px}
-    .thumbs-panel{width:100vw;height:100vh;border-radius:0;max-width:none;max-height:none}
-    .thumbs-head{padding:12px 14px}
-  }
-
-  ::-webkit-scrollbar{width:10px;height:10px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px;border:3px solid transparent;background-clip:content-box}
-  ::-webkit-scrollbar-thumb:hover{background:var(--muted);background-clip:content-box;border:3px solid transparent}
+@media (max-width:720px){
+  .brand small{display:none}
+  .brand .bt{max-width:130px}
+  .rbar .rtitle{max-width:130px}
+  .rbar{gap:6px;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top))}
+  .rbar .icon-btn{width:34px;height:34px;font-size:14px}
+  .navzone{display:none}
+  .stage{padding:8px}
+  .rfoot{gap:6px;padding:8px 10px}
+  .rfoot .page-input{width:48px;padding:7px 6px;font-size:13px}
+  .hero{padding:20px 16px 8px}
+  .tiles{padding:8px 16px 50px;gap:12px}
+  .tile{padding:18px;gap:14px;min-height:100px;border-radius:18px}
+  .tile-icon{width:58px;height:58px;font-size:34px;border-radius:16px}
+  .tile-title{font-size:17px}
+  .tile-desc{font-size:11.5px}
+  .tile-count{font-size:26px;padding:8px 12px;min-width:50px}
+  .grid-toolbar{padding:0 16px 12px}
+  .grid{padding:0 16px 50px;gap:14px}
+  .thumbs-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+  .thumbs-body{padding:12px}
+  .thumbs-panel{width:100vw;height:100vh;border-radius:0;max-width:none;max-height:none}
+  .thumbs-head{padding:12px 14px}
+  .modal-panel{padding:18px}
+  .theme-options{grid-template-columns:repeat(2,1fr)}
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--muted);background-clip:content-box;border:3px solid transparent}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">К</div>
-  <div class="brand">Книги<small>читайте и листайте учебники</small></div>
+  <button class="icon-btn" id="btnBack" style="display:none" title="Назад">←</button>
+  <div class="logo" id="logo" title="Нажми меня 🎆">К</div>
+  <div class="brand">
+    <span class="bt" id="brandTitle">Книги</span>
+    <small id="brandSub">читайте и листайте учебники</small>
+  </div>
   <div class="spacer"></div>
-  <button class="btn ghost icon-btn" id="btnInstall" title="Установить приложение" style="display:none">⬇</button>
+  <button class="btn ghost icon-btn" id="btnInstall" title="Установить" style="display:none">⬇</button>
+  <button class="btn ghost icon-btn" id="btnSearch" title="Поиск">🔍</button>
   <button class="btn ghost icon-btn" id="btnSettings" title="Настройки">⚙</button>
-  <button class="btn" id="btnAdd"><span>＋</span> Добавить PDF</button>
 </header>
 
-<!-- Настройки -->
-<div class="settings-backdrop" id="settingsBackdrop"></div>
-<div class="settings-popover" id="settingsPop" role="dialog" aria-label="Настройки">
-  <div class="settings-section">
-    <div class="settings-title">Тема оформления</div>
-    <div class="theme-options">
-      <button class="theme-opt" data-theme-val="0">
-        <span class="em">☀</span><span>Светлая</span>
-      </button>
-      <button class="theme-opt" data-theme-val="1">
-        <span class="em">🌙</span><span>Тёмная</span>
-      </button>
-      <button class="theme-opt" data-theme-val="2">
-        <span class="em">📖</span><span>Сепия</span>
-      </button>
-    </div>
+<section class="screen active" id="screenHome">
+  <div class="hero">
+    <h1>Книги</h1>
+    <p>Рекомендуемые учебники от администратора, ваша библиотека и закладки.</p>
   </div>
-
-  <div class="settings-section">
-    <div class="settings-title">Чтение</div>
-    <label class="switch-row" for="setSkipFirst">
-      <div>
-        <div class="switch-label">Пропускать 1-ю страницу</div>
-        <div class="switch-desc">Если первая страница PDF — обложка, система не будет её считать. Открыв «страницу 256», вы увидите 256-ю страницу книги.</div>
+  <div class="tiles">
+    <button class="tile" data-target="rec">
+      <div class="tile-icon">⭐</div>
+      <div class="tile-info">
+        <div class="tile-title">Рекомендуемые книги</div>
+        <div class="tile-desc">Подобраны администратором</div>
       </div>
-      <div class="switch" id="switchSkipFirst"></div>
-      <input type="checkbox" id="setSkipFirst">
-    </label>
-    <div class="settings-hint" id="skipFirstHint">Применяется ко всем книгам.</div>
+      <div class="tile-count" id="tileRecCount">0</div>
+    </button>
+    <button class="tile" data-target="mine">
+      <div class="tile-icon">📚</div>
+      <div class="tile-info">
+        <div class="tile-title">Мои книги</div>
+        <div class="tile-desc">Ваши личные PDF-файлы</div>
+      </div>
+      <div class="tile-count" id="tileMineCount">0</div>
+    </button>
+    <button class="tile" data-target="bookmarks">
+      <div class="tile-icon">🔖</div>
+      <div class="tile-info">
+        <div class="tile-title">Закладки</div>
+        <div class="tile-desc">Сохранённые страницы со всех книг</div>
+      </div>
+      <div class="tile-count" id="tileBmCount">0</div>
+    </button>
   </div>
-</div>
+</section>
 
-<section class="screen active" id="library">
+<section class="screen" id="screenRec">
+  <div class="hero">
+    <h1>Рекомендуемые книги</h1>
+    <p>Скачайте PDF — приложение распознает его автоматически и добавит в «Мои книги».</p>
+  </div>
+  <div class="grid-toolbar">
+    <button class="btn admin" id="btnAddRec" style="display:none">＋ Добавить</button>
+    <div class="spacer"></div>
+    <span class="count-pill" id="recCount">0</span>
+  </div>
+  <div class="grid" id="gridRec"></div>
+</section>
+
+<section class="screen" id="screenMine">
   <div class="hero">
     <h1>Мои книги</h1>
-    <p>Учебники можно добавить один раз — приложение найдёт их в вашей библиотеке по названию и больше не будет просить повторно.</p>
+    <p>Ваши PDF-файлы. Добавьте файл или перетащите прямо в окно.</p>
   </div>
-  <div class="grid" id="grid"></div>
+  <div class="grid-toolbar">
+    <button class="btn" id="btnAddMine">＋ Добавить PDF</button>
+    <div class="spacer"></div>
+    <span class="count-pill" id="mineCount">0</span>
+  </div>
+  <div class="grid" id="gridMine"></div>
+</section>
+
+<section class="screen" id="screenBookmarks">
+  <div class="hero">
+    <h1>🔖 Закладки</h1>
+    <p>Все сохранённые страницы со всех книг.</p>
+  </div>
+  <div class="grid-toolbar">
+    <div class="spacer"></div>
+    <span class="count-pill" id="bmCount">0</span>
+  </div>
+  <div class="grid" id="gridBm"></div>
 </section>
 
 <section class="screen" id="reader">
   <div class="rbar">
-    <button class="icon-btn" id="btnBack" title="К библиотеке">←</button>
+    <button class="icon-btn" id="btnBackReader" title="Закрыть">←</button>
     <div style="min-width:0">
       <div class="rtitle" id="rTitle">—</div>
       <div class="rsub" id="rSub">—</div>
     </div>
     <div class="spacer"></div>
+    <button class="icon-btn" id="btnBookmark" title="Закладка">🔖</button>
+    <button class="icon-btn" id="btnSpeak" title="Читать вслух">🔊</button>
     <button class="icon-btn" id="btnGrid" title="Сетка страниц">⊞</button>
     <button class="icon-btn" id="zoomOut" title="Уменьшить">−</button>
-    <button class="icon-btn" id="zoomFit" title="По размеру страницы">⛶</button>
+    <button class="icon-btn" id="zoomFit" title="По размеру">⛶</button>
     <button class="icon-btn" id="zoomIn" title="Увеличить">＋</button>
     <button class="icon-btn" id="btnDownload" title="Скачать PDF">⬇</button>
   </div>
-
   <div class="stage" id="stage">
-    <div id="pageWrap"><canvas id="pageCanvas"></canvas></div>
+    <div id="pageWrap">
+      <canvas id="pageCanvas"></canvas>
+      <canvas id="pageCanvas2" style="display:none"></canvas>
+    </div>
     <button class="navzone l" id="zonePrev">‹</button>
     <button class="navzone r" id="zoneNext">›</button>
     <div class="loading" id="loading" style="display:none">
-      <div>
-        <div class="spinner"></div>
-        <div>Загрузка…</div>
-      </div>
+      <div><div class="spinner"></div><div>Загрузка…</div></div>
     </div>
   </div>
-
   <div class="rfoot">
-    <button class="icon-btn" id="prevBtn" title="Предыдущая (←)">‹</button>
+    <button class="icon-btn" id="prevBtn" title="Назад">‹</button>
     <input class="page-input" id="pageInput" type="text" inputmode="numeric" value="1">
     <span class="sep">/</span>
     <span class="total" id="pageTotal">—</span>
@@ -553,9 +546,69 @@
       <div class="bubble" id="bubble">1</div>
       <input type="range" class="slider" id="slider" min="1" max="1" value="1">
     </div>
-    <button class="icon-btn" id="nextBtn" title="Следующая (→)">›</button>
+    <button class="icon-btn" id="nextBtn" title="Вперёд">›</button>
   </div>
 </section>
+
+<div class="modal" id="adminLoginModal">
+  <div class="modal-panel">
+    <h3>Вход администратора</h3>
+    <div class="sub">Введите пароль, чтобы редактировать рекомендуемые книги.</div>
+    <div class="field pwd">
+      <label for="adminPwd">Пароль</label>
+      <input type="password" id="adminPwd" inputmode="numeric" autocomplete="off" placeholder="•••">
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="adminCancel">Отмена</button>
+      <button class="btn admin" id="adminLogin">Войти</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="recEditModal">
+  <div class="modal-panel">
+    <h3 id="recEditTitle">Новая рекомендованная книга</h3>
+    <div class="sub">Заполните поля — книга появится в разделе «Рекомендуемые».</div>
+    <div class="field"><label for="recName">Название *</label>
+      <input id="recName" placeholder="Например, Геометрия. 11 класс"></div>
+    <div class="field"><label for="recAuthor">Автор</label>
+      <input id="recAuthor" placeholder="Например, Л. С. Атанасян"></div>
+    <div class="field"><label for="recClass">Класс</label>
+      <input id="recClass" placeholder="Например, 11 класс"></div>
+    <div class="field"><label for="recUrl">Ссылка на скачивание *</label>
+      <input id="recUrl" placeholder="https://..." inputmode="url">
+      <div class="help">Если сайт разрешит — приложение скачает PDF автоматически.</div></div>
+    <div class="field"><label for="recKeywords">Ключевые слова (через запятую)</label>
+      <input id="recKeywords" placeholder="геометрия, атанасян"></div>
+    <div class="field"><label>Цвет обложки</label>
+      <div class="theme-picker">
+        <div class="theme-pick" data-th="soc" title="Бирюзовый"></div>
+        <div class="theme-pick" data-th="phys" title="Синий"></div>
+        <div class="theme-pick" data-th="eng" title="Красный"></div>
+        <div class="theme-pick" data-th="admin" title="Фиолетовый"></div>
+      </div></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="recCancel">Отмена</button>
+      <button class="btn admin" id="recSave">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="bookmarkModal">
+  <div class="modal-panel">
+    <h3>🔖 Закладка</h3>
+    <div class="sub">Добавьте пометку к странице (необязательно).</div>
+    <div class="field">
+      <label for="bmNote">Заметка</label>
+      <textarea id="bmNote" placeholder="Например: Формулы для ЕГЭ" maxlength="200"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="bmCancel">Отмена</button>
+      <button class="btn danger" id="bmDelete" style="display:none">Удалить</button>
+      <button class="btn" id="bmSave">Сохранить</button>
+    </div>
+  </div>
+</div>
 
 <div class="thumbs-modal" id="thumbsModal">
   <div class="thumbs-panel">
@@ -563,7 +616,7 @@
       <h3>Страницы</h3>
       <span class="cnt" id="thumbsCnt">—</span>
       <div class="spacer"></div>
-      <button class="icon-btn" id="thumbsClose" title="Закрыть">✕</button>
+      <button class="icon-btn" id="thumbsClose">✕</button>
     </div>
     <div class="thumbs-body" id="thumbsBody">
       <div class="thumbs-grid" id="thumbsGrid"></div>
@@ -571,983 +624,1090 @@
   </div>
 </div>
 
+<div class="settings-backdrop" id="settingsBackdrop"></div>
+<div class="settings-popover" id="settingsPop">
+  <div class="settings-section">
+    <div class="settings-title">Тема</div>
+    <div class="theme-options">
+      <button class="theme-opt" data-theme-val="0"><span class="em">☀</span><span>Светлая</span></button>
+      <button class="theme-opt" data-theme-val="1"><span class="em">🌙</span><span>Тёмная</span></button>
+      <button class="theme-opt" data-theme-val="2"><span class="em">📖</span><span>Сепия</span></button>
+      <button class="theme-opt" data-theme-val="3"><span class="em">🎓</span><span>Академия</span></button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">Цвет акцента</div>
+    <div class="accent-palette" id="accentPalette"></div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">Сортировка</div>
+    <div class="seg-options" id="sortOpts">
+      <button class="seg-opt" data-sort="date">Дата</button>
+      <button class="seg-opt" data-sort="alpha">А-Я</button>
+      <button class="seg-opt" data-sort="size">Размер</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">Чтение</div>
+    <label class="switch-row" for="setSkipFirst">
+      <div><div class="switch-label">Пропускать 1-ю страницу</div>
+        <div class="switch-desc">Если первая страница — обложка.</div></div>
+      <div class="switch" id="switchSkipFirst"></div>
+      <input type="checkbox" id="setSkipFirst">
+    </label>
+    <label class="switch-row" for="setTwoPage" style="margin-top:14px">
+      <div><div class="switch-label">Двухстраничный режим</div>
+        <div class="switch-desc">Разворот как в настоящей книге. Для планшетов.</div></div>
+      <div class="switch" id="switchTwoPage"></div>
+      <input type="checkbox" id="setTwoPage">
+    </label>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">Развлечения</div>
+    <label class="switch-row" for="setFun">
+      <div><div class="switch-label">Прикольные анимации</div>
+        <div class="switch-desc">Салют, пасхалки на страницах.</div></div>
+      <div class="switch" id="switchFun"></div>
+      <input type="checkbox" id="setFun">
+    </label>
+    <label class="switch-row" for="setSounds" style="margin-top:14px">
+      <div><div class="switch-label">Звуки</div>
+        <div class="switch-desc">Шорох страниц, дзынь.</div></div>
+      <div class="switch" id="switchSounds"></div>
+      <input type="checkbox" id="setSounds">
+    </label>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">Данные</div>
+    <button class="btn ghost" id="btnExport" style="width:100%;justify-content:center">💾 Экспорт настроек и закладок</button>
+    <button class="btn ghost" id="btnImport" style="width:100%;justify-content:center;margin-top:8px">📥 Импорт из файла</button>
+    <div class="settings-hint">Экспортируется JSON: настройки, темы, закладки.</div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">Администратор</div>
+    <div id="adminArea"></div>
+  </div>
+</div>
+
+<canvas id="fxCanvas"></canvas>
+<div class="fx-overlay" id="fxOverlay">
+  <div class="fx-text">
+    <span class="fx-line1" id="fxLine1">СИКСЕВЕН</span>
+    <span class="fx-line2" id="fxLine2">67</span>
+  </div>
+</div>
+
 <div class="drop-overlay" id="dropOverlay">
   <div class="box"><div class="ico">📚</div><div>Отпустите PDF, чтобы добавить в библиотеку</div></div>
 </div>
-
 <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple style="display:none">
+<input type="file" id="importInput" accept="application/json,.json" style="display:none">
 <div class="toast" id="toast"></div>
 
 <script>
-/* =====================================================================
-   PDF.JS
-   ===================================================================== */
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-/* =====================================================================
-   IndexedDB
-   ===================================================================== */
-const DB_NAME = 'school-library', DB_VER = 1, STORE = 'books';
+/* ===== IndexedDB ===== */
+const DB_NAME='school-library',DB_VER=1,STORE='books';
 let dbP;
-function getDB(){
-  if (dbP) return dbP;
-  dbP = new Promise((resolve, reject)=>{
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = e => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id' });
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-  return dbP;
-}
-async function dbPut(book){
-  const db = await getDB();
-  return new Promise((res, rej)=>{
-    const tx = db.transaction(STORE, 'readwrite');
-    tx.objectStore(STORE).put(book);
-    tx.oncomplete = () => res();
-    tx.onerror = () => rej(tx.error);
-  });
-}
-async function dbGetAll(){
-  const db = await getDB();
-  return new Promise((res, rej)=>{
-    const tx = db.transaction(STORE, 'readonly');
-    const r = tx.objectStore(STORE).getAll();
-    r.onsuccess = () => res(r.result || []);
-    r.onerror = () => rej(r.error);
-  });
-}
-async function dbDelete(id){
-  const db = await getDB();
-  return new Promise((res, rej)=>{
-    const tx = db.transaction(STORE, 'readwrite');
-    tx.objectStore(STORE).delete(id);
-    tx.oncomplete = () => res();
-    tx.onerror = () => rej(tx.error);
-  });
-}
-async function dbGet(id){
-  const db = await getDB();
-  return new Promise((res, rej)=>{
-    const tx = db.transaction(STORE, 'readonly');
-    const r = tx.objectStore(STORE).get(id);
-    r.onsuccess = () => res(r.result);
-    r.onerror = () => rej(r.error);
-  });
-}
+function getDB(){if(dbP)return dbP;dbP=new Promise((rs,rj)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE,{keyPath:'id'})};r.onsuccess=()=>rs(r.result);r.onerror=()=>rj(r.error)});return dbP}
+async function dbPut(b){const db=await getDB();return new Promise((rs,rj)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(b);tx.oncomplete=()=>rs();tx.onerror=()=>rj(tx.error)})}
+async function dbGetAll(){const db=await getDB();return new Promise((rs,rj)=>{const tx=db.transaction(STORE,'readonly');const r=tx.objectStore(STORE).getAll();r.onsuccess=()=>rs(r.result||[]);r.onerror=()=>rj(r.error)})}
+async function dbDelete(id){const db=await getDB();return new Promise((rs,rj)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);tx.oncomplete=()=>rs();tx.onerror=()=>rj(tx.error)})}
+async function dbGet(id){const db=await getDB();return new Promise((rs,rj)=>{const tx=db.transaction(STORE,'readonly');const r=tx.objectStore(STORE).get(id);r.onsuccess=()=>rs(r.result);r.onerror=()=>rj(r.error)})}
 
-/* =====================================================================
-   УТИЛИТЫ
-   ===================================================================== */
-function toast(msg, ms=2400){
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(()=>el.classList.remove('show'), ms);
-}
-function fmtSize(bytes){
-  if (bytes == null) return '—';
-  if (bytes < 1024) return bytes + ' Б';
-  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' КБ';
-  return (bytes/1048576).toFixed(1) + ' МБ';
-}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));}
+/* ===== Utils ===== */
+function toast(m,ms=2400){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),ms)}
+function fmtSize(b){if(b==null)return'—';if(b<1024)return b+' Б';if(b<1048576)return(b/1024).toFixed(1)+' КБ';return(b/1048576).toFixed(1)+' МБ'}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-/* =====================================================================
-   НАСТРОЙКИ
-   ===================================================================== */
-const THEMES = ['light','dark','sepia'];
-const settings = {
-  themeIdx: +(localStorage.getItem('lib-theme') ?? 0),
-  skipFirst: localStorage.getItem('lib-skip-first') === '1'
+/* ===== SETTINGS ===== */
+const THEMES=['light','dark','sepia','academy'];
+const ACCENTS=[
+  {name:'Бирюза',a:'#0f9b8e',b:'#0b6e66'},
+  {name:'Малина',a:'#e63570',b:'#a31754'},
+  {name:'Оранж',a:'#f97316',b:'#c2410c'},
+  {name:'Индиго',a:'#6366f1',b:'#4338ca'},
+  {name:'Изумруд',a:'#10b981',b:'#047857'},
+  {name:'Роза',a:'#ec4899',b:'#be185d'},
+  {name:'Графит',a:'#475569',b:'#1e293b'},
+  {name:'Золото',a:'#c9a961',b:'#a08346'}
+];
+const settings={
+  themeIdx:+(localStorage.getItem('lib-theme')??0),
+  accentIdx:+(localStorage.getItem('lib-accent')??0),
+  skipFirst:localStorage.getItem('lib-skip-first')==='1',
+  twoPage:localStorage.getItem('lib-two-page')==='1',
+  sort:localStorage.getItem('lib-sort')||'date',
+  fun:localStorage.getItem('lib-fun')!=='0',
+  sounds:localStorage.getItem('lib-sounds')==='1'
 };
+let isAdmin=localStorage.getItem('lib-admin')==='1';
 
 function saveSettings(){
-  localStorage.setItem('lib-theme', settings.themeIdx);
-  localStorage.setItem('lib-skip-first', settings.skipFirst ? '1' : '0');
+  localStorage.setItem('lib-theme',settings.themeIdx);
+  localStorage.setItem('lib-accent',settings.accentIdx);
+  localStorage.setItem('lib-skip-first',settings.skipFirst?'1':'0');
+  localStorage.setItem('lib-two-page',settings.twoPage?'1':'0');
+  localStorage.setItem('lib-sort',settings.sort);
+  localStorage.setItem('lib-fun',settings.fun?'1':'0');
+  localStorage.setItem('lib-sounds',settings.sounds?'1':'0');
+  localStorage.setItem('lib-admin',isAdmin?'1':'0');
 }
-
 function applyTheme(){
-  document.documentElement.dataset.theme = THEMES[settings.themeIdx];
-  document.querySelectorAll('.theme-opt').forEach(el=>{
-    el.classList.toggle('active', +el.dataset.themeVal === settings.themeIdx);
+  document.documentElement.dataset.theme=THEMES[settings.themeIdx];
+  document.querySelectorAll('.theme-opt').forEach(el=>el.classList.toggle('active',+el.dataset.themeVal===settings.themeIdx));
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#0f9b8e';
+}
+function applyAccent(){
+  const a=ACCENTS[settings.accentIdx]||ACCENTS[0];
+  document.documentElement.style.setProperty('--accent',a.a);
+  document.documentElement.style.setProperty('--accent-2',a.b);
+  document.querySelectorAll('.accent-pick').forEach(el=>el.classList.toggle('active',+el.dataset.ai===settings.accentIdx));
+}
+function renderAccentPalette(){
+  const el=document.getElementById('accentPalette');
+  el.innerHTML='';
+  ACCENTS.forEach((a,i)=>{
+    const d=document.createElement('div');
+    d.className='accent-pick';d.dataset.ai=i;
+    d.style.background=`linear-gradient(135deg,${a.a},${a.b})`;
+    d.title=a.name;
+    d.onclick=()=>{settings.accentIdx=i;saveSettings();applyAccent()};
+    el.appendChild(d);
   });
+  applyAccent();
+}
+function syncSortUI(){document.querySelectorAll('#sortOpts .seg-opt').forEach(el=>el.classList.toggle('active',el.dataset.sort===settings.sort))}
+function syncSkipFirstUI(){document.getElementById('switchSkipFirst').classList.toggle('on',settings.skipFirst);document.getElementById('setSkipFirst').checked=settings.skipFirst}
+function syncTwoPageUI(){document.getElementById('switchTwoPage').classList.toggle('on',settings.twoPage);document.getElementById('setTwoPage').checked=settings.twoPage}
+function syncFunUI(){document.getElementById('switchFun').classList.toggle('on',settings.fun);document.getElementById('setFun').checked=settings.fun}
+function syncSoundsUI(){document.getElementById('switchSounds').classList.toggle('on',settings.sounds);document.getElementById('setSounds').checked=settings.sounds}
+
+/* ===== SOUNDS ===== */
+let audioCtx=null;
+function beep(freq,dur,type='sine',vol=.06){
+  if(!settings.sounds)return;
+  try{
+    if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type=type;o.frequency.value=freq;
+    g.gain.value=vol;
+    o.connect(g);g.connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur);
+    o.stop(audioCtx.currentTime+dur);
+  }catch(e){}
+}
+const sndPage=()=>beep(380,.06,'triangle',.05);
+const sndAdd=()=>{beep(660,.08,'sine',.06);setTimeout(()=>beep(880,.12,'sine',.06),80)};
+const sndClose=()=>beep(220,.12,'sine',.06);
+
+/* ===== BOOKMARKS ===== */
+const BM_STORE='lib-bookmarks-v1';
+function getBookmarks(){try{return JSON.parse(localStorage.getItem(BM_STORE)||'{}')}catch(e){return{}}}
+function saveBookmarks(b){localStorage.setItem(BM_STORE,JSON.stringify(b))}
+function getAllBookmarksFlat(){
+  const all=getBookmarks();const out=[];
+  for(const[k,v]of Object.entries(all)){for(const bm of v){out.push({bookId:k,...bm})}}
+  out.sort((a,b)=>b.date-a.date);
+  return out;
+}
+function isBookmarked(bookId,page){
+  const all=getBookmarks();
+  return (all[bookId]||[]).some(b=>b.page===page);
+}
+function removeBookmark(bookId,page){
+  const all=getBookmarks();if(!all[bookId])return;
+  all[bookId]=all[bookId].filter(b=>b.page!==page);
+  if(!all[bookId].length)delete all[bookId];
+  saveBookmarks(all);
+}
+function getBookmarkNote(bookId,page){
+  const all=getBookmarks();const arr=all[bookId]||[];
+  const f=arr.find(b=>b.page===page);return f?f.note:'';
 }
 
-// Popover
-const settingsPop = document.getElementById('settingsPop');
-const settingsBackdrop = document.getElementById('settingsBackdrop');
-const btnSettings = document.getElementById('btnSettings');
-
-function openSettings(){
-  settingsPop.classList.add('open');
-  settingsBackdrop.classList.add('open');
-}
-function closeSettings(){
-  settingsPop.classList.remove('open');
-  settingsBackdrop.classList.remove('open');
-}
-btnSettings.addEventListener('click', e=>{
-  e.stopPropagation();
-  if (settingsPop.classList.contains('open')) closeSettings();
-  else openSettings();
-});
-settingsBackdrop.addEventListener('click', closeSettings);
-document.addEventListener('click', e=>{
-  if (!settingsPop.classList.contains('open')) return;
-  if (settingsPop.contains(e.target) || btnSettings.contains(e.target)) return;
-  closeSettings();
-});
-
-// Кнопки тем
-document.querySelectorAll('.theme-opt').forEach(el=>{
-  el.addEventListener('click', ()=>{
-    settings.themeIdx = +el.dataset.themeVal;
-    saveSettings();
-    applyTheme();
-  });
-});
-
-// Тумблер «Пропускать 1-ю страницу»
-const setSkipFirstInput = document.getElementById('setSkipFirst');
-const switchSkipFirst = document.getElementById('switchSkipFirst');
-const skipFirstHint = document.getElementById('skipFirstHint');
-
-function syncSkipFirstUI(){
-  switchSkipFirst.classList.toggle('on', settings.skipFirst);
-  setSkipFirstInput.checked = settings.skipFirst;
-  skipFirstHint.textContent = settings.skipFirst
-    ? 'Нумерация сдвинута: первая страница книги = 2-я в PDF.'
-    : 'Применяется ко всем книгам.';
-}
-
-document.querySelector('.switch-row').addEventListener('click', (e)=>{
-  e.preventDefault();
-  setSkipFirst(settings.skipFirst ? false : true);
-});
-function setSkipFirst(v){
-  settings.skipFirst = v;
-  saveSettings();
-  syncSkipFirstUI();
-  if (state.pdf){
-    if (v && state.page === 1 && state.pdf.numPages > 1){
-      goToPage(2, 1);
-    } else {
-      updatePageUI();
-    }
+/* ===== ADMIN ===== */
+const adminArea=document.getElementById('adminArea');
+const adminLoginModal=document.getElementById('adminLoginModal');
+const adminPwdInput=document.getElementById('adminPwd');
+function renderAdminArea(){
+  if(isAdmin){
+    adminArea.innerHTML=`<div class="admin-status"><span class="dot"></span><span>Режим админа включён</span></div>
+      <button class="btn danger" id="adminLogout" style="width:100%;justify-content:center">Выйти</button>`;
+    document.getElementById('adminLogout').onclick=()=>{isAdmin=false;saveSettings();renderAdminArea();applyAdminMode();renderAll();toast('Вы вышли')};
+  }else{
+    adminArea.innerHTML=`<button class="btn admin" id="adminLoginBtn" style="width:100%;justify-content:center">🔐 Войти как администратор</button>
+      <div class="settings-hint" style="margin-top:8px">Только админ редактирует рекомендации.</div>`;
+    document.getElementById('adminLoginBtn').onclick=()=>{closeSettings();adminLoginModal.classList.add('open');adminPwdInput.value='';setTimeout(()=>adminPwdInput.focus(),100)};
   }
 }
-
-/* =====================================================================
-   ПРЕДУСТАНОВЛЕННЫЕ УЧЕБНИКИ
-   ===================================================================== */
-const PRESET_BOOKS = [
-  {
-    id: 'preset-soc11',
-    name: 'Обществознание. 11 класс',
-    author: 'Л. Н. Боголюбов (ред.)',
-    url: 'https://share.google/sOP0fqwrPDpHAj9sj',
-    filenameHint: '11_Obschestvoznanie_L.N._Bogolyubov.pdf',
-    matchAny: ['obschestvoznanie', 'обществознание', 'bogolyubov', 'боголюбов'],
-    theme: 'soc'
-  },
-  {
-    id: 'preset-phys11',
-    name: 'Физика. 11 класс',
-    author: 'Г. Я. Мякишев, Б. Б. Буховцев, В. М. Чаругин',
-    url: 'https://share.google/P6ARVA8qyMjuyEXWX',
-    filenameHint: 'Физика_11_класс.pdf',
-    matchAny: ['физика', 'мякишев', 'буховцев', 'чаругин', 'myakishev', 'physics'],
-    theme: 'phys'
-  },
-  {
-    id: 'preset-eng11',
-    name: 'Английский язык. 11 класс',
-    author: 'О. В. Афанасьева, Д. Дули, И. В. Михеева, Б. Оби, В. Эванс',
-    url: 'https://share.google/6WhmHd6M84dPOdGHO',
-    filenameHint: 'Английский_11_класс.pdf',
-    matchAny: [
-      'english', 'английский',
-      'spotlight', 'starlight', 'rainbow',
-      'afanasyeva', 'афанасьева', 'mikheeva', 'михеева',
-      'vaulina', 'ваулина', 'kuzovlev', 'кузовлев',
-      'evans', 'эванс', 'dooley', 'дули'
-    ],
-    theme: 'eng'
+document.getElementById('adminCancel').onclick=()=>adminLoginModal.classList.remove('open');
+adminLoginModal.addEventListener('click',e=>{if(e.target===adminLoginModal)adminLoginModal.classList.remove('open')});
+document.getElementById('adminLogin').onclick=tryAdminLogin;
+adminPwdInput.addEventListener('keydown',e=>{if(e.key==='Enter')tryAdminLogin()});
+function tryAdminLogin(){
+  if(adminPwdInput.value.trim()==='565'){
+    isAdmin=true;saveSettings();adminLoginModal.classList.remove('open');
+    renderAdminArea();applyAdminMode();renderAll();
+    toast('Добро пожаловать, администратор 👑',2800);
+  }else{
+    adminPwdInput.value='';adminPwdInput.focus();toast('Неверный пароль',1800);
+    const panel=adminLoginModal.querySelector('.modal-panel');
+    panel.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:320});
   }
+}
+function applyAdminMode(){document.getElementById('btnAddRec').style.display=isAdmin?'inline-flex':'none'}
+
+/* ===== RECOMMENDED ===== */
+const REC_STORAGE='lib-recommended-v1';
+const DEFAULT_RECS=[
+  {id:'rec_soc11',name:'Обществознание. 11 класс',author:'Л. Н. Боголюбов (ред.)',className:'11 класс',
+   url:'https://share.google/sOP0fqwrPDpHAj9sj',
+   matchAny:['obschestvoznanie','обществознание','bogolyubov','боголюбов'],theme:'soc',addedAt:0},
+  {id:'rec_phys11',name:'Физика. 11 класс',author:'Г. Я. Мякишев, Б. Б. Буховцев, В. М. Чаругин',className:'11 класс',
+   url:'https://share.google/P6ARVA8qyMjuyEXWX',
+   matchAny:['физика','мякишев','буховцев','чаругин','myakishev','physics'],theme:'phys',addedAt:0},
+  {id:'rec_eng11',name:'Английский язык. 11 класс',author:'О. В. Афанасьева, Д. Дули, И. В. Михеева, Б. Оби, В. Эванс',className:'11 класс',
+   url:'https://share.google/6WhmHd6M84dPOdGHO',
+   matchAny:['english','английский','spotlight','starlight','rainbow','afanasyeva','афанасьева','mikheeva','михеева','vaulina','ваулина','kuzovlev','кузовлев','evans','эванс','dooley','дули'],
+   theme:'eng',addedAt:0}
 ];
+function getRecommended(){try{const r=localStorage.getItem(REC_STORAGE);if(!r){localStorage.setItem(REC_STORAGE,JSON.stringify(DEFAULT_RECS));return[...DEFAULT_RECS]}const a=JSON.parse(r);return Array.isArray(a)?a:[...DEFAULT_RECS]}catch(e){return[...DEFAULT_RECS]}}
+function saveRecommended(l){localStorage.setItem(REC_STORAGE,JSON.stringify(l))}
+function normMatch(s){return String(s||'').toLowerCase().replace(/\.pdf$/i,'').replace(/[^a-zа-яё0-9]+/gi,'')}
+function findMatchingSaved(books,rec){const terms=(rec.matchAny||[]).map(normMatch).filter(Boolean);if(!terms.length)return null;
+  for(const b of books){const n=normMatch(b.name);if(terms.some(t=>n.includes(t)))return b}return null}
+function phClass(rec){if(rec.theme==='phys')return'physics';if(rec.theme==='eng')return'english';if(rec.theme==='admin')return'admin';return''}
 
-function normalizeForMatch(s){
-  return String(s || '').toLowerCase()
-    .replace(/\.pdf$/i, '')
-    .replace(/[^a-zа-яё0-9]+/gi, '');
+/* ===== PWA ===== */
+let deferredPrompt=null;const btnInstall=document.getElementById('btnInstall');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;btnInstall.style.display='grid'});
+btnInstall.addEventListener('click',async()=>{
+  if(!deferredPrompt){toast('Откройте меню → «Установить приложение»',4000);return}
+  deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;
+  if(outcome==='accepted')toast('Спасибо! Установлено');deferredPrompt=null;btnInstall.style.display='none';
+});
+window.addEventListener('appinstalled',()=>{toast('Приложение установлено');btnInstall.style.display='none'});
+
+/* ===== SEASONAL LOGO ===== */
+function seasonalEmoji(){
+  const now=new Date();const m=now.getMonth();const d=now.getDate();
+  if(m===11||m<=1)return'❄';
+  if(m===5||m===6||m===7)return'☀';
+  if(m===8&&d===1)return'🔔';
+  return'К';
 }
+document.getElementById('logo').textContent=seasonalEmoji();
 
-function findMatchingSavedBook(savedBooks, preset){
-  const terms = (preset.matchAny || []).map(normalizeForMatch).filter(Boolean);
-  if (!terms.length) return null;
-  for (const b of savedBooks){
-    const n = normalizeForMatch(b.name);
-    if (terms.some(t => n.includes(t))) return b;
-  }
-  return null;
+/* ===== NAV ===== */
+let currentScreen='home';let lastScreenBeforeReader='mine';
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('screen'+name.charAt(0).toUpperCase()+name.slice(1));
+  if(el)el.classList.add('active');
+  currentScreen=name;updateHeader();
+  if(el)el.scrollTop=0;
 }
-
-/* =====================================================================
-   PWA: install prompt
-   ===================================================================== */
-let deferredPrompt = null;
-const btnInstall = document.getElementById('btnInstall');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  btnInstall.style.display = 'grid';
+function updateHeader(){
+  const b=document.getElementById('btnBack');const t=document.getElementById('brandTitle');const s=document.getElementById('brandSub');
+  const map={
+    home:['Книги','читайте и листайте учебники'],
+    rec:['Рекомендуемые','подобрано администратором'],
+    mine:['Мои книги','личная библиотека'],
+    bookmarks:['Закладки','сохранённые страницы'],
+    search:['Поиск','по названию и автору'],
+    reader:['Чтение','']
+  };
+  const m=map[currentScreen]||map.home;
+  b.style.display=currentScreen==='home'?'none':'grid';
+  t.textContent=m[0];s.textContent=m[1];
+}
+document.getElementById('btnBack').addEventListener('click',()=>{if(currentScreen!=='reader')showScreen('home')});
+document.querySelectorAll('.tile').forEach(t=>{
+  t.addEventListener('click',()=>{
+    const g=t.dataset.target;
+    if(g==='rec')showScreen('rec');
+    else if(g==='mine')showScreen('mine');
+    else if(g==='bookmarks')showScreen('bookmarks');
+  });
 });
+document.getElementById('btnAddMine').addEventListener('click',()=>fileInput.click());
 
-btnInstall.addEventListener('click', async () => {
-  if (!deferredPrompt){
-    toast('Откройте меню браузера → «Установить приложение».', 4000);
-    return;
-  }
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') toast('Спасибо! Приложение установлено');
-  deferredPrompt = null;
-  btnInstall.style.display = 'none';
-});
+/* ===== SETTINGS POPOVER ===== */
+const settingsPop=document.getElementById('settingsPop');
+const settingsBackdrop=document.getElementById('settingsBackdrop');
+const btnSettings=document.getElementById('btnSettings');
+function openSettings(){settingsPop.classList.add('open');settingsBackdrop.classList.add('open')}
+function closeSettings(){settingsPop.classList.remove('open');settingsBackdrop.classList.remove('open')}
+btnSettings.addEventListener('click',e=>{e.stopPropagation();settingsPop.classList.contains('open')?closeSettings():openSettings()});
+settingsBackdrop.addEventListener('click',closeSettings);
+document.addEventListener('click',e=>{if(!settingsPop.classList.contains('open'))return;if(settingsPop.contains(e.target)||btnSettings.contains(e.target))return;closeSettings()});
+document.querySelectorAll('.theme-opt').forEach(el=>el.addEventListener('click',()=>{settings.themeIdx=+el.dataset.themeVal;saveSettings();applyTheme()}));
+document.querySelectorAll('#sortOpts .seg-opt').forEach(el=>el.addEventListener('click',()=>{settings.sort=el.dataset.sort;saveSettings();syncSortUI();renderAll()}));
+document.querySelector('label[for="setSkipFirst"]').addEventListener('click',e=>{e.preventDefault();settings.skipFirst=!settings.skipFirst;saveSettings();syncSkipFirstUI();if(state.pdf){if(settings.skipFirst&&state.page===1&&state.pdf.numPages>1)goToPage(2,1);else updatePageUI()}});
+document.querySelector('label[for="setTwoPage"]').addEventListener('click',e=>{e.preventDefault();settings.twoPage=!settings.twoPage;saveSettings();syncTwoPageUI();if(state.pdf)renderPage()});
+document.querySelector('label[for="setFun"]').addEventListener('click',e=>{e.preventDefault();settings.fun=!settings.fun;saveSettings();syncFunUI()});
+document.querySelector('label[for="setSounds"]').addEventListener('click',e=>{e.preventDefault();settings.sounds=!settings.sounds;saveSettings();syncSoundsUI()});
 
-window.addEventListener('appinstalled', () => {
-  toast('Приложение установлено');
-  btnInstall.style.display = 'none';
-});
+/* ===== EXPORT / IMPORT ===== */
+document.getElementById('btnExport').onclick=()=>{
+  const data={
+    version:1,exportedAt:new Date().toISOString(),
+    settings:{
+      theme:settings.themeIdx,accent:settings.accentIdx,skipFirst:settings.skipFirst,
+      twoPage:settings.twoPage,sort:settings.sort,fun:settings.fun,sounds:settings.sounds
+    },
+    recommended:getRecommended(),
+    bookmarks:getBookmarks()
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='knigi-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+  toast('Файл сохранён');
+};
+document.getElementById('btnImport').onclick=()=>document.getElementById('importInput').click();
+document.getElementById('importInput').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';
+  if(!f)return;
+  try{
+    const txt=await f.text();
+    const d=JSON.parse(txt);
+    if(d.settings){
+      settings.themeIdx=d.settings.theme??settings.themeIdx;
+      settings.accentIdx=d.settings.accent??settings.accentIdx;
+      settings.skipFirst=!!d.settings.skipFirst;
+      settings.twoPage=!!d.settings.twoPage;
+      settings.sort=d.settings.sort||settings.sort;
+      settings.fun=d.settings.fun!==false;
+      settings.sounds=!!d.settings.sounds;
+    }
+    if(d.recommended)saveRecommended(d.recommended);
+    if(d.bookmarks)saveBookmarks(d.bookmarks);
+    saveSettings();
+    applyTheme();applyAccent();syncSortUI();syncSkipFirstUI();syncTwoPageUI();syncFunUI();syncSoundsUI();
+    renderAll();
+    toast('Импорт завершён ✅',2600);
+  }catch(err){console.error(err);toast('Ошибка импорта',2400)}
+};
 
-/* =====================================================================
-   БИБЛИОТЕКА
-   ===================================================================== */
-const grid = document.getElementById('grid');
-
-const PRESET_SVG = `
-<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none">
+/* ===== RENDER ===== */
+const PRESET_SVG=`<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none">
   <path d="M256 140 C230 120 180 118 130 132 L130 372 C180 358 230 362 256 380 Z" fill="#ffffff" opacity="0.95"/>
   <path d="M256 140 C282 120 332 118 382 132 L382 372 C332 358 282 362 256 380 Z" fill="#ffffff" opacity="0.8"/>
-  <line x1="256" y1="140" x2="256" y2="380" stroke="#000" stroke-width="6" opacity="0.15"/>
   <line x1="160" y1="200" x2="230" y2="196" stroke="#000" stroke-width="8" stroke-linecap="round" opacity="0.2"/>
   <line x1="160" y1="232" x2="230" y2="228" stroke="#000" stroke-width="8" stroke-linecap="round" opacity="0.2"/>
   <line x1="282" y1="196" x2="352" y2="200" stroke="#000" stroke-width="8" stroke-linecap="round" opacity="0.15"/>
   <line x1="282" y1="228" x2="352" y2="232" stroke="#000" stroke-width="8" stroke-linecap="round" opacity="0.15"/>
 </svg>`;
 
-async function renderLibrary(){
-  const savedBooks = await dbGetAll();
-  savedBooks.sort((a,b)=>b.addedAt - a.addedAt);
-
-  grid.innerHTML = '';
-  document.querySelectorAll('#library .empty').forEach(e=>e.remove());
-
-  const usedIds = new Set();
-  const presetMatches = new Map();
-  for (const preset of PRESET_BOOKS){
-    const m = findMatchingSavedBook(savedBooks, preset);
-    if (m){
-      presetMatches.set(preset.id, m);
-      usedIds.add(m.id);
-    }
-  }
-
-  const items = [];
-  for (const preset of PRESET_BOOKS){
-    const matched = presetMatches.get(preset.id);
-    if (matched) items.push({ kind: 'preset-matched', preset, book: matched });
-    else items.push({ kind: 'preset', preset });
-  }
-  for (const b of savedBooks){
-    if (!usedIds.has(b.id)) items.push({ kind: 'saved', book: b });
-  }
-
-  if (items.length === 0){
-    grid.style.display = 'none';
-    const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.innerHTML = `
-      <div class="big">📚</div>
-      <h2>Библиотека пуста</h2>
-      <p>Перетащите PDF-файл учебника сюда или нажмите кнопку ниже.</p>
-      <button class="btn" id="emptyAdd"><span>＋</span> Добавить PDF</button>
-    `;
-    document.querySelector('#library .hero').after(empty);
-    empty.querySelector('#emptyAdd').onclick = ()=> fileInput.click();
-    return;
-  }
-  grid.style.display = 'grid';
-
-  for (const item of items){
-    if (item.kind === 'preset-matched') renderPresetMatched(item.preset, item.book);
-    else if (item.kind === 'preset') renderPresetMissing(item.preset);
-    else renderSavedBook(item.book);
-  }
-
-  const add = document.createElement('button');
-  add.className = 'add-card';
-  add.innerHTML = `<div class="plus">＋</div><div class="t">Добавить PDF</div><div class="s">или перетащите файл в окно</div>`;
-  add.onclick = ()=> fileInput.click();
-  grid.appendChild(add);
+async function renderAll(){
+  const recs=getRecommended();
+  const books=await dbGetAll();
+  renderHome(recs,books);
+  renderRecScreen(recs,books);
+  renderMineScreen(books);
+  renderBookmarksScreen(books);
+}
+function renderHome(recs,books){
+  document.getElementById('tileRecCount').textContent=recs.length;
+  document.getElementById('tileMineCount').textContent=books.length;
+  document.getElementById('tileBmCount').textContent=getAllBookmarksFlat().length;
 }
 
-function presetPlaceholderClass(preset){
-  if (preset.theme === 'phys') return 'physics';
-  if (preset.theme === 'eng') return 'english';
-  return '';
+const gridRec=document.getElementById('gridRec');
+const recCountEl=document.getElementById('recCount');
+function renderRecScreen(recs,books){
+  gridRec.innerHTML='';
+  recCountEl.textContent=recs.length;
+  const sorted=[...recs];
+  if(settings.sort==='alpha')sorted.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru',{sensitivity:'base'}));
+  else sorted.sort((a,b)=>(b.addedAt||0)-(a.addedAt||0));
+  if(!sorted.length){gridRec.innerHTML=`<div class="section-empty">Пока нет рекомендуемых книг.<br>${isAdmin?'Нажмите «＋ Добавить».':'Загляните позже.'}</div>`;return}
+  for(const rec of sorted){const m=findMatchingSaved(books,rec);renderRecCard(rec,m)}
+}
+function renderRecCard(rec,matched){
+  const card=document.createElement('div');
+  card.className='card rec'+(matched?' matched':'');
+  const ph=phClass(rec);
+  const cover=matched&&matched.thumb?`<img src="${matched.thumb}" alt="">`:`<div class="placeholder-cover ${ph}">${PRESET_SVG}</div>`;
+  const badge=matched?`<div class="badge ok">✓ В БИБЛИОТЕКЕ</div>`:`<div class="badge rec">РЕКОМЕНДУЕМ</div>`;
+  const meta=[rec.author,rec.className].filter(Boolean).join(' · ');
+  const hint=matched?`<div class="hint ok">✓ Учебник уже в «Моих книгах»</div>`:`<div class="hint rec">Скачайте PDF и добавьте в «Мои книги».</div>`;
+  const actions=matched
+    ?`<button class="btn ok" data-act="open">Читать</button><button class="icon-btn" data-act="info" title="Ссылка">🔗</button>`
+    :`<button class="btn" data-act="download">Скачать</button><button class="icon-btn" data-act="info" title="Ссылка">🔗</button>`;
+  const adminTools=isAdmin?`<div class="admin-tools"><button data-act="edit">✎ Изменить</button><button class="del" data-act="del">🗑 Удалить</button></div>`:'';
+  card.innerHTML=`
+    <div class="cover" data-cover><div class="spine ${matched?'ok':'admin'}"></div>${cover}${badge}
+      <div class="overlay">${matched?'Читать →':'Скачать →'}</div></div>
+    <div class="card-body"><h3>${esc(rec.name)}</h3>
+      <div class="meta">${esc(meta)}</div>${hint}
+      <div class="card-actions">${actions}</div>${adminTools}</div>`;
+  card.querySelector('[data-cover]').onclick=()=>{matched?openBook(matched.id):downloadRec(rec)};
+  const op=card.querySelector('[data-act="open"]');if(op)op.onclick=()=>openBook(matched.id);
+  const dl=card.querySelector('[data-act="download"]');if(dl)dl.onclick=()=>downloadRec(rec);
+  card.querySelector('[data-act="info"]').onclick=()=>window.open(rec.url,'_blank');
+  if(isAdmin){
+    card.querySelector('[data-act="edit"]').onclick=()=>openRecEditor(rec);
+    card.querySelector('[data-act="del"]').onclick=()=>{if(!confirm('Удалить «'+rec.name+'»?'))return;saveRecommended(getRecommended().filter(r=>r.id!==rec.id));renderAll();toast('Удалено')};
+  }
+  gridRec.appendChild(card);
 }
 
-function renderPresetMatched(preset, book){
-  const card = document.createElement('div');
-  card.className = 'card matched';
-  const phClass = presetPlaceholderClass(preset);
-  card.innerHTML = `
-    <div class="cover" data-cover>
-      <div class="spine ok"></div>
-      ${book.thumb ? `<img src="${book.thumb}" alt="">` : `<div class="placeholder-cover ${phClass}">${PRESET_SVG}</div>`}
-      <div class="badge ok">✓ В БИБЛИОТЕКЕ</div>
-      <div class="overlay">Читать →</div>
-    </div>
-    <div class="card-body">
-      <h3>${escapeHtml(preset.name)}</h3>
-      <div class="meta">${escapeHtml(preset.author)} · ${book.pages} стр. · ${fmtSize(book.size)}</div>
-      <div class="hint ok">✓ Учебник уже добавлен в библиотеку</div>
-      <div class="card-actions">
-        <button class="btn ok" data-act="open">Читать</button>
-        <button class="icon-btn" data-act="download" title="Скачать PDF">⬇</button>
-      </div>
-    </div>
-  `;
-  card.querySelector('[data-cover]').onclick = ()=> openBook(book.id);
-  card.querySelector('[data-act="open"]').onclick = ()=> openBook(book.id);
-  card.querySelector('[data-act="download"]').onclick = ()=> downloadBook(book.id);
-  grid.appendChild(card);
+const gridMine=document.getElementById('gridMine');
+const mineCountEl=document.getElementById('mineCount');
+function renderMineScreen(books){
+  gridMine.innerHTML='';mineCountEl.textContent=books.length;
+  const sorted=[...books];
+  if(settings.sort==='alpha')sorted.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru',{sensitivity:'base'}));
+  else if(settings.sort==='size')sorted.sort((a,b)=>(b.size||0)-(a.size||0));
+  else sorted.sort((a,b)=>(b.addedAt||0)-(a.addedAt||0));
+  for(const b of sorted)renderSavedBook(b);
+  const add=document.createElement('button');
+  add.className='add-card';
+  add.innerHTML=`<div class="plus">＋</div><div class="t">Добавить PDF</div><div class="s">или перетащите файл</div>`;
+  add.onclick=()=>fileInput.click();
+  gridMine.appendChild(add);
 }
-
-function renderPresetMissing(preset){
-  const card = document.createElement('div');
-  card.className = 'card missing';
-  const phClass = presetPlaceholderClass(preset);
-  card.innerHTML = `
-    <div class="cover" data-cover>
-      <div class="spine warn"></div>
-      <div class="placeholder-cover ${phClass}">${PRESET_SVG}</div>
-      <div class="badge warn">НЕ ДОБАВЛЕН</div>
-      <div class="overlay">Добавить →</div>
-    </div>
-    <div class="card-body">
-      <h3>${escapeHtml(preset.name)}</h3>
-      <div class="meta">${escapeHtml(preset.author)} · рекомендуемый учебник</div>
-      <div class="hint">Файл не найден в библиотеке. Выберите его на устройстве или скачайте по ссылке.</div>
-      <div class="card-actions">
-        <button class="btn" data-act="pick">📁 Найти файл</button>
-        <button class="icon-btn" data-act="url" title="Скачать по ссылке">⬇</button>
-      </div>
-    </div>
-  `;
-  card.querySelector('[data-cover]').onclick = ()=> pickPresetFile(preset);
-  card.querySelector('[data-act="pick"]').onclick = ()=> pickPresetFile(preset);
-  card.querySelector('[data-act="url"]').onclick = ()=> downloadPresetByUrl(preset);
-  grid.appendChild(card);
-}
-
-function renderSavedBook(book){
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = `
-    <div class="cover" data-cover>
-      <div class="spine"></div>
-      ${book.thumb ? `<img src="${book.thumb}" alt="">` : ''}
-      <div class="overlay">Открыть книгу →</div>
-    </div>
-    <div class="card-body">
-      <h3>${escapeHtml(book.name)}</h3>
-      <div class="meta">${book.pages} стр. · ${fmtSize(book.size)}</div>
+function renderSavedBook(b){
+  const card=document.createElement('div');
+  card.className='card';
+  const cur=b.lastPage||1;const total=b.pages||1;
+  const pct=total>1?Math.min(100,Math.round((cur/total)*100)):0;
+  const progressHtml=cur>1?`
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="progress-text">стр. ${cur} / ${total} · ${pct}%</div>`:'';
+  card.innerHTML=`
+    <div class="cover" data-cover><div class="spine"></div>
+      ${b.thumb?`<img src="${b.thumb}" alt="">`:''}
+      <div class="overlay">Открыть →</div></div>
+    <div class="card-body"><h3>${esc(b.name)}</h3>
+      <div class="meta">${b.pages} стр. · ${fmtSize(b.size)}</div>
+      ${progressHtml}
       <div class="card-actions">
         <button class="btn" data-act="open">Читать</button>
         <button class="icon-btn" data-act="download" title="Скачать">⬇</button>
         <button class="icon-btn" data-act="del" title="Удалить">🗑</button>
-      </div>
-    </div>
-  `;
-  card.querySelector('[data-cover]').onclick = ()=> openBook(book.id);
-  card.querySelector('[data-act="open"]').onclick = ()=> openBook(book.id);
-  card.querySelector('[data-act="download"]').onclick = ()=> downloadBook(book.id);
-  card.querySelector('[data-act="del"]').onclick = async ()=>{
-    if (!confirm(`Удалить «${book.name}» из библиотеки?`)) return;
-    await dbDelete(book.id);
-    toast('Книга удалена');
-    renderLibrary();
+      </div></div>`;
+  card.querySelector('[data-cover]').onclick=()=>openBook(b.id);
+  card.querySelector('[data-act="open"]').onclick=()=>openBook(b.id);
+  card.querySelector('[data-act="download"]').onclick=()=>downloadBook(b.id);
+  card.querySelector('[data-act="del"]').onclick=async()=>{
+    if(!confirm('Удалить «'+b.name+'»?'))return;
+    await dbDelete(b.id);
+    const all=getBookmarks();if(all[b.id]){delete all[b.id];saveBookmarks(all)}
+    toast('Книга удалена');renderAll();
   };
-  grid.appendChild(card);
+  gridMine.appendChild(card);
 }
 
-/* =====================================================================
-   ВЫБОР ФАЙЛА ДЛЯ ПРЕСЕТА
-   ===================================================================== */
-let pickingPreset = null;
-function pickPresetFile(preset){
-  pickingPreset = preset;
-  toast('Выберите файл: ' + preset.filenameHint, 4500);
-  fileInput.click();
-}
-
-/* =====================================================================
-   ДОБАВЛЕНИЕ PDF
-   ===================================================================== */
-const fileInput = document.getElementById('fileInput');
-document.getElementById('btnAdd').onclick = ()=>{
-  pickingPreset = null;
-  fileInput.click();
-};
-fileInput.onchange = e => {
-  const files = [...e.target.files];
-  fileInput.value = '';
-  const preset = pickingPreset;
-  pickingPreset = null;
-  files.forEach(f => addFile(f, preset));
-};
-
-async function addFile(file, presetContext = null){
-  if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf'){
-    toast('Это не PDF-файл: ' + file.name);
+const gridBm=document.getElementById('gridBm');
+const bmCountEl=document.getElementById('bmCount');
+async function renderBookmarksScreen(books){
+  const flat=getAllBookmarksFlat();
+  bmCountEl.textContent=flat.length;
+  gridBm.innerHTML='';
+  if(!flat.length){
+    gridBm.innerHTML=`<div class="section-empty">Пока нет закладок.<br>Откройте книгу и нажмите 🔖 в шапке читалки.</div>`;
     return;
   }
-  toast('Обрабатываю: ' + file.name, 3000);
-  try {
-    const data = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: data.slice(0) }).promise;
-    const page = await pdf.getPage(1);
-    const base = page.getViewport({ scale: 1 });
-    const vp = page.getViewport({ scale: 500 / base.width });
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.floor(vp.width);
-    canvas.height = Math.floor(vp.height);
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    await page.render({ canvasContext: ctx, viewport: vp }).promise;
-    const thumb = canvas.toDataURL('image/jpeg', 0.78);
-
-    const cleanName = file.name.replace(/\.pdf$/i, '');
-
-    const book = {
-      id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
-      name: cleanName,
-      size: file.size,
-      pages: pdf.numPages,
-      thumb,
-      data,
-      addedAt: Date.now(),
-      lastPage: 1
+  const byId={};for(const b of books)byId[b.id]=b;
+  for(const bm of flat){
+    const book=byId[bm.bookId];
+    if(!book)continue;
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`
+      <div class="cover" data-cover>
+        <div class="spine"></div>
+        ${book.thumb?`<img src="${book.thumb}" alt="">`:''}
+        <div class="badge bookmark">🔖 стр. ${bm.page}</div>
+        <div class="overlay">Открыть →</div>
+      </div>
+      <div class="card-body"><h3>${esc(book.name)}</h3>
+        <div class="meta">Стр. ${bm.page} · ${new Date(bm.date).toLocaleDateString('ru')}</div>
+        ${bm.note?`<div class="hint ok">${esc(bm.note)}</div>`:''}
+        <div class="card-actions">
+          <button class="btn" data-act="open">Открыть</button>
+          <button class="icon-btn" data-act="del" title="Удалить">🗑</button>
+        </div></div>`;
+    card.querySelector('[data-cover]').onclick=()=>openBookAt(book.id,bm.page);
+    card.querySelector('[data-act="open"]').onclick=()=>openBookAt(book.id,bm.page);
+    card.querySelector('[data-act="del"]').onclick=()=>{
+      if(!confirm('Удалить закладку?'))return;
+      removeBookmark(bm.bookId,bm.page);
+      renderAll();
+      toast('Закладка удалена');
     };
-    await dbPut(book);
-
-    const matchedPreset = presetContext || PRESET_BOOKS.find(p => {
-      const terms = (p.matchAny || []).map(normalizeForMatch);
-      const n = normalizeForMatch(cleanName);
-      return terms.some(t => n.includes(t));
-    });
-
-    if (matchedPreset) toast('Учебник «' + matchedPreset.name + '» добавлен в библиотеку', 3200);
-    else toast('Книга добавлена: ' + cleanName);
-
-    renderLibrary();
-  } catch(err){
-    console.error(err);
-    toast('Не удалось открыть PDF: ' + (err.message || err));
+    gridBm.appendChild(card);
   }
 }
 
-const dropOverlay = document.getElementById('dropOverlay');
-let dragDepth = 0;
-window.addEventListener('dragenter', e=>{
-  if (![...e.dataTransfer.types].includes('Files')) return;
-  e.preventDefault(); dragDepth++;
-  if (document.getElementById('library').classList.contains('active')) dropOverlay.classList.add('on');
-});
-window.addEventListener('dragover', e=>{
-  if (![...e.dataTransfer.types].includes('Files')) return;
-  e.preventDefault();
-});
-window.addEventListener('dragleave', ()=>{
-  dragDepth = Math.max(0, dragDepth - 1);
-  if (dragDepth === 0) dropOverlay.classList.remove('on');
-});
-window.addEventListener('drop', e=>{
-  e.preventDefault(); dragDepth = 0; dropOverlay.classList.remove('on');
-  if (!document.getElementById('library').classList.contains('active')) return;
-  [...(e.dataTransfer?.files || [])].forEach(f => addFile(f));
-});
+/* ===== REC EDITOR ===== */
+const recEditModal=document.getElementById('recEditModal');
+const recEditTitle=document.getElementById('recEditTitle');
+let editingRecId=null;let pickedTheme='soc';
+document.querySelectorAll('.theme-pick').forEach(el=>el.addEventListener('click',()=>{pickedTheme=el.dataset.th;document.querySelectorAll('.theme-pick').forEach(x=>x.classList.toggle('active',x===el))}));
+function syncThemePicker(){document.querySelectorAll('.theme-pick').forEach(el=>el.classList.toggle('active',el.dataset.th===pickedTheme))}
+function openRecEditor(rec=null){
+  if(!isAdmin)return;
+  editingRecId=rec?rec.id:null;
+  recEditTitle.textContent=rec?'Изменить':'Новая рекомендованная книга';
+  document.getElementById('recName').value=rec?.name||'';
+  document.getElementById('recAuthor').value=rec?.author||'';
+  document.getElementById('recClass').value=rec?.className||'';
+  document.getElementById('recUrl').value=rec?.url||'';
+  document.getElementById('recKeywords').value=(rec?.matchAny||[]).join(', ');
+  pickedTheme=rec?.theme||'soc';syncThemePicker();
+  recEditModal.classList.add('open');
+  setTimeout(()=>document.getElementById('recName').focus(),100);
+}
+document.getElementById('recCancel').onclick=()=>recEditModal.classList.remove('open');
+recEditModal.addEventListener('click',e=>{if(e.target===recEditModal)recEditModal.classList.remove('open')});
+document.getElementById('recSave').onclick=()=>{
+  const name=document.getElementById('recName').value.trim();
+  const url=document.getElementById('recUrl').value.trim();
+  if(!name){toast('Нужно название');return}
+  if(!url){toast('Нужна ссылка');return}
+  const author=document.getElementById('recAuthor').value.trim();
+  const className=document.getElementById('recClass').value.trim();
+  const keywords=document.getElementById('recKeywords').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const list=getRecommended();
+  if(editingRecId){
+    const i=list.findIndex(r=>r.id===editingRecId);
+    if(i>=0)list[i]={...list[i],name,author,className,url,matchAny:keywords,theme:pickedTheme};
+  }else{
+    list.push({id:'rec_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name,author,className,url,matchAny:keywords,theme:pickedTheme,addedAt:Date.now()});
+  }
+  saveRecommended(list);recEditModal.classList.remove('open');renderAll();
+  toast(editingRecId?'Изменения сохранены':'Книга добавлена');
+};
+document.getElementById('btnAddRec').addEventListener('click',()=>openRecEditor(null));
 
-/* =====================================================================
-   СКАЧИВАНИЕ
-   ===================================================================== */
+/* ===== DOWNLOAD REC ===== */
+async function downloadRec(rec){
+  toast('Пытаюсь скачать…',4000);
+  try{
+    const resp=await fetch(rec.url,{mode:'cors',redirect:'follow'});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    const blob=await resp.blob();
+    if(blob.size<1000)throw new Error('мал');
+    const ab=await blob.arrayBuffer();
+    const head=new Uint8Array(ab.slice(0,5));
+    if(!(head[0]===0x25&&head[1]===0x50&&head[2]===0x44&&head[3]===0x46))throw new Error('не PDF');
+    await saveAbAsBook(ab,rec.name);
+    sndAdd();
+    toast('Добавлено в «Мои книги» ✅',3000);
+    renderAll();
+  }catch(err){
+    console.warn(err);
+    const open=confirm('Не удалось скачать автоматически.\n\nОткрыть ссылку в браузере, чтобы скачать вручную?\n\nПосле — «Мои книги» → «＋ Добавить PDF».');
+    if(open)window.open(rec.url,'_blank');
+  }
+}
+async function saveAbAsBook(ab,name){
+  const pdf=await pdfjsLib.getDocument({data:ab.slice(0)}).promise;
+  const page=await pdf.getPage(1);
+  const base=page.getViewport({scale:1});
+  const vp=page.getViewport({scale:500/base.width});
+  const c=document.createElement('canvas');c.width=Math.floor(vp.width);c.height=Math.floor(vp.height);
+  const ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height);
+  await page.render({canvasContext:ctx,viewport:vp}).promise;
+  const thumb=c.toDataURL('image/jpeg',0.78);
+  const book={id:'b_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),name,size:ab.byteLength,pages:pdf.numPages,thumb,data:ab,addedAt:Date.now(),lastPage:1};
+  await dbPut(book);return book;
+}
+
+/* ===== ADD PDF ===== */
+const fileInput=document.getElementById('fileInput');
+fileInput.onchange=e=>{const fs=[...e.target.files];fileInput.value='';fs.forEach(addFile)};
+async function addFile(file){
+  if(!/\.pdf$/i.test(file.name)&&file.type!=='application/pdf'){toast('Не PDF: '+file.name);return}
+  toast('Обрабатываю: '+file.name,3000);
+  try{
+    const data=await file.arrayBuffer();
+    const clean=file.name.replace(/\.pdf$/i,'');
+    await saveAbAsBook(data,clean);
+    sndAdd();
+    const recs=getRecommended();
+    const match=recs.find(r=>{const t=(r.matchAny||[]).map(normMatch);const n=normMatch(clean);return t.some(x=>n.includes(x))});
+    if(match)toast('«'+match.name+'» добавлена ✅',3200);
+    else toast('Книга добавлена: '+clean);
+    renderAll();showScreen('mine');
+  }catch(err){console.error(err);toast('Ошибка: '+(err.message||err))}
+}
+const dropOverlay=document.getElementById('dropOverlay');let dragD=0;
+window.addEventListener('dragenter',e=>{if(![...e.dataTransfer.types].includes('Files'))return;e.preventDefault();dragD++;if(currentScreen!=='reader')dropOverlay.classList.add('on')});
+window.addEventListener('dragover',e=>{if([...e.dataTransfer.types].includes('Files'))e.preventDefault()});
+window.addEventListener('dragleave',()=>{dragD=Math.max(0,dragD-1);if(!dragD)dropOverlay.classList.remove('on')});
+window.addEventListener('drop',e=>{e.preventDefault();dragD=0;dropOverlay.classList.remove('on');if(currentScreen==='reader'||currentScreen==='rec')return;[...(e.dataTransfer?.files||[])].forEach(addFile)});
+
+/* ===== DOWNLOAD OWN BOOK ===== */
 async function downloadBook(id){
-  const b = await dbGet(id);
-  if (!b) return;
-  const blob = new Blob([b.data], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = b.name + '.pdf';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  const b=await dbGet(id);if(!b)return;
+  const blob=new Blob([b.data],{type:'application/pdf'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=b.name+'.pdf';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
 }
 
-async function downloadPresetByUrl(preset){
-  const openManually = confirm(
-    'Скачать «' + preset.name + '» по ссылке?\n\n' +
-    'Файл откроется в новой вкладке. После скачивания перетащите его в библиотеку.'
-  );
-  if (openManually) window.open(preset.url, '_blank');
+/* ===== SEARCH ===== */
+const searchScreen=document.createElement('section');
+searchScreen.className='screen';searchScreen.id='screenSearch';
+searchScreen.innerHTML=`
+  <div class="hero"><h1>🔍 Поиск</h1><p>По названию, автору или классу.</p></div>
+  <div class="grid-toolbar"><input class="search-input" id="searchInput" placeholder="Начните печатать…"></div>
+  <div class="grid" id="gridSearch"></div>`;
+document.body.appendChild(searchScreen);
+document.getElementById('btnSearch').addEventListener('click',()=>{
+  showScreen('search');
+  setTimeout(()=>document.getElementById('searchInput').focus(),120);
+});
+document.getElementById('searchInput').addEventListener('input',async e=>{
+  const q=e.target.value.trim().toLowerCase();
+  const grid=document.getElementById('gridSearch');
+  if(!q){grid.innerHTML='';return}
+  const books=await dbGetAll();
+  const recs=getRecommended();
+  const items=[];
+  for(const b of books){
+    if((b.name||'').toLowerCase().includes(q))items.push({kind:'book',b});
+  }
+  for(const r of recs){
+    const hay=[r.name,r.author,r.className].filter(Boolean).join(' ').toLowerCase();
+    if(hay.includes(q)){
+      const matched=findMatchingSaved(books,r);
+      if(!items.some(it=>it.kind==='rec'&&it.r.id===r.id))
+        items.push({kind:'rec',r,matched});
+    }
+  }
+  grid.innerHTML='';
+  if(!items.length){grid.innerHTML=`<div class="section-empty">Ничего не найдено.</div>`;return}
+  for(const it of items){
+    if(it.kind==='book'){
+      const b=it.b;const card=document.createElement('div');card.className='card';
+      card.innerHTML=`
+        <div class="cover"><div class="spine"></div>${b.thumb?`<img src="${b.thumb}" alt="">`:''}
+          <div class="overlay">Открыть →</div></div>
+        <div class="card-body"><h3>${esc(b.name)}</h3>
+          <div class="meta">${b.pages} стр. · ${fmtSize(b.size)}</div>
+          <div class="card-actions"><button class="btn" data-act="open">Читать</button></div></div>`;
+      card.querySelector('[data-act="open"]').onclick=()=>openBook(b.id);
+      card.querySelector('.cover').onclick=()=>openBook(b.id);
+      grid.appendChild(card);
+    }else{
+      const r=it.r;const m=it.matched;const card=document.createElement('div');
+      card.className='card rec'+(m?' matched':'');
+      card.innerHTML=`
+        <div class="cover"><div class="spine ${m?'ok':'admin'}"></div>
+          ${m&&m.thumb?`<img src="${m.thumb}" alt="">`:`<div class="placeholder-cover ${phClass(r)}">${PRESET_SVG}</div>`}
+          <div class="badge rec">РЕКОМЕНДУЕМ</div>
+          <div class="overlay">${m?'Читать →':'Скачать →'}</div></div>
+        <div class="card-body"><h3>${esc(r.name)}</h3>
+          <div class="meta">${esc([r.author,r.className].filter(Boolean).join(' · '))}</div>
+          <div class="card-actions">${m?`<button class="btn ok" data-act="open">Читать</button>`:`<button class="btn" data-act="dl">Скачать</button>`}</div></div>`;
+      if(m){card.querySelector('[data-act="open"]').onclick=()=>openBook(m.id);card.querySelector('.cover').onclick=()=>openBook(m.id)}
+      else{card.querySelector('[data-act="dl"]').onclick=()=>downloadRec(r);card.querySelector('.cover').onclick=()=>downloadRec(r)}
+      grid.appendChild(card);
+    }
+  }
+});
+
+/* ===== TTS ===== */
+let ttsActive=false;
+document.getElementById('btnSpeak').addEventListener('click',async ()=>{
+  if(!state.pdf)return;
+  if(ttsActive){window.speechSynthesis.cancel();ttsActive=false;document.getElementById('btnSpeak').classList.remove('on');return}
+  try{
+    document.getElementById('btnSpeak').classList.add('on');
+    ttsActive=true;
+    const page=await state.pdf.getPage(state.page);
+    const tc=await page.getTextContent();
+    const text=tc.items.map(it=>it.str).join(' ');
+    if(!text.trim()){toast('На этой странице нет текста');ttsActive=false;document.getElementById('btnSpeak').classList.remove('on');return}
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='ru-RU';u.rate=1.0;
+    u.onend=()=>{ttsActive=false;document.getElementById('btnSpeak').classList.remove('on')};
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+    toast('Читаю страницу вслух 🔊',2000);
+  }catch(err){console.error(err);toast('Не удалось прочитать');ttsActive=false;document.getElementById('btnSpeak').classList.remove('on')}
+});
+
+/* ===== FX: FIREWORKS ===== */
+const fxCanvas=document.getElementById('fxCanvas');const fxCtx=fxCanvas.getContext('2d');
+let fxParticles=[],fxRunning=false;
+function fxResize(){fxCanvas.width=window.innerWidth;fxCanvas.height=window.innerHeight}
+window.addEventListener('resize',fxResize);fxResize();
+function fxLaunch(x,y,hue){
+  const colors=hue!=null?[`hsl(${hue},100%,65%)`,`hsl(${(hue+30)%360},100%,70%)`,`hsl(${(hue-30+360)%360},100%,70%)`,'#fff']
+    :['#ff3366','#ff9933','#ffdd33','#33dd66','#33ccff','#9966ff','#ff33cc','#fff'];
+  const N=55+Math.floor(Math.random()*25);
+  for(let i=0;i<N;i++){
+    const ang=(Math.PI*2*i)/N+(Math.random()-.5)*.3;
+    const sp=2.5+Math.random()*5.5;
+    fxParticles.push({x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,life:1,decay:.012+Math.random()*.012,color:colors[Math.floor(Math.random()*colors.length)],size:1.5+Math.random()*2.6});
+  }
+  if(!fxRunning){fxRunning=true;fxCanvas.style.display='block';requestAnimationFrame(fxLoop)}
+}
+function fxLoop(){
+  fxCtx.globalCompositeOperation='source-over';fxCtx.fillStyle='rgba(0,0,0,.12)';fxCtx.fillRect(0,0,fxCanvas.width,fxCanvas.height);
+  fxCtx.globalCompositeOperation='lighter';let alive=false;
+  for(let i=fxParticles.length-1;i>=0;i--){
+    const p=fxParticles[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.07;p.vx*=.985;p.vy*=.985;p.life-=p.decay;
+    if(p.life<=0){fxParticles.splice(i,1);continue}
+    alive=true;fxCtx.globalAlpha=Math.max(0,p.life);fxCtx.fillStyle=p.color;
+    fxCtx.beginPath();fxCtx.arc(p.x,p.y,p.size*(.4+p.life*.8),0,Math.PI*2);fxCtx.fill();
+  }
+  fxCtx.globalAlpha=1;
+  if(alive||fxParticles.length>0)requestAnimationFrame(fxLoop);
+  else{fxRunning=false;fxCtx.clearRect(0,0,fxCanvas.width,fxCanvas.height);fxCanvas.style.display='none'}
+}
+function fxShow(){
+  if(!settings.fun)return;
+  const N=5+Math.floor(Math.random()*3);const baseHue=Math.random()*360;
+  for(let i=0;i<N;i++)setTimeout(()=>{fxLaunch(window.innerWidth*(.12+Math.random()*.76),window.innerHeight*(.15+Math.random()*.5),(baseHue+i*40)%360)},i*160);
+}
+document.getElementById('logo').addEventListener('click',()=>{fxShow();if(settings.fun)toast('🎆 Салют!',1200)});
+
+/* ===== FX: OVERLAY ===== */
+const fxOverlay=document.getElementById('fxOverlay');
+let fxTimer=null;
+function fxShowText(line1,line2){
+  if(!settings.fun)return;
+  document.getElementById('fxLine1').textContent=line1;
+  document.getElementById('fxLine2').textContent=line2;
+  fxOverlay.classList.remove('show');
+  void fxOverlay.offsetWidth;
+  fxOverlay.classList.add('show');
+  clearTimeout(fxTimer);fxTimer=setTimeout(()=>fxOverlay.classList.remove('show'),2700);
+}
+function catRun(){
+  const c=document.createElement('div');c.className='cat-run';c.textContent='🐈‍⬛';
+  document.body.appendChild(c);setTimeout(()=>c.remove(),3100);
 }
 
-/* =====================================================================
-   ЧИТАЛКА
-   ===================================================================== */
-const state = {
-  book: null, pdf: null, page: 1,
-  fit: 'page', manualScale: null,
-  lastScale: 1, renderToken: 0,
-  thumbCache: {}
+/* ===== READER ===== */
+const state={book:null,pdf:null,page:1,fit:'page',manualScale:null,lastScale:1,renderToken:0,thumbCache:{},shown:{}};
+const els={
+  canvas:document.getElementById('pageCanvas'),
+  canvas2:document.getElementById('pageCanvas2'),
+  wrap:document.getElementById('pageWrap'),
+  stage:document.getElementById('stage'),
+  loading:document.getElementById('loading'),
+  slider:document.getElementById('slider'),
+  bubble:document.getElementById('bubble'),
+  pageInput:document.getElementById('pageInput'),
+  pageTotal:document.getElementById('pageTotal'),
+  prev:document.getElementById('prevBtn'),
+  next:document.getElementById('nextBtn'),
+  zonePrev:document.getElementById('zonePrev'),
+  zoneNext:document.getElementById('zoneNext')
 };
-
-const els = {
-  library: document.getElementById('library'),
-  reader: document.getElementById('reader'),
-  title: document.getElementById('rTitle'),
-  sub: document.getElementById('rSub'),
-  canvas: document.getElementById('pageCanvas'),
-  wrap: document.getElementById('pageWrap'),
-  stage: document.getElementById('stage'),
-  loading: document.getElementById('loading'),
-  slider: document.getElementById('slider'),
-  bubble: document.getElementById('bubble'),
-  pageInput: document.getElementById('pageInput'),
-  pageTotal: document.getElementById('pageTotal'),
-  prev: document.getElementById('prevBtn'),
-  next: document.getElementById('nextBtn'),
-  zonePrev: document.getElementById('zonePrev'),
-  zoneNext: document.getElementById('zoneNext')
-};
-
-function showScreen(name){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-}
-
-function isSkip(){ return settings.skipFirst; }
-function realToVirtual(rp){
-  if (!isSkip()) return rp;
-  return Math.max(1, rp - 1);
-}
-function virtualToReal(vp){
-  if (!isSkip()) return vp;
-  return vp + 1;
-}
-function virtualTotal(){
-  if (!state.pdf) return 1;
-  if (!isSkip()) return state.pdf.numPages;
-  return Math.max(1, state.pdf.numPages - 1);
-}
-function realMin(){
-  return isSkip() ? 2 : 1;
-}
-
+function isSkip(){return settings.skipFirst}
+function realToVirtual(rp){return isSkip()?Math.max(1,rp-1):rp}
+function virtualToReal(vp){return isSkip()?vp+1:vp}
+function virtualTotal(){if(!state.pdf)return 1;return isSkip()?Math.max(1,state.pdf.numPages-1):state.pdf.numPages}
+function realMin(){return isSkip()?2:1}
+function effectiveStep(){return settings.twoPage&&window.innerWidth>820?2:1}
 function updatePageUI(){
-  if (!state.pdf) return;
-  const vt = virtualTotal();
-  const vp = realToVirtual(state.page);
-  els.pageTotal.textContent = vt;
-  els.pageInput.value = vp;
-  els.slider.min = 1;
-  els.slider.max = vt;
-  els.slider.value = vp;
+  if(!state.pdf)return;
+  const vt=virtualTotal();const vp=realToVirtual(state.page);
+  els.pageTotal.textContent=vt;els.pageInput.value=vp;
+  els.slider.min=1;els.slider.max=vt;els.slider.value=vp;
   updateSliderFill();
-  const rmin = realMin();
-  els.prev.disabled = state.page <= rmin;
-  els.next.disabled = state.page >= state.pdf.numPages;
-  els.zonePrev.disabled = els.prev.disabled;
-  els.zoneNext.disabled = els.next.disabled;
-  els.sub.textContent = vt + ' стр.';
+  const rmin=realMin();
+  els.prev.disabled=state.page<=rmin;
+  els.next.disabled=state.page>=state.pdf.numPages;
+  els.zonePrev.disabled=els.prev.disabled;els.zoneNext.disabled=els.next.disabled;
+  document.getElementById('rSub').textContent=vt+' стр.';
+  document.getElementById('btnBookmark').classList.toggle('on',isBookmarked(state.book.id,state.page));
 }
-
 async function openBook(id){
-  const book = await dbGet(id);
-  if (!book) { toast('Книга не найдена'); return; }
-  state.book = book;
-  state.thumbCache = {};
-
-  els.loading.style.display = 'grid';
-  els.loading.firstElementChild.innerHTML = '<div class="spinner"></div><div>Открываю…</div>';
-
-  try {
-    state.pdf = await pdfjsLib.getDocument({ data: book.data.slice(0) }).promise;
-  } catch(err){
-    console.error(err);
-    toast('Не удалось открыть книгу');
-    els.loading.style.display = 'none';
-    return;
-  }
-
-  state.page = Math.min(Math.max(1, book.lastPage || 1), state.pdf.numPages);
-  if (isSkip() && state.page === 1 && state.pdf.numPages > 1) state.page = 2;
-  state.manualScale = null;
-  state.lastScale = 1;
-  state.fit = 'page';
-
-  els.title.textContent = book.name;
-
+  const b=await dbGet(id);if(!b){toast('Не найдена');return}
+  state.book=b;state.thumbCache={};state.shown={};
+  lastScreenBeforeReader=currentScreen==='reader'?lastScreenBeforeReader:currentScreen;
+  els.loading.style.display='grid';
+  els.loading.firstElementChild.innerHTML='<div class="spinner"></div><div>Открываю…</div>';
+  try{state.pdf=await pdfjsLib.getDocument({data:b.data.slice(0)}).promise}catch(e){console.error(e);toast('Ошибка');els.loading.style.display='none';return}
+  state.page=Math.min(Math.max(1,b.lastPage||1),state.pdf.numPages);
+  if(isSkip()&&state.page===1&&state.pdf.numPages>1)state.page=2;
+  state.manualScale=null;state.lastScale=1;state.fit='page';
+  document.getElementById('rTitle').textContent=b.name;
+  document.querySelector('header').style.display='none';
   showScreen('reader');
-  requestAnimationFrame(()=> requestAnimationFrame(()=> renderPage()));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>renderPage()));
 }
-
+async function openBookAt(id,page){
+  await openBook(id);
+  if(state.pdf){state.page=Math.min(Math.max(page,realMin()),state.pdf.numPages);await renderPage()}
+}
 function closeReader(){
-  if (state.book && state.page){
-    dbGet(state.book.id).then(b=>{
-      if (b){ b.lastPage = state.page; dbPut(b); }
-    });
-  }
-  closeThumbs();
-  state.pdf = null; state.book = null; state.thumbCache = {};
-  showScreen('library');
-  renderLibrary();
+  if(state.book&&state.page){dbGet(state.book.id).then(b=>{if(b){b.lastPage=state.page;dbPut(b)}})}
+  window.speechSynthesis.cancel();ttsActive=false;document.getElementById('btnSpeak').classList.remove('on');
+  closeThumbs();sndClose();
+  state.pdf=null;state.book=null;state.thumbCache={};state.shown={};
+  document.querySelector('header').style.display='flex';
+  showScreen(lastScreenBeforeReader||'mine');
+  renderAll();
 }
+document.getElementById('btnBackReader').onclick=closeReader;
 
 async function renderPage(){
-  if (!state.pdf) return;
-  const token = ++state.renderToken;
-  els.loading.style.display = 'grid';
-
-  try {
-    const page = await state.pdf.getPage(state.page);
-    if (token !== state.renderToken) return;
-
-    const stageRect = els.stage.getBoundingClientRect();
-    const padX = 48, padY = 48;
-    const availW = Math.max(100, stageRect.width  - padX);
-    const availH = Math.max(100, stageRect.height - padY);
-
-    const base = page.getViewport({ scale: 1 });
+  if(!state.pdf)return;
+  const token=++state.renderToken;
+  els.loading.style.display='grid';
+  try{
+    const page=await state.pdf.getPage(state.page);
+    if(token!==state.renderToken)return;
+    const stageRect=els.stage.getBoundingClientRect();
+    const padX=48,padY=48;
+    const twoPage=settings.twoPage&&window.innerWidth>820&&state.pdf.numPages>1&&state.page<state.pdf.numPages;
+    const availW=Math.max(100,stageRect.width-padX);
+    const availH=Math.max(100,stageRect.height-padY);
+    const base=page.getViewport({scale:1});
     let scale;
-    if (state.manualScale != null){
-      scale = state.manualScale;
-    } else if (state.fit === 'width'){
-      scale = availW / base.width;
-    } else {
-      scale = Math.min(availW / base.width, availH / base.height);
+    if(state.manualScale!=null)scale=state.manualScale;
+    else if(state.fit==='width')scale=(twoPage?availW/2:availW)/base.width;
+    else scale=Math.min((twoPage?availW/2:availW)/base.width,availH/base.height);
+    const vp=page.getViewport({scale});
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+
+    els.canvas.width=Math.floor(vp.width*dpr);els.canvas.height=Math.floor(vp.height*dpr);
+    els.canvas.style.width=Math.floor(vp.width)+'px';els.canvas.style.height=Math.floor(vp.height)+'px';
+    let ctx=els.canvas.getContext('2d');
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,els.canvas.width,els.canvas.height);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    await page.render({canvasContext:ctx,viewport:vp}).promise;
+    if(token!==state.renderToken)return;
+
+    if(twoPage){
+      const page2=await state.pdf.getPage(state.page+1);
+      if(token!==state.renderToken)return;
+      els.canvas2.style.display='block';
+      els.canvas2.width=Math.floor(vp.width*dpr);els.canvas2.height=Math.floor(vp.height*dpr);
+      els.canvas2.style.width=Math.floor(vp.width)+'px';els.canvas2.style.height=Math.floor(vp.height)+'px';
+      const ctx2=els.canvas2.getContext('2d');
+      ctx2.fillStyle='#fff';ctx2.fillRect(0,0,els.canvas2.width,els.canvas2.height);
+      ctx2.setTransform(dpr,0,0,dpr,0,0);
+      const vp2=page2.getViewport({scale});
+      await page2.render({canvasContext:ctx2,viewport:vp2}).promise;
+      els.wrap.classList.add('two-page');
+    }else{
+      els.canvas2.style.display='none';els.wrap.classList.remove('two-page');
     }
 
-    const vp = page.getViewport({ scale });
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const canvas = els.canvas;
-    canvas.width = Math.floor(vp.width  * dpr);
-    canvas.height = Math.floor(vp.height * dpr);
-    canvas.style.width  = Math.floor(vp.width)  + 'px';
-    canvas.style.height = Math.floor(vp.height) + 'px';
-
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    const task = page.render({ canvasContext: ctx, viewport: vp });
-    await task.promise;
-    if (token !== state.renderToken) return;
-
-    state.lastScale = vp.width / base.width;
+    state.lastScale=vp.width/base.width;
     updatePageUI();
-    els.loading.style.display = 'none';
-  } catch(err){
-    if (token !== state.renderToken) return;
-    console.error(err);
-    els.loading.style.display = 'none';
-  }
-}
+    els.loading.style.display='none';
 
+    const vp67=realToVirtual(state.page);
+    const pairs={67:['СИКСЕВЕН','67'],42:['ОТВЕТ НА ГЛАВНЫЙ ВОПРОС','42'],100:['СОТОЧКА!','100'],365:['ГОДОВОЙ ЗАПАС','365']};
+    if(settings.fun&&!state.shown['p'+vp67]&&pairs[vp67]){
+      state.shown['p'+vp67]=true;
+      fxShowText(pairs[vp67][0],pairs[vp67][1]);
+      if(vp67===42)fxShow();
+    }
+    if(settings.fun&&vp67===13&&!state.shown['cat13']){state.shown['cat13']=true;catRun()}
+  }catch(err){if(token!==state.renderToken)return;console.error(err);els.loading.style.display='none'}
+}
 function updateSliderFill(){
-  const min = +els.slider.min, max = +els.slider.max;
-  const val = +els.slider.value;
-  const pct = max > min ? ((val - min) / (max - min)) * 100 : 0;
-  els.slider.style.backgroundSize = pct + '% 100%';
+  const min=+els.slider.min,max=+els.slider.max,val=+els.slider.value;
+  els.slider.style.backgroundSize=(max>min?((val-min)/(max-min))*100:0)+'% 100%';
 }
-
-async function goToPage(realN, direction){
-  if (!state.pdf) return;
-  realN = Math.round(realN);
-  if (isNaN(realN)) return;
-  const rmin = realMin();
-  realN = Math.max(rmin, Math.min(state.pdf.numPages, realN));
-  if (realN === state.page) return;
-
-  const dir = direction ?? (realN > state.page ? 1 : -1);
-  const wrap = els.wrap;
-
+async function goToPage(realN,direction){
+  if(!state.pdf)return;
+  realN=Math.round(realN);if(isNaN(realN))return;
+  const rmin=realMin();
+  realN=Math.max(rmin,Math.min(state.pdf.numPages,realN));
+  if(realN===state.page)return;
+  const dir=direction??(realN>state.page?1:-1);
+  const wrap=els.wrap;
   wrap.classList.add('animating');
-  wrap.style.transform = `translateX(${-dir * 40}px)`;
-  wrap.style.opacity = '0';
-
-  await new Promise(r=>setTimeout(r, 160));
-
-  state.page = realN;
+  wrap.style.transform=`translateX(${-dir*40}px)`;wrap.style.opacity='0';
+  await new Promise(r=>setTimeout(r,160));
+  state.page=realN;
+  sndPage();
   await renderPage();
-
   wrap.classList.remove('animating');
-  wrap.style.transform = `translateX(${dir * 40}px)`;
-  wrap.style.opacity = '0';
-
-  requestAnimationFrame(()=>{
-    wrap.classList.add('animating');
-    wrap.style.transform = 'translateX(0)';
-    wrap.style.opacity = '1';
-  });
+  wrap.style.transform=`translateX(${dir*40}px)`;wrap.style.opacity='0';
+  requestAnimationFrame(()=>{wrap.classList.add('animating');wrap.style.transform='translateX(0)';wrap.style.opacity='1'});
+  if(state.book){const b=state.book;b.lastPage=state.page;dbPut(b).catch(()=>{})}
 }
+const step=()=>effectiveStep();
+const nextPage=()=>goToPage(state.page+step(),1);
+const prevPage=()=>{if(state.page<=realMin())return;goToPage(state.page-step(),-1)};
+els.next.onclick=nextPage;els.prev.onclick=prevPage;els.zoneNext.onclick=nextPage;els.zonePrev.onclick=prevPage;
+function showBubble(){const min=+els.slider.min,max=+els.slider.max,val=+els.slider.value;
+  const pct=max>min?((val-min)/(max-min))*100:0;
+  const wrapRect=els.slider.parentElement.getBoundingClientRect();
+  const thumbW=22,usable=wrapRect.width-thumbW;
+  els.bubble.style.left=(thumbW/2+usable*pct/100)+'px';
+  els.bubble.textContent=val;els.bubble.classList.add('show')}
+function hideBubble(){els.bubble.classList.remove('show')}
+els.slider.addEventListener('input',e=>{els.pageInput.value=e.target.value;updateSliderFill();showBubble()});
+els.slider.addEventListener('change',e=>{hideBubble();goToPage(virtualToReal(+e.target.value))});
+els.slider.addEventListener('pointerdown',showBubble);els.slider.addEventListener('pointerup',hideBubble);
+els.slider.addEventListener('pointercancel',hideBubble);els.slider.addEventListener('blur',hideBubble);
+els.pageInput.onchange=e=>{let v=+e.target.value.replace(/\D/g,'');if(!v){e.target.value=realToVirtual(state.page);return}
+  const vt=virtualTotal();v=Math.max(1,Math.min(vt,v));goToPage(virtualToReal(v))};
+els.pageInput.onkeydown=e=>{if(e.key==='Enter')e.target.blur()};
 
-const nextPage = ()=> goToPage(state.page + 1, 1);
-const prevPage = ()=>{
-  const rmin = realMin();
-  if (state.page <= rmin) return;
-  goToPage(state.page - 1, -1);
-};
-
-els.next.onclick = nextPage;
-els.prev.onclick = prevPage;
-els.zoneNext.onclick = nextPage;
-els.zonePrev.onclick = prevPage;
-
-function showBubbleForSlider(){
-  const min = +els.slider.min, max = +els.slider.max;
-  const val = +els.slider.value;
-  const pct = max > min ? ((val - min) / (max - min)) * 100 : 0;
-  const wrapRect = els.slider.parentElement.getBoundingClientRect();
-  const thumbW = 22;
-  const usable = wrapRect.width - thumbW;
-  els.bubble.style.left = (thumbW/2 + usable * pct / 100) + 'px';
-  els.bubble.textContent = val;
-  els.bubble.classList.add('show');
-}
-function hideBubble(){ els.bubble.classList.remove('show'); }
-
-els.slider.addEventListener('input', e=>{
-  els.pageInput.value = e.target.value;
-  updateSliderFill();
-  showBubbleForSlider();
-});
-els.slider.addEventListener('change', e=>{
-  const virtualVal = +e.target.value;
-  hideBubble();
-  goToPage(virtualToReal(virtualVal));
-});
-els.slider.addEventListener('pointerdown', showBubbleForSlider);
-els.slider.addEventListener('pointerup', hideBubble);
-els.slider.addEventListener('pointercancel', hideBubble);
-els.slider.addEventListener('blur', hideBubble);
-
-els.pageInput.onchange = e => {
-  let vv = +e.target.value.replace(/\D/g,'');
-  if (!vv){ e.target.value = realToVirtual(state.page); return; }
-  const vt = virtualTotal();
-  vv = Math.max(1, Math.min(vt, vv));
-  goToPage(virtualToReal(vv));
-};
-els.pageInput.onkeydown = e => { if (e.key === 'Enter') e.target.blur(); };
-
-document.addEventListener('keydown', e=>{
-  if (settingsPop.classList.contains('open')){
-    if (e.key === 'Escape') closeSettings();
+document.addEventListener('keydown',e=>{
+  if(adminLoginModal.classList.contains('open')||recEditModal.classList.contains('open')||bookmarkModal.classList.contains('open')){
+    if(e.key==='Escape'){adminLoginModal.classList.remove('open');recEditModal.classList.remove('open');bookmarkModal.classList.remove('open')}
     return;
   }
-  if (document.getElementById('thumbsModal').classList.contains('open')){
-    if (e.key === 'Escape') closeThumbs();
-    return;
-  }
-  if (!els.reader.classList.contains('active')) return;
-  if (document.activeElement === els.pageInput) return;
-  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); nextPage(); }
-  else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prevPage(); }
-  else if (e.key === 'Home'){ e.preventDefault(); goToPage(realMin(), -1); }
-  else if (e.key === 'End'){ e.preventDefault(); goToPage(state.pdf.numPages, 1); }
-  else if (e.key === 'Escape'){ closeReader(); }
-  else if (e.key === '+' || e.key === '='){ zoom(1.2); }
-  else if (e.key === '-'){ zoom(1/1.2); }
-  else if (e.key === '0'){ zoomReset(); }
+  if(settingsPop.classList.contains('open')){if(e.key==='Escape')closeSettings();return}
+  if(thumbsModal.classList.contains('open')){if(e.key==='Escape')closeThumbs();return}
+  if(currentScreen!=='reader')return;
+  if(document.activeElement===els.pageInput)return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();nextPage()}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prevPage()}
+  else if(e.key==='Home'){e.preventDefault();goToPage(realMin(),-1)}
+  else if(e.key==='End'){e.preventDefault();goToPage(state.pdf.numPages,1)}
+  else if(e.key==='Escape'){closeReader()}
+  else if(e.key==='+'||e.key==='='){zoom(1.2)}
+  else if(e.key==='-'){zoom(1/1.2)}
+  else if(e.key==='0'){zoomReset()}
 });
 
-let touchX = null, touchY = null;
-els.stage.addEventListener('touchstart', e=>{
-  if (e.touches.length !== 1) return;
-  touchX = e.touches[0].clientX;
-  touchY = e.touches[0].clientY;
-}, {passive:true});
-els.stage.addEventListener('touchend', e=>{
-  if (touchX == null) return;
-  const t = e.changedTouches[0];
-  const dx = t.clientX - touchX;
-  const dy = t.clientY - touchY;
-  touchX = touchY = null;
-  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
-    if (dx < 0) nextPage(); else prevPage();
-  }
-}, {passive:true});
+let touchX=null,touchY=null;
+els.stage.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});
+els.stage.addEventListener('touchend',e=>{
+  if(touchX==null)return;const t=e.changedTouches[0];const dx=t.clientX-touchX,dy=t.clientY-touchY;
+  touchX=touchY=null;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0)nextPage();else prevPage()}
+},{passive:true});
 
-function zoom(factor){
-  state.lastScale = (state.lastScale || 1) * factor;
-  state.manualScale = state.lastScale;
-  renderPage();
-}
-function zoomReset(){
-  state.manualScale = null;
-  state.lastScale = 1;
-  state.fit = 'page';
-  renderPage();
-}
-document.getElementById('zoomIn').onclick = ()=> zoom(1.2);
-document.getElementById('zoomOut').onclick = ()=> zoom(1/1.2);
-document.getElementById('zoomFit').onclick = zoomReset;
+function zoom(f){state.lastScale=(state.lastScale||1)*f;state.manualScale=state.lastScale;renderPage()}
+function zoomReset(){state.manualScale=null;state.lastScale=1;state.fit='page';renderPage()}
+document.getElementById('zoomIn').onclick=()=>zoom(1.2);
+document.getElementById('zoomOut').onclick=()=>zoom(1/1.2);
+document.getElementById('zoomFit').onclick=zoomReset;
+document.getElementById('btnDownload').onclick=()=>{if(state.book)downloadBook(state.book.id)};
 
-document.getElementById('btnDownload').onclick = ()=>{
-  if (state.book) downloadBook(state.book.id);
+let resizeT;window.addEventListener('resize',()=>{if(currentScreen!=='reader')return;clearTimeout(resizeT);resizeT=setTimeout(()=>{state.manualScale=null;state.lastScale=1;renderPage()},140)});
+
+/* ===== BOOKMARK BUTTON ===== */
+const bookmarkModal=document.getElementById('bookmarkModal');
+document.getElementById('btnBookmark').addEventListener('click',()=>{
+  if(!state.book)return;
+  const page=state.page;
+  const existing=isBookmarked(state.book.id,page);
+  document.getElementById('bmNote').value=existing?getBookmarkNote(state.book.id,page):'';
+  document.getElementById('bmDelete').style.display=existing?'inline-flex':'none';
+  document.getElementById('bmSave').textContent=existing?'Обновить':'Сохранить';
+  bookmarkModal.classList.add('open');
+  setTimeout(()=>document.getElementById('bmNote').focus(),100);
+});
+document.getElementById('bmCancel').onclick=()=>bookmarkModal.classList.remove('open');
+bookmarkModal.addEventListener('click',e=>{if(e.target===bookmarkModal)bookmarkModal.classList.remove('open')});
+document.getElementById('bmSave').onclick=()=>{
+  if(!state.book)return;
+  const note=document.getElementById('bmNote').value.trim();
+  const all=getBookmarks();
+  if(!all[state.book.id])all[state.book.id]=[];
+  const idx=all[state.book.id].findIndex(b=>b.page===state.page);
+  if(idx>=0)all[state.book.id][idx].note=note;
+  else all[state.book.id].push({page:state.page,note,date:Date.now()});
+  saveBookmarks(all);
+  bookmarkModal.classList.remove('open');
+  document.getElementById('btnBookmark').classList.add('on');
+  toast('Закладка сохранена 🔖');
 };
-document.getElementById('btnBack').onclick = closeReader;
+document.getElementById('bmDelete').onclick=()=>{
+  if(!state.book)return;
+  removeBookmark(state.book.id,state.page);
+  bookmarkModal.classList.remove('open');
+  document.getElementById('btnBookmark').classList.remove('on');
+  toast('Закладка удалена');
+};
 
-let resizeT;
-window.addEventListener('resize', ()=>{
-  if (!els.reader.classList.contains('active')) return;
-  clearTimeout(resizeT);
-  resizeT = setTimeout(()=>{
-    state.manualScale = null;
-    state.lastScale = 1;
-    renderPage();
-  }, 140);
-});
-
-/* =====================================================================
-   МОДАЛКА-СЕТКА СТРАНИЦ
-   ===================================================================== */
-const thumbsModal = document.getElementById('thumbsModal');
-const thumbsGrid  = document.getElementById('thumbsGrid');
-const thumbsCnt   = document.getElementById('thumbsCnt');
-let thumbsObserver = null;
-
+/* ===== THUMBS ===== */
+const thumbsModal=document.getElementById('thumbsModal');
+const thumbsGrid=document.getElementById('thumbsGrid');
+const thumbsCnt=document.getElementById('thumbsCnt');
+let thumbsObserver=null;
 function openThumbs(){
-  if (!state.pdf) return;
-  thumbsModal.classList.add('open');
-  thumbsGrid.innerHTML = '';
-  thumbsCnt.textContent = `${realToVirtual(state.page)} / ${virtualTotal()}`;
-
-  for (let i = 1; i <= state.pdf.numPages; i++){
-    const isCover = (i === 1 && isSkip());
-    const card = document.createElement('button');
-    card.className = 'thumb' + (i === state.page ? ' current' : '');
-    card.dataset.page = i;
-    card.innerHTML = `
+  if(!state.pdf)return;
+  thumbsModal.classList.add('open');thumbsGrid.innerHTML='';
+  thumbsCnt.textContent=`${realToVirtual(state.page)} / ${virtualTotal()}`;
+  const bms=getBookmarks()[state.book.id]||[];
+  const bmSet=new Set(bms.map(b=>b.page));
+  for(let i=1;i<=state.pdf.numPages;i++){
+    const isCover=(i===1&&isSkip());
+    const card=document.createElement('button');
+    card.className='thumb'+(i===state.page?' current':'');
+    card.dataset.page=i;
+    card.innerHTML=`
       <div class="thumb-canvas-wrap">
-        ${isCover ? '<div class="thumb-cover-tag">ОБЛОЖКА</div>' : ''}
+        ${isCover?'<div class="thumb-cover-tag">ОБЛОЖКА</div>':''}
+        ${bmSet.has(i)?'<div class="thumb-bm-tag">🔖</div>':''}
         <div class="thumb-placeholder">Стр. ${realToVirtual(i)}</div>
       </div>
-      <div class="thumb-num">${realToVirtual(i)}</div>
-    `;
-    card.addEventListener('click', ()=>{
-      closeThumbs();
-      goToPage(i);
-    });
+      <div class="thumb-num">${realToVirtual(i)}</div>`;
+    card.addEventListener('click',()=>{closeThumbs();goToPage(i)});
     thumbsGrid.appendChild(card);
   }
-
-  if (thumbsObserver) thumbsObserver.disconnect();
-  thumbsObserver = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if (entry.isIntersecting){
-        renderThumb(entry.target, +entry.target.dataset.page);
-        thumbsObserver.unobserve(entry.target);
-      }
-    });
-  }, { root: document.getElementById('thumbsBody'), rootMargin: '400px 0px', threshold: 0.01 });
-  [...thumbsGrid.children].forEach(c => thumbsObserver.observe(c));
-
-  requestAnimationFrame(()=>{
-    const cur = thumbsGrid.querySelector('.thumb.current');
-    if (cur) cur.scrollIntoView({ block: 'center', behavior: 'auto' });
-  });
+  if(thumbsObserver)thumbsObserver.disconnect();
+  thumbsObserver=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{if(en.isIntersecting){renderThumb(en.target,+en.target.dataset.page);thumbsObserver.unobserve(en.target)}});
+  },{root:document.getElementById('thumbsBody'),rootMargin:'400px 0px',threshold:0.01});
+  [...thumbsGrid.children].forEach(c=>thumbsObserver.observe(c));
+  requestAnimationFrame(()=>{const cur=thumbsGrid.querySelector('.thumb.current');if(cur)cur.scrollIntoView({block:'center',behavior:'auto'})});
 }
-
-async function renderThumb(card, pageNum){
-  if (!state.pdf) return;
-  try {
-    let dataUrl = state.thumbCache[pageNum];
-    if (!dataUrl){
-      const page = await state.pdf.getPage(pageNum);
-      const base = page.getViewport({ scale: 1 });
-      const vp = page.getViewport({ scale: 220 / base.width });
-      const c = document.createElement('canvas');
-      c.width  = Math.floor(vp.width);
-      c.height = Math.floor(vp.height);
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, c.width, c.height);
-      await page.render({ canvasContext: ctx, viewport: vp }).promise;
-      dataUrl = c.toDataURL('image/jpeg', 0.72);
-      state.thumbCache[pageNum] = dataUrl;
+async function renderThumb(card,pageNum){
+  if(!state.pdf)return;
+  try{
+    let url=state.thumbCache[pageNum];
+    if(!url){
+      const page=await state.pdf.getPage(pageNum);
+      const base=page.getViewport({scale:1});
+      const vp=page.getViewport({scale:220/base.width});
+      const c=document.createElement('canvas');c.width=Math.floor(vp.width);c.height=Math.floor(vp.height);
+      const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+      await page.render({canvasContext:ctx,viewport:vp}).promise;
+      url=c.toDataURL('image/jpeg',0.72);state.thumbCache[pageNum]=url;
     }
-    if (!card.isConnected) return;
-    const wrap = card.querySelector('.thumb-canvas-wrap');
-    if (!wrap) return;
-    const tag = wrap.querySelector('.thumb-cover-tag');
-    wrap.innerHTML = '';
-    if (tag) wrap.appendChild(tag);
-    const img = new Image();
-    img.src = dataUrl;
-    img.style.maxWidth = '100%';
-    img.style.maxHeight = '100%';
+    if(!card.isConnected)return;
+    const wrap=card.querySelector('.thumb-canvas-wrap');
+    if(!wrap)return;
+    const tags=[...wrap.querySelectorAll('.thumb-cover-tag,.thumb-bm-tag')];
+    wrap.innerHTML='';tags.forEach(t=>wrap.appendChild(t));
+    const img=new Image();img.src=url;img.style.maxWidth='100%';img.style.maxHeight='100%';
     wrap.appendChild(img);
-  } catch(err){ console.warn('thumb error', pageNum, err); }
+  }catch(e){console.warn(e)}
 }
-
-function closeThumbs(){
-  thumbsModal.classList.remove('open');
-  if (thumbsObserver){ thumbsObserver.disconnect(); thumbsObserver = null; }
-  thumbsGrid.innerHTML = '';
-}
-
-document.getElementById('btnGrid').onclick = openThumbs;
-document.getElementById('thumbsClose').onclick = closeThumbs;
-thumbsModal.addEventListener('click', e=>{ if (e.target === thumbsModal) closeThumbs(); });
-
-const origGoToPage = goToPage;
-goToPage = async function(realN, direction){
-  await origGoToPage(realN, direction);
-  if (thumbsModal.classList.contains('open')){
-    thumbsCnt.textContent = `${realToVirtual(state.page)} / ${virtualTotal()}`;
-    thumbsGrid.querySelectorAll('.thumb').forEach(el=>{
-      el.classList.toggle('current', +el.dataset.page === state.page);
-    });
+function closeThumbs(){thumbsModal.classList.remove('open');if(thumbsObserver){thumbsObserver.disconnect();thumbsObserver=null}thumbsGrid.innerHTML=''}
+document.getElementById('btnGrid').onclick=openThumbs;
+document.getElementById('thumbsClose').onclick=closeThumbs;
+thumbsModal.addEventListener('click',e=>{if(e.target===thumbsModal)closeThumbs()});
+const origGoToPage=goToPage;
+goToPage=async function(realN,direction){
+  await origGoToPage(realN,direction);
+  if(thumbsModal.classList.contains('open')){
+    thumbsCnt.textContent=`${realToVirtual(state.page)} / ${virtualTotal()}`;
+    thumbsGrid.querySelectorAll('.thumb').forEach(el=>el.classList.toggle('current',+el.dataset.page===state.page));
   }
 };
 
-/* =====================================================================
-   СТАРТ
-   ===================================================================== */
-applyTheme();
-syncSkipFirstUI();
-renderLibrary();
+/* ===== BOOT ===== */
+applyTheme();applyAccent();renderAccentPalette();
+syncSortUI();syncSkipFirstUI();syncTwoPageUI();syncFunUI();syncSoundsUI();
+renderAdminArea();applyAdminMode();
+renderAll();
+showScreen('home');
 
-/* PWA: регистрация Service Worker */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW зарегистрирован:', reg.scope))
-      .catch(err => console.warn('SW не зарегистрирован:', err));
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').then(r=>console.log('SW:',r.scope)).catch(e=>console.warn('SW:',e));
   });
 }
 </script>
