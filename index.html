@@ -20,7 +20,7 @@
   --bg:#eef1f6;--panel:#ffffff;--text:#1c2431;--muted:#6b7787;
   --line:#dde3ec;--accent:#0f9b8e;--accent-2:#0b6e66;
   --ok:#22a06b;--ok-bg:#e6f6ee;--warn:#d68b1a;--warn-bg:#fdf3e0;
-  --admin:#8b5cf6;--admin-2:#6d28d9;--admin-bg:rgba(139,92,246,.1);
+  --rec:#8b5cf6;--rec-2:#6d28d9;--rec-bg:rgba(139,92,246,.1);
   --shadow:0 8px 30px rgba(20,40,70,.10);--stage:#3a4453;
   --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
   --serif:Georgia,'Times New Roman',serif;
@@ -28,14 +28,14 @@
 }
 html[data-theme="dark"]{--bg:#0e1218;--panel:#1a2028;--text:#e6ebf2;--muted:#93a0b1;
   --line:#2a323d;--shadow:0 8px 30px rgba(0,0,0,.45);--stage:#080b0f;
-  --ok-bg:#123024;--warn-bg:#33260e;--admin-bg:rgba(139,92,246,.18)}
+  --ok-bg:#123024;--warn-bg:#33260e;--rec-bg:rgba(139,92,246,.18)}
 html[data-theme="sepia"]{--bg:#efe6d5;--panel:#fbf5e9;--text:#3a3227;--muted:#8a7c66;
   --line:#e0d3bb;--shadow:0 8px 30px rgba(120,100,70,.15);--stage:#c9b896;
-  --ok-bg:#e3efd9;--warn-bg:#f6e8cd;--admin-bg:rgba(139,92,246,.15)}
+  --ok-bg:#e3efd9;--warn-bg:#f6e8cd;--rec-bg:rgba(139,92,246,.15)}
 html[data-theme="academy"]{--bg:#0f1622;--panel:#182132;--text:#f4ead5;--muted:#8a96b0;
   --line:#2a3548;--accent:#c9a961;--accent-2:#a08346;
   --shadow:0 8px 30px rgba(0,0,0,.55);--stage:#0a1119;
-  --ok-bg:#1b2a1f;--warn-bg:#2c2415;--admin-bg:rgba(201,169,97,.15)}
+  --ok-bg:#1b2a1f;--warn-bg:#2c2415;--rec-bg:rgba(201,169,97,.15)}
 html[data-theme="academy"] body{font-family:var(--serif)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overscroll-behavior:none}
@@ -64,7 +64,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none}
 .btn.ghost:hover{border-color:var(--accent);color:var(--accent);filter:none}
 .btn.ok{background:linear-gradient(135deg,#22a06b,#178a58)}
-.btn.admin{background:linear-gradient(135deg,var(--admin),var(--admin-2));box-shadow:0 4px 14px rgba(139,92,246,.3)}
 .btn.danger{background:linear-gradient(135deg,#e05252,#b83434)}
 .icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);
   background:transparent;color:var(--text);cursor:pointer;display:grid;place-items:center;
@@ -91,13 +90,13 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
   display:flex;flex-direction:column;align-items:center;gap:5px;transition:.15s}
 .theme-opt .em{font-size:22px;line-height:1}
 .theme-opt:hover{border-color:var(--accent);color:var(--accent)}
-.theme-opt.active{border-color:var(--accent);background:var(--admin-bg);color:var(--accent)}
+.theme-opt.active{border-color:var(--accent);background:var(--rec-bg);color:var(--accent)}
 .seg-options{display:flex;gap:6px;flex-wrap:wrap}
 .seg-opt{flex:1;min-width:52px;border:1.5px solid var(--line);background:transparent;
   padding:10px 6px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:12.5px;
   font-weight:700;color:var(--text);transition:.15s;text-align:center}
 .seg-opt:hover{border-color:var(--accent);color:var(--accent)}
-.seg-opt.active{border-color:var(--accent);background:var(--admin-bg);color:var(--accent)}
+.seg-opt.active{border-color:var(--accent);background:var(--rec-bg);color:var(--accent)}
 .switch-row{display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;user-select:none}
 .switch-row > div:first-child{flex:1;min-width:0}
 .switch-label{font-size:13.5px;font-weight:700;line-height:1.3}
@@ -115,12 +114,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
   transition:.15s;position:relative}
 .accent-pick:hover{transform:scale(1.08)}
 .accent-pick.active{border-color:var(--text);box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--text)}
-.admin-status{display:flex;align-items:center;gap:10px;padding:10px 12px;
-  background:var(--admin-bg);border-radius:10px;margin-bottom:10px;
-  font-size:12.5px;font-weight:700;color:var(--admin)}
-.admin-status .dot{width:8px;height:8px;border-radius:50%;background:var(--admin);
-  box-shadow:0 0 10px var(--admin);animation:pulse 1.6s ease-in-out infinite}
-@keyframes pulse{50%{opacity:.5;transform:scale(.8)}}
 .screen{position:fixed;top:var(--header-h);left:0;right:0;bottom:0;display:none;
   overflow:auto;padding-bottom:env(safe-area-inset-bottom)}
 .screen.active{display:block}
@@ -171,7 +164,7 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .spine{position:absolute;left:0;top:0;bottom:0;width:7px;
   background:linear-gradient(180deg,var(--accent),var(--accent-2));opacity:.85;z-index:2}
 .spine.ok{background:linear-gradient(180deg,#22a06b,#178a58)}
-.spine.admin{background:linear-gradient(180deg,var(--admin),var(--admin-2))}
+.spine.rec{background:linear-gradient(180deg,var(--rec),var(--rec-2))}
 .overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55));
   opacity:0;transition:opacity .2s;display:flex;align-items:flex-end;padding:14px;color:#fff;
   font-size:12.5px;font-weight:600;z-index:3}
@@ -179,14 +172,19 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .placeholder-cover{position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--accent-2));
   display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.9)}
 .placeholder-cover svg{width:56%;height:56%;opacity:.9}
-.placeholder-cover.physics{background:linear-gradient(135deg,#3b82c4,#1e4f78)}
-.placeholder-cover.english{background:linear-gradient(135deg,#c94d4d,#7a2626)}
-.placeholder-cover.admin{background:linear-gradient(135deg,var(--admin),var(--admin-2))}
+.placeholder-cover.soc{background:linear-gradient(135deg,#14b8a6 0%,#0d9488 50%,#0f766e 100%)}
+.placeholder-cover.physics{background:linear-gradient(135deg,#3b4a63 0%,#2a3548 50%,#1e293b 100%)}
+.placeholder-cover.english{background:linear-gradient(135deg,#a855f7 0%,#7e22ce 50%,#581c87 100%)}
+.placeholder-cover.russian{background:linear-gradient(135deg,#3b82f6 0%,#1e40af 50%,#1e3a8a 100%)}
+.placeholder-cover.bio{background:linear-gradient(135deg,#c4b5fd 0%,#a78bfa 50%,#7c3aed 100%)}
+.placeholder-cover.bio-pro{background:linear-gradient(135deg,#a78bfa 0%,#7c3aed 50%,#4c1d95 100%)}
+.placeholder-cover.geo{background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 45%,#ea580c 100%)}
+.placeholder-cover.rec{background:linear-gradient(135deg,var(--rec),var(--rec-2))}
 .badge{position:absolute;top:10px;right:10px;font-size:10.5px;font-weight:800;letter-spacing:.4px;
   padding:5px 9px;border-radius:7px;box-shadow:0 4px 12px rgba(0,0,0,.18);
   display:flex;align-items:center;gap:4px;z-index:4}
 .badge.ok{background:#22a06b;color:#fff}
-.badge.rec{background:linear-gradient(135deg,var(--admin),var(--admin-2));color:#fff}
+.badge.rec{background:linear-gradient(135deg,var(--rec),var(--rec-2));color:#fff}
 .badge.bookmark{background:#f59e0b;color:#fff}
 .card-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:4px;flex:1}
 .card-body h3{margin:0;font-size:15px;letter-spacing:-.2px;line-height:1.25;
@@ -195,7 +193,7 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .card-body .hint{font-size:11.5px;color:var(--warn);background:var(--warn-bg);
   padding:7px 9px;border-radius:7px;margin-top:6px;line-height:1.35}
 .card-body .hint.ok{color:var(--ok);background:var(--ok-bg)}
-.card-body .hint.rec{color:var(--admin);background:var(--admin-bg)}
+.card-body .hint.rec{color:var(--rec);background:var(--rec-bg)}
 .card-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
 .card-actions .btn{flex:1;justify-content:center;padding:9px 10px;font-size:12.5px;min-width:0}
 .card-actions .icon-btn{width:36px;height:36px;font-size:14px}
@@ -203,12 +201,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));
   border-radius:99px;transition:width .4s ease}
 .progress-text{font-size:11px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
-.admin-tools{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
-.admin-tools button{flex:1;padding:7px 8px;border-radius:8px;border:1px solid var(--line);
-  background:transparent;color:var(--text);font-family:inherit;font-size:11.5px;font-weight:700;
-  cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:4px}
-.admin-tools button:hover{border-color:var(--admin);color:var(--admin);background:var(--admin-bg)}
-.admin-tools button.del:hover{border-color:#e05252;color:#e05252;background:rgba(224,82,82,.08)}
 .add-card{border:2px dashed var(--line);border-radius:16px;aspect-ratio:3/4;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
   cursor:pointer;color:var(--muted);transition:.18s;background:transparent;
@@ -235,13 +227,11 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .modal-panel .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.4}
 .field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .field label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.3px}
-.field input,.field textarea{width:100%;padding:10px 12px;border-radius:10px;
+.field textarea{width:100%;padding:10px 12px;border-radius:10px;
   border:1.5px solid var(--line);background:var(--bg);color:var(--text);
   font-family:inherit;font-size:14px;outline:none;transition:.15s}
-.field input:focus,.field textarea:focus{border-color:var(--accent);background:var(--panel)}
+.field textarea:focus{border-color:var(--accent);background:var(--panel)}
 .field textarea{resize:vertical;min-height:60px}
-.field .help{font-size:11px;color:var(--muted);line-height:1.4;margin-top:2px}
-.field.pwd input{letter-spacing:3px;text-align:center;font-size:20px;font-weight:800}
 .modal-actions{display:flex;gap:8px;margin-top:18px}
 .modal-actions .btn{flex:1;justify-content:center}
 #screenReader{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;padding-bottom:0 !important;padding-top:0}
@@ -421,14 +411,14 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 <section class="screen active" id="screenHome">
   <div class="hero">
     <h1>Книги</h1>
-    <p>Рекомендуемые учебники от администратора, ваша библиотека и закладки.</p>
+    <p>Рекомендуемые учебники, ваша библиотека и закладки.</p>
   </div>
   <div class="tiles">
     <button class="tile" data-target="rec">
       <div class="tile-icon">⭐</div>
       <div class="tile-info">
         <div class="tile-title">Рекомендуемые книги</div>
-        <div class="tile-desc">Подобраны администратором</div>
+        <div class="tile-desc">Подобраны для вас</div>
       </div>
       <div class="tile-count" id="tileRecCount">0</div>
     </button>
@@ -457,7 +447,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
     <p>Скачайте PDF — приложение распознает его автоматически и добавит в «Мои книги».</p>
   </div>
   <div class="grid-toolbar">
-    <button class="btn admin" id="btnAddRec" style="display:none">＋ Добавить</button>
     <div class="spacer"></div>
     <span class="count-pill" id="recCount">0</span>
   </div>
@@ -498,12 +487,10 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
     </div>
     <div class="spacer"></div>
     <button class="icon-btn" id="btnBookmark" title="Закладка">🔖</button>
-    <button class="icon-btn" id="btnSpeak" title="Читать вслух">🔊</button>
     <button class="icon-btn" id="btnGrid" title="Сетка страниц">⊞</button>
     <button class="icon-btn" id="zoomOut" title="Уменьшить">−</button>
     <button class="icon-btn" id="zoomFit" title="По размеру">⛶</button>
     <button class="icon-btn" id="zoomIn" title="Увеличить">＋</button>
-    <button class="icon-btn" id="btnDownload" title="Скачать PDF">⬇</button>
   </div>
   <div class="stage" id="stage">
     <div id="pageWrap">
@@ -528,45 +515,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
     <button class="icon-btn" id="nextBtn" title="Вперёд">›</button>
   </div>
 </section>
-
-<div class="modal" id="adminLoginModal">
-  <div class="modal-panel">
-    <h3>Вход администратора</h3>
-    <div class="sub">Введите пароль, чтобы редактировать рекомендуемые книги.</div>
-    <div class="field pwd">
-      <label for="adminPwd">Пароль</label>
-      <input type="password" id="adminPwd" inputmode="numeric" autocomplete="off" placeholder="•••">
-    </div>
-    <div class="modal-actions">
-      <button class="btn ghost" id="adminCancel">Отмена</button>
-      <button class="btn admin" id="adminLogin">Войти</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="recEditModal">
-  <div class="modal-panel">
-    <h3 id="recEditTitle">Новая рекомендованная книга</h3>
-    <div class="sub">Название, класс и ссылка — больше ничего не нужно. Автор подтянется автоматически из PDF.</div>
-    <div class="field">
-      <label for="recName">Название *</label>
-      <input id="recName" placeholder="Например, Обществознание">
-    </div>
-    <div class="field">
-      <label for="recClass">Класс</label>
-      <input id="recClass" placeholder="Например, 11 класс">
-    </div>
-    <div class="field">
-      <label for="recUrl">Ссылка на скачивание *</label>
-      <input id="recUrl" placeholder="https://..." inputmode="url">
-      <div class="help">Если сайт разрешит — приложение скачает PDF автоматически.</div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn ghost" id="recCancel">Отмена</button>
-      <button class="btn admin" id="recSave">Сохранить</button>
-    </div>
-  </div>
-</div>
 
 <div class="modal" id="bookmarkModal">
   <div class="modal-panel">
@@ -655,11 +603,7 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
     <div class="settings-title">Данные</div>
     <button class="btn ghost" id="btnExport" style="width:100%;justify-content:center">💾 Экспорт настроек и закладок</button>
     <button class="btn ghost" id="btnImport" style="width:100%;justify-content:center;margin-top:8px">📥 Импорт из файла</button>
-    <div class="settings-hint">Экспортируется JSON: настройки, темы, закладки.</div>
-  </div>
-  <div class="settings-section">
-    <div class="settings-title">Администратор</div>
-    <div id="adminArea"></div>
+    <div class="settings-hint">Экспортируется JSON: настройки и закладки.</div>
   </div>
 </div>
 
@@ -716,7 +660,6 @@ const settings={
   fun:localStorage.getItem('lib-fun')!=='0',
   sounds:localStorage.getItem('lib-sounds')==='1'
 };
-let isAdmin=localStorage.getItem('lib-admin')==='1';
 function saveSettings(){
   localStorage.setItem('lib-theme',settings.themeIdx);
   localStorage.setItem('lib-accent',settings.accentIdx);
@@ -725,7 +668,6 @@ function saveSettings(){
   localStorage.setItem('lib-sort',settings.sort);
   localStorage.setItem('lib-fun',settings.fun?'1':'0');
   localStorage.setItem('lib-sounds',settings.sounds?'1':'0');
-  localStorage.setItem('lib-admin',isAdmin?'1':'0');
 }
 function applyTheme(){
   document.documentElement.dataset.theme=THEMES[settings.themeIdx];
@@ -802,39 +744,7 @@ function getBookmarkNote(bookId,page){
   const f=arr.find(b=>b.page===page);return f?f.note:'';
 }
 
-/* ===== ADMIN ===== */
-const adminArea=document.getElementById('adminArea');
-const adminLoginModal=document.getElementById('adminLoginModal');
-const adminPwdInput=document.getElementById('adminPwd');
-function renderAdminArea(){
-  if(isAdmin){
-    adminArea.innerHTML=`<div class="admin-status"><span class="dot"></span><span>Режим админа включён</span></div>
-      <button class="btn danger" id="adminLogout" style="width:100%;justify-content:center">Выйти</button>`;
-    document.getElementById('adminLogout').onclick=()=>{isAdmin=false;saveSettings();renderAdminArea();applyAdminMode();renderAll();toast('Вы вышли')};
-  }else{
-    adminArea.innerHTML=`<button class="btn admin" id="adminLoginBtn" style="width:100%;justify-content:center">🔐 Войти как администратор</button>
-      <div class="settings-hint" style="margin-top:8px">Только админ редактирует рекомендации.</div>`;
-    document.getElementById('adminLoginBtn').onclick=()=>{closeSettings();adminLoginModal.classList.add('open');adminPwdInput.value='';setTimeout(()=>adminPwdInput.focus(),100)};
-  }
-}
-document.getElementById('adminCancel').onclick=()=>adminLoginModal.classList.remove('open');
-adminLoginModal.addEventListener('click',e=>{if(e.target===adminLoginModal)adminLoginModal.classList.remove('open')});
-document.getElementById('adminLogin').onclick=tryAdminLogin;
-adminPwdInput.addEventListener('keydown',e=>{if(e.key==='Enter')tryAdminLogin()});
-function tryAdminLogin(){
-  if(adminPwdInput.value.trim()==='565'){
-    isAdmin=true;saveSettings();adminLoginModal.classList.remove('open');
-    renderAdminArea();applyAdminMode();renderAll();
-    toast('Добро пожаловать, администратор 👑',2800);
-  }else{
-    adminPwdInput.value='';adminPwdInput.focus();toast('Неверный пароль',1800);
-    const panel=adminLoginModal.querySelector('.modal-panel');
-    panel.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:320});
-  }
-}
-function applyAdminMode(){document.getElementById('btnAddRec').style.display=isAdmin?'inline-flex':'none'}
-
-/* ===== AUTO-KEYWORDS + AUTO-THEME ===== */
+/* ===== AUTO-KEYWORDS / AUTO-THEME ===== */
 const STOPWORDS=['класс','учебник','язык','книга','pdf','год','часть','том',
   'базовый','углублённый','уровень','уровни'];
 const TRANSLIT_MAP={
@@ -855,7 +765,6 @@ function autoKeywords(name,className){
   const out=new Set();
   const use=words.slice(0,3);
   if(!use.length){
-    // fallback — просто первое слово в исходном имени
     const w=String(name||'').toLowerCase().replace(/[^a-zа-яё0-9]/gi,'');
     if(w) out.add(w);
   }
@@ -866,36 +775,98 @@ function autoKeywords(name,className){
   }
   return [...out];
 }
-function autoTheme(name){
-  const s=String(name).toLowerCase();
-  if(/физик|physics/.test(s))return 'phys';
-  if(/англ|english|spotlight|starlight|rainbow/.test(s))return 'eng';
-  if(/общ|obschest|social|society/.test(s))return 'soc';
-  let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;
-  const themes=['soc','phys','eng','admin'];
-  return themes[Math.abs(h)%themes.length];
-}
 
-/* ===== RECOMMENDED ===== */
-const REC_STORAGE='lib-recommended-v1';
-const DEFAULT_RECS=[
-  {id:'rec_soc11',name:'Обществознание. 11 класс',author:'Л. Н. Боголюбов (ред.)',className:'11 класс',
-   url:'https://share.google/sOP0fqwrPDpHAj9sj',
-   matchAny:['obschestvoznanie','обществознание','bogolyubov','боголюбов'],theme:'soc',addedAt:0},
-  {id:'rec_phys11',name:'Физика. 11 класс',author:'Г. Я. Мякишев, Б. Б. Буховцев, В. М. Чаругин',className:'11 класс',
-   url:'https://share.google/P6ARVA8qyMjuyEXWX',
-   matchAny:['физика','мякишев','буховцев','чаругин','myakishev','physics'],theme:'phys',addedAt:0},
-  {id:'rec_eng11',name:'Английский язык. 11 класс',author:'О. В. Афанасьева, Д. Дули, И. В. Михеева, Б. Оби, В. Эванс',className:'11 класс',
-   url:'https://share.google/6WhmHd6M84dPOdGHO',
-   matchAny:['english','английский','spotlight','starlight','rainbow','afanasyeva','афанасьева','mikheeva','михеева','vaulina','ваулина','kuzovlev','кузовлев','evans','эванс','dooley','дули'],
-   theme:'eng',addedAt:0}
+/* ===== РЕКОМЕНДУЕМЫЕ КНИГИ ===== */
+const REC_BOOKS=[
+  {
+    id:'rec_soc11',
+    name:'Обществознание. 11 класс',
+    className:'11 класс',
+    author:'Л. Н. Боголюбов (ред.)',
+    url:'https://share.google/sOP0fqwrPDpHAj9sj',
+    matchAny:['obschestvoznanie','обществознание','bogolyubov','боголюбов'],
+    theme:'soc'
+  },
+  {
+    id:'rec_phys11',
+    name:'Физика. 11 класс',
+    className:'11 класс',
+    author:'Г. Я. Мякишев, Б. Б. Буховцев, В. М. Чаругин',
+    url:'https://share.google/P6ARVA8qyMjuyEXWX',
+    matchAny:['физика','мякишев','буховцев','чаругин','myakishev','physics'],
+    theme:'phys'
+  },
+  {
+    id:'rec_eng11',
+    name:'Английский язык. 11 класс (Spotlight)',
+    className:'11 класс',
+    author:'О. В. Афанасьева, Д. Дули, И. В. Михеева, Б. Оби, В. Эванс',
+    url:'https://share.google/6WhmHd6M84dPOdGHO',
+    matchAny:['english','английский','spotlight','starlight','rainbow',
+      'afanasyeva','афанасьева','mikheeva','михеева','vaulina','ваулина',
+      'kuzovlev','кузовлев','evans','эванс','dooley','дули'],
+    theme:'eng'
+  },
+  {
+    id:'rec_rus1011',
+    name:'Русский язык. 10-11 класс',
+    className:'10-11 класс',
+    author:'В. Ф. Греков, С. Е. Крючков, Л. А. Чешко',
+    url:'https://share.google/ZBDp5uonlK2UUT2qc',
+    matchAny:['russkiy','русский','grekov','греков','kryuchkov','крючков','cheshko','чешко'],
+    theme:'russian'
+  },
+  {
+    id:'rec_bio11',
+    name:'Биология. 11 класс (базовый)',
+    className:'11 класс',
+    author:'В. В. Пасечник, А. А. Каменский, А. М. Рубцов',
+    url:'https://so.11klasov.net/index.php?do=download&id=26284',
+    matchAny:['биология','biologiya','biology','pasechnik','пасечник','kamensky','каменский','rubtsov','рубцов'],
+    theme:'bio'
+  },
+  {
+    id:'rec_bio11_prof',
+    name:'Биология. 11 класс (углублённый)',
+    className:'11 класс',
+    author:'В. В. Пасечник, А. А. Каменский, А. М. Рубцов',
+    url:'https://so.11klasov.net/index.php?do=download&id=26328',
+    matchAny:['биология углубленный','биология профиль','biologiya uglublenny','biology advanced'],
+    theme:'bio-pro'
+  },
+  {
+    id:'rec_geo11',
+    name:'География. 11 класс (Полярная звезда)',
+    className:'11 класс',
+    author:'Ю. Н. Гладкий, В. В. Николина',
+    url:'https://share.google/1F6fIuFWkL5AhfSlA',
+    matchAny:['география','geografiya','geography','gladkiy','гладкий','nikolina','николина','polyarnaya','полярная'],
+    theme:'geo'
+  }
 ];
-function getRecommended(){try{const r=localStorage.getItem(REC_STORAGE);if(!r){localStorage.setItem(REC_STORAGE,JSON.stringify(DEFAULT_RECS));return[...DEFAULT_RECS]}const a=JSON.parse(r);return Array.isArray(a)?a:[...DEFAULT_RECS]}catch(e){return[...DEFAULT_RECS]}}
-function saveRecommended(l){localStorage.setItem(REC_STORAGE,JSON.stringify(l))}
+
 function normMatch(s){return String(s||'').toLowerCase().replace(/\.pdf$/i,'').replace(/[^a-zа-яё0-9]+/gi,'')}
-function findMatchingSaved(books,rec){const terms=(rec.matchAny||[]).map(normMatch).filter(Boolean);if(!terms.length)return null;
-  for(const b of books){const n=normMatch(b.name);if(terms.some(t=>n.includes(t)))return b}return null}
-function phClass(rec){if(rec.theme==='phys')return'physics';if(rec.theme==='eng')return'english';if(rec.theme==='admin')return'admin';return''}
+function findMatchingSaved(books,rec){
+  const terms=(rec.matchAny||[]).map(normMatch).filter(Boolean);
+  if(!terms.length)return null;
+  for(const b of books){
+    const n=normMatch(b.name);
+    if(terms.some(t=>n.includes(t)))return b;
+  }
+  return null;
+}
+function phClass(rec){
+  const map={
+    soc:'soc',
+    phys:'physics',
+    eng:'english',
+    russian:'russian',
+    bio:'bio',
+    'bio-pro':'bio-pro',
+    geo:'geo'
+  };
+  return map[rec.theme] || 'rec';
+}
 
 /* ===== PWA ===== */
 let deferredPrompt=null;const btnInstall=document.getElementById('btnInstall');
@@ -930,7 +901,7 @@ function updateHeader(){
   const b=document.getElementById('btnBack');const t=document.getElementById('brandTitle');const s=document.getElementById('brandSub');
   const map={
     home:['Книги','читайте и листайте учебники'],
-    rec:['Рекомендуемые','подобрано администратором'],
+    rec:['Рекомендуемые','подобраны для вас'],
     mine:['Мои книги','личная библиотека'],
     bookmarks:['Закладки','сохранённые страницы'],
     search:['Поиск','по названию и автору'],
@@ -975,7 +946,6 @@ document.getElementById('btnExport').onclick=()=>{
       theme:settings.themeIdx,accent:settings.accentIdx,skipFirst:settings.skipFirst,
       twoPage:settings.twoPage,sort:settings.sort,fun:settings.fun,sounds:settings.sounds
     },
-    recommended:getRecommended(),
     bookmarks:getBookmarks()
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
@@ -1002,7 +972,6 @@ document.getElementById('importInput').onchange=async e=>{
       settings.fun=d.settings.fun!==false;
       settings.sounds=!!d.settings.sounds;
     }
-    if(d.recommended)saveRecommended(d.recommended);
     if(d.bookmarks)saveBookmarks(d.bookmarks);
     saveSettings();
     applyTheme();applyAccent();syncSortUI();syncSkipFirstUI();syncTwoPageUI();syncFunUI();syncSoundsUI();
@@ -1022,29 +991,29 @@ const PRESET_SVG=`<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" 
 </svg>`;
 
 async function renderAll(){
-  const recs=getRecommended();
   const books=await dbGetAll();
-  renderHome(recs,books);
-  renderRecScreen(recs,books);
+  renderHome(books);
+  renderRecScreen(books);
   renderMineScreen(books);
   renderBookmarksScreen(books);
 }
-function renderHome(recs,books){
-  document.getElementById('tileRecCount').textContent=recs.length;
+function renderHome(books){
+  document.getElementById('tileRecCount').textContent=REC_BOOKS.length;
   document.getElementById('tileMineCount').textContent=books.length;
   document.getElementById('tileBmCount').textContent=getAllBookmarksFlat().length;
 }
 
 const gridRec=document.getElementById('gridRec');
 const recCountEl=document.getElementById('recCount');
-function renderRecScreen(recs,books){
+function renderRecScreen(books){
   gridRec.innerHTML='';
-  recCountEl.textContent=recs.length;
-  const sorted=[...recs];
+  recCountEl.textContent=REC_BOOKS.length;
+  const sorted=[...REC_BOOKS];
   if(settings.sort==='alpha')sorted.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru',{sensitivity:'base'}));
-  else sorted.sort((a,b)=>(b.addedAt||0)-(a.addedAt||0));
-  if(!sorted.length){gridRec.innerHTML=`<div class="section-empty">Пока нет рекомендуемых книг.<br>${isAdmin?'Нажмите «＋ Добавить».':'Загляните позже.'}</div>`;return}
-  for(const rec of sorted){const m=findMatchingSaved(books,rec);renderRecCard(rec,m)}
+  for(const rec of sorted){
+    const m=findMatchingSaved(books,rec);
+    renderRecCard(rec,m);
+  }
 }
 function renderRecCard(rec,matched){
   const card=document.createElement('div');
@@ -1052,28 +1021,24 @@ function renderRecCard(rec,matched){
   const ph=phClass(rec);
   const cover=matched&&matched.thumb?`<img src="${matched.thumb}" alt="">`:`<div class="placeholder-cover ${ph}">${PRESET_SVG}</div>`;
   const badge=matched?`<div class="badge ok">✓ В БИБЛИОТЕКЕ</div>`:`<div class="badge rec">РЕКОМЕНДУЕМ</div>`;
-  // Автор: из PDF, если книга уже скачана; иначе из записи рекомендации (для старых записей)
   const authorLine=(matched&&matched.author)||rec.author||'';
   const meta=[authorLine,rec.className].filter(Boolean).join(' · ');
-  const hint=matched?`<div class="hint ok">✓ Учебник уже в «Моих книгах»</div>`:`<div class="hint rec">Скачайте PDF и добавьте в «Мои книги».</div>`;
+  const hint=matched
+    ?`<div class="hint ok">✓ Учебник уже в «Моих книгах»</div>`
+    :`<div class="hint rec">Скачайте PDF и добавьте в «Мои книги».</div>`;
   const actions=matched
     ?`<button class="btn ok" data-act="open">Читать</button><button class="icon-btn" data-act="info" title="Ссылка">🔗</button>`
     :`<button class="btn" data-act="download">Скачать</button><button class="icon-btn" data-act="info" title="Ссылка">🔗</button>`;
-  const adminTools=isAdmin?`<div class="admin-tools"><button data-act="edit">✎ Изменить</button><button class="del" data-act="del">🗑 Удалить</button></div>`:'';
   card.innerHTML=`
-    <div class="cover" data-cover><div class="spine ${matched?'ok':'admin'}"></div>${cover}${badge}
+    <div class="cover" data-cover><div class="spine ${matched?'ok':'rec'}"></div>${cover}${badge}
       <div class="overlay">${matched?'Читать →':'Скачать →'}</div></div>
     <div class="card-body"><h3>${esc(rec.name)}</h3>
       <div class="meta">${esc(meta)}</div>${hint}
-      <div class="card-actions">${actions}</div>${adminTools}</div>`;
+      <div class="card-actions">${actions}</div></div>`;
   card.querySelector('[data-cover]').onclick=()=>{matched?openBook(matched.id):downloadRec(rec)};
   const op=card.querySelector('[data-act="open"]');if(op)op.onclick=()=>openBook(matched.id);
   const dl=card.querySelector('[data-act="download"]');if(dl)dl.onclick=()=>downloadRec(rec);
   card.querySelector('[data-act="info"]').onclick=()=>window.open(rec.url,'_blank');
-  if(isAdmin){
-    card.querySelector('[data-act="edit"]').onclick=()=>openRecEditor(rec);
-    card.querySelector('[data-act="del"]').onclick=()=>{if(!confirm('Удалить «'+rec.name+'»?'))return;saveRecommended(getRecommended().filter(r=>r.id!==rec.id));renderAll();toast('Удалено')};
-  }
   gridRec.appendChild(card);
 }
 
@@ -1167,53 +1132,6 @@ async function renderBookmarksScreen(books){
   }
 }
 
-/* ===== REC EDITOR ===== */
-const recEditModal=document.getElementById('recEditModal');
-const recEditTitle=document.getElementById('recEditTitle');
-let editingRecId=null;
-function openRecEditor(rec=null){
-  if(!isAdmin)return;
-  editingRecId=rec?rec.id:null;
-  recEditTitle.textContent=rec?'Изменить рекомендованную книгу':'Новая рекомендованная книга';
-  document.getElementById('recName').value=rec?.name||'';
-  document.getElementById('recClass').value=rec?.className||'';
-  document.getElementById('recUrl').value=rec?.url||'';
-  recEditModal.classList.add('open');
-  setTimeout(()=>document.getElementById('recName').focus(),100);
-}
-document.getElementById('recCancel').onclick=()=>recEditModal.classList.remove('open');
-recEditModal.addEventListener('click',e=>{if(e.target===recEditModal)recEditModal.classList.remove('open')});
-document.getElementById('recSave').onclick=()=>{
-  const name=document.getElementById('recName').value.trim();
-  const url=document.getElementById('recUrl').value.trim();
-  if(!name){toast('Нужно название');return}
-  if(!url){toast('Нужна ссылка');return}
-  const className=document.getElementById('recClass').value.trim();
-  const list=getRecommended();
-  if(editingRecId){
-    const i=list.findIndex(r=>r.id===editingRecId);
-    if(i>=0){
-      const old=list[i];
-      const newKw=autoKeywords(name,className);
-      const mergedKw=[...new Set([...(old.matchAny||[]),...newKw])];
-      list[i]={...old,name,className,url,matchAny:mergedKw,theme:autoTheme(name)};
-    }
-  }else{
-    list.push({
-      id:'rec_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
-      name,className,url,
-      matchAny:autoKeywords(name,className),
-      theme:autoTheme(name),
-      addedAt:Date.now()
-    });
-  }
-  saveRecommended(list);
-  recEditModal.classList.remove('open');
-  renderAll();
-  toast(editingRecId?'Изменения сохранены':'Книга добавлена');
-};
-document.getElementById('btnAddRec').addEventListener('click',()=>openRecEditor(null));
-
 /* ===== DOWNLOAD REC ===== */
 async function downloadRec(rec){
   toast('Пытаюсь скачать…',4000);
@@ -1245,12 +1163,10 @@ async function saveAbAsBook(ab,name){
   await page.render({canvasContext:ctx,viewport:vp}).promise;
   const thumb=c.toDataURL('image/jpeg',0.78);
 
-  // Автоизвлечение автора из метаданных PDF
   let author='';
   try{
     const meta=await pdf.getMetadata();
     author=(meta?.info?.Author||'').trim();
-    // Если в метаданных мусор длиной > 200 символов — игнорируем
     if(author.length>200)author='';
   }catch(e){}
 
@@ -1277,8 +1193,7 @@ async function addFile(file){
     const clean=file.name.replace(/\.pdf$/i,'');
     await saveAbAsBook(data,clean);
     sndAdd();
-    const recs=getRecommended();
-    const match=recs.find(r=>{const t=(r.matchAny||[]).map(normMatch);const n=normMatch(clean);return t.some(x=>n.includes(x))});
+    const match=REC_BOOKS.find(r=>{const t=(r.matchAny||[]).map(normMatch);const n=normMatch(clean);return t.some(x=>n.includes(x))});
     if(match)toast('«'+match.name+'» добавлена ✅',3200);
     else toast('Книга добавлена: '+clean);
     renderAll();showScreen('mine');
@@ -1316,13 +1231,12 @@ document.getElementById('searchInput').addEventListener('input',async e=>{
   const grid=document.getElementById('gridSearch');
   if(!q){grid.innerHTML='';return}
   const books=await dbGetAll();
-  const recs=getRecommended();
   const items=[];
   for(const b of books){
     const hay=((b.name||'')+' '+(b.author||'')).toLowerCase();
     if(hay.includes(q))items.push({kind:'book',b});
   }
-  for(const r of recs){
+  for(const r of REC_BOOKS){
     const hay=[r.name,r.author,r.className].filter(Boolean).join(' ').toLowerCase();
     if(hay.includes(q)){
       const matched=findMatchingSaved(books,r);
@@ -1348,7 +1262,7 @@ document.getElementById('searchInput').addEventListener('input',async e=>{
       const r=it.r;const m=it.matched;const card=document.createElement('div');
       card.className='card rec'+(m?' matched':'');
       card.innerHTML=`
-        <div class="cover"><div class="spine ${m?'ok':'admin'}"></div>
+        <div class="cover"><div class="spine ${m?'ok':'rec'}"></div>
           ${m&&m.thumb?`<img src="${m.thumb}" alt="">`:`<div class="placeholder-cover ${phClass(r)}">${PRESET_SVG}</div>`}
           <div class="badge rec">РЕКОМЕНДУЕМ</div>
           <div class="overlay">${m?'Читать →':'Скачать →'}</div></div>
@@ -1360,27 +1274,6 @@ document.getElementById('searchInput').addEventListener('input',async e=>{
       grid.appendChild(card);
     }
   }
-});
-
-/* ===== TTS ===== */
-let ttsActive=false;
-document.getElementById('btnSpeak').addEventListener('click',async ()=>{
-  if(!state.pdf)return;
-  if(ttsActive){window.speechSynthesis.cancel();ttsActive=false;document.getElementById('btnSpeak').classList.remove('on');return}
-  try{
-    document.getElementById('btnSpeak').classList.add('on');
-    ttsActive=true;
-    const page=await state.pdf.getPage(state.page);
-    const tc=await page.getTextContent();
-    const text=tc.items.map(it=>it.str).join(' ');
-    if(!text.trim()){toast('На этой странице нет текста');ttsActive=false;document.getElementById('btnSpeak').classList.remove('on');return}
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang='ru-RU';u.rate=1.0;
-    u.onend=()=>{ttsActive=false;document.getElementById('btnSpeak').classList.remove('on')};
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-    toast('Читаю страницу вслух 🔊',2000);
-  }catch(err){console.error(err);toast('Не удалось прочитать');ttsActive=false;document.getElementById('btnSpeak').classList.remove('on')}
 });
 
 /* ===== FX: FIREWORKS ===== */
@@ -1485,37 +1378,24 @@ async function openBook(id){
   document.getElementById('rTitle').textContent=b.name;
   document.querySelector('header').style.display='none';
   showScreen('reader');
-  // Push history state, чтобы системная "назад" закрывала читалку
-  try{
-    if(!history.state || !history.state.reader){
-      history.pushState({reader:true,bookId:id},'');
-    }
-  }catch(e){}
   requestAnimationFrame(()=>requestAnimationFrame(()=>renderPage()));
 }
 async function openBookAt(id,page){
   await openBook(id);
   if(state.pdf){state.page=Math.min(Math.max(page,realMin()),state.pdf.numPages);await renderPage()}
 }
-function closeReader(fromPopstate){
-  // Если закрываем через кнопку, но в истории есть наш маркер — идём через history.back()
-  if(!fromPopstate && history.state && history.state.reader){
-    try{history.back();return}catch(e){}
+function closeReader(){
+  if(state.book&&state.page){
+    dbGet(state.book.id).then(b=>{if(b){b.lastPage=state.page;dbPut(b)}});
   }
-  if(state.book&&state.page){dbGet(state.book.id).then(b=>{if(b){b.lastPage=state.page;dbPut(b)}})}
-  window.speechSynthesis.cancel();ttsActive=false;document.getElementById('btnSpeak').classList.remove('on');
-  closeThumbs();sndClose();
+  closeThumbs();
+  sndClose();
   state.pdf=null;state.book=null;state.thumbCache={};state.shown={};
   document.querySelector('header').style.display='flex';
   showScreen(lastScreenBeforeReader||'mine');
   renderAll();
 }
-document.getElementById('btnBackReader').onclick=()=>closeReader();
-
-// Системная кнопка "назад" (Android) и Escape — закрывают читалку
-window.addEventListener('popstate',()=>{
-  if(currentScreen==='reader') closeReader(true);
-});
+document.getElementById('btnBackReader').onclick=closeReader;
 
 async function renderPage(){
   if(!state.pdf)return;
@@ -1614,8 +1494,8 @@ els.pageInput.onchange=e=>{let v=+e.target.value.replace(/\D/g,'');if(!v){e.targ
 els.pageInput.onkeydown=e=>{if(e.key==='Enter')e.target.blur()};
 
 document.addEventListener('keydown',e=>{
-  if(adminLoginModal.classList.contains('open')||recEditModal.classList.contains('open')||bookmarkModal.classList.contains('open')){
-    if(e.key==='Escape'){adminLoginModal.classList.remove('open');recEditModal.classList.remove('open');bookmarkModal.classList.remove('open')}
+  if(bookmarkModal.classList.contains('open')){
+    if(e.key==='Escape')bookmarkModal.classList.remove('open');
     return;
   }
   if(settingsPop.classList.contains('open')){if(e.key==='Escape')closeSettings();return}
@@ -1645,7 +1525,6 @@ function zoomReset(){state.manualScale=null;state.lastScale=1;state.fit='page';r
 document.getElementById('zoomIn').onclick=()=>zoom(1.2);
 document.getElementById('zoomOut').onclick=()=>zoom(1/1.2);
 document.getElementById('zoomFit').onclick=zoomReset;
-document.getElementById('btnDownload').onclick=()=>{if(state.book)downloadBook(state.book.id)};
 
 let resizeT;window.addEventListener('resize',()=>{if(currentScreen!=='reader')return;clearTimeout(resizeT);resizeT=setTimeout(()=>{state.manualScale=null;state.lastScale=1;renderPage()},140)});
 
@@ -1755,7 +1634,6 @@ goToPage=async function(realN,direction){
 /* ===== BOOT ===== */
 applyTheme();applyAccent();renderAccentPalette();
 syncSortUI();syncSkipFirstUI();syncTwoPageUI();syncFunUI();syncSoundsUI();
-renderAdminArea();applyAdminMode();
 renderAll();
 showScreen('home');
 
