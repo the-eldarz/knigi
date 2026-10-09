@@ -41,7 +41,6 @@ html[data-theme="academy"] body{font-family:var(--serif)}
 html,body{height:100%;overscroll-behavior:none}
 body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);
   transition:background .25s,color .25s;overflow:hidden}
-
 header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0 16px;
   padding-top:env(safe-area-inset-top);background:var(--panel);border-bottom:1px solid var(--line);
   position:fixed;top:0;left:0;right:0;z-index:30}
@@ -74,7 +73,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .icon-btn:active{transform:scale(.94)}
 .icon-btn:disabled{opacity:.35;cursor:not-allowed}
 .icon-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
-
 .settings-backdrop{position:fixed;inset:0;z-index:40;display:none;background:rgba(0,0,0,.15)}
 .settings-backdrop.open{display:block}
 .settings-popover{position:fixed;top:calc(var(--header-h) + env(safe-area-inset-top) + 8px);
@@ -123,14 +121,12 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .admin-status .dot{width:8px;height:8px;border-radius:50%;background:var(--admin);
   box-shadow:0 0 10px var(--admin);animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.5;transform:scale(.8)}}
-
 .screen{position:fixed;top:var(--header-h);left:0;right:0;bottom:0;display:none;
   overflow:auto;padding-bottom:env(safe-area-inset-bottom)}
 .screen.active{display:block}
 .hero{max-width:820px;margin:0 auto;padding:28px 22px 10px}
 .hero h1{font-size:clamp(24px,3.4vw,32px);margin:0 0 6px;letter-spacing:-.7px}
 .hero p{margin:0;color:var(--muted);font-size:14px;max-width:640px;line-height:1.5}
-
 .tiles{max-width:820px;margin:0 auto;padding:10px 22px 60px;display:flex;flex-direction:column;gap:16px}
 .tile{display:flex;align-items:center;gap:20px;padding:24px;border-radius:20px;border:none;
   cursor:pointer;font-family:inherit;color:#fff;text-align:left;position:relative;
@@ -153,14 +149,12 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
   background:rgba(255,255,255,.18);backdrop-filter:blur(6px);
   border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:10px 16px;
   font-variant-numeric:tabular-nums;position:relative;z-index:1;min-width:60px;text-align:center}
-
 .grid-toolbar{max-width:820px;margin:0 auto;padding:0 22px 14px;display:flex;align-items:center;gap:10px}
 .count-pill{font-size:12px;font-weight:700;color:var(--muted);background:var(--panel);
   padding:6px 12px;border-radius:9px;border:1px solid var(--line);font-variant-numeric:tabular-nums}
 .search-input{flex:1;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);
   background:var(--panel);color:var(--text);font-family:inherit;font-size:14px;outline:none;min-width:0}
 .search-input:focus{border-color:var(--accent)}
-
 .grid{max-width:820px;margin:0 auto;padding:0 22px 60px;display:grid;gap:18px;
   grid-template-columns:repeat(2,minmax(0,1fr))}
 .card{background:var(--panel);border-radius:16px;overflow:hidden;border:1px solid var(--line);
@@ -228,7 +222,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
   color:var(--muted);border:2px dashed var(--line);border-radius:16px;
   font-size:13.5px;line-height:1.55;grid-column:1/-1}
 .section-empty b{color:var(--text)}
-
 .modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.55);
   backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:16px;
   animation:fadeIn .18s ease}
@@ -249,19 +242,10 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .field textarea{resize:vertical;min-height:60px}
 .field .help{font-size:11px;color:var(--muted);line-height:1.4;margin-top:2px}
 .field.pwd input{letter-spacing:3px;text-align:center;font-size:20px;font-weight:800}
-.theme-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.theme-pick{aspect-ratio:1;border-radius:10px;border:2px solid transparent;cursor:pointer;transition:.15s}
-.theme-pick:hover{transform:scale(1.05)}
-.theme-pick.active{border-color:var(--text);box-shadow:0 0 0 2px var(--panel)}
-.theme-pick[data-th="soc"]{background:linear-gradient(135deg,#12b8a8,#0b6e66)}
-.theme-pick[data-th="phys"]{background:linear-gradient(135deg,#3b82c4,#1e4f78)}
-.theme-pick[data-th="eng"]{background:linear-gradient(135deg,#c94d4d,#7a2626)}
-.theme-pick[data-th="admin"]{background:linear-gradient(135deg,var(--admin),var(--admin-2))}
 .modal-actions{display:flex;gap:8px;margin-top:18px}
 .modal-actions .btn{flex:1;justify-content:center}
-
-#reader{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;padding-bottom:0 !important}
-#reader.active{display:flex;flex-direction:column;overflow:hidden}
+#screenReader{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;padding-bottom:0 !important;padding-top:0}
+#screenReader.active{display:flex;flex-direction:column;overflow:hidden}
 .rbar{display:flex;align-items:center;gap:9px;padding:9px 14px;flex:0 0 auto;
   padding-top:calc(9px + env(safe-area-inset-top));
   background:var(--panel);border-bottom:1px solid var(--line);z-index:10}
@@ -319,7 +303,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .spinner{width:38px;height:38px;border:3px solid rgba(255,255,255,.25);
   border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .thumbs-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55);
   backdrop-filter:blur(4px);display:none;flex-direction:column;animation:fadeIn .18s ease}
 .thumbs-modal.open{display:flex}
@@ -353,14 +336,12 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
   font-weight:800;padding:3px 6px;border-radius:5px;letter-spacing:.4px;z-index:2}
 .thumb .thumb-cover-tag{left:6px;background:rgba(214,139,26,.92);color:#fff}
 .thumb .thumb-bm-tag{right:6px;background:#f59e0b;color:#fff}
-
 .toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;
   transform:translateX(-50%) translateY(90px);background:var(--text);color:var(--panel);
   padding:12px 20px;border-radius:11px;font-size:13.5px;font-weight:600;z-index:500;
   opacity:0;transition:.3s;box-shadow:0 10px 30px rgba(0,0,0,.28);
   pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
 #fxCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none}
 .fx-overlay{position:fixed;inset:0;z-index:9997;display:none;align-items:center;justify-content:center;
   pointer-events:none;background:radial-gradient(circle at center,rgba(15,155,142,.4),rgba(0,0,0,.6));
@@ -383,7 +364,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 .cat-run{position:fixed;bottom:30px;font-size:60px;z-index:9997;pointer-events:none;
   animation:catRun 3s linear forwards}
 @keyframes catRun{0%{left:-80px}100%{left:100vw}}
-
 .drop-overlay{position:fixed;inset:0;background:rgba(15,155,142,.14);backdrop-filter:blur(6px);
   z-index:200;display:none;align-items:center;justify-content:center;pointer-events:none}
 .drop-overlay.on{display:flex}
@@ -391,7 +371,6 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
   background:var(--panel);color:var(--accent);font-size:20px;font-weight:800;
   display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:var(--shadow)}
 .drop-overlay .box .ico{font-size:52px}
-
 @media (max-width:720px){
   .brand small{display:none}
   .brand .bt{max-width:130px}
@@ -510,7 +489,7 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
   <div class="grid" id="gridBm"></div>
 </section>
 
-<section class="screen" id="reader">
+<section class="screen" id="screenReader">
   <div class="rbar">
     <button class="icon-btn" id="btnBackReader" title="Закрыть">←</button>
     <div style="min-width:0">
@@ -568,25 +547,20 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 <div class="modal" id="recEditModal">
   <div class="modal-panel">
     <h3 id="recEditTitle">Новая рекомендованная книга</h3>
-    <div class="sub">Заполните поля — книга появится в разделе «Рекомендуемые».</div>
-    <div class="field"><label for="recName">Название *</label>
-      <input id="recName" placeholder="Например, Геометрия. 11 класс"></div>
-    <div class="field"><label for="recAuthor">Автор</label>
-      <input id="recAuthor" placeholder="Например, Л. С. Атанасян"></div>
-    <div class="field"><label for="recClass">Класс</label>
-      <input id="recClass" placeholder="Например, 11 класс"></div>
-    <div class="field"><label for="recUrl">Ссылка на скачивание *</label>
+    <div class="sub">Название, класс и ссылка — больше ничего не нужно. Автор подтянется автоматически из PDF.</div>
+    <div class="field">
+      <label for="recName">Название *</label>
+      <input id="recName" placeholder="Например, Обществознание">
+    </div>
+    <div class="field">
+      <label for="recClass">Класс</label>
+      <input id="recClass" placeholder="Например, 11 класс">
+    </div>
+    <div class="field">
+      <label for="recUrl">Ссылка на скачивание *</label>
       <input id="recUrl" placeholder="https://..." inputmode="url">
-      <div class="help">Если сайт разрешит — приложение скачает PDF автоматически.</div></div>
-    <div class="field"><label for="recKeywords">Ключевые слова (через запятую)</label>
-      <input id="recKeywords" placeholder="геометрия, атанасян"></div>
-    <div class="field"><label>Цвет обложки</label>
-      <div class="theme-picker">
-        <div class="theme-pick" data-th="soc" title="Бирюзовый"></div>
-        <div class="theme-pick" data-th="phys" title="Синий"></div>
-        <div class="theme-pick" data-th="eng" title="Красный"></div>
-        <div class="theme-pick" data-th="admin" title="Фиолетовый"></div>
-      </div></div>
+      <div class="help">Если сайт разрешит — приложение скачает PDF автоматически.</div>
+    </div>
     <div class="modal-actions">
       <button class="btn ghost" id="recCancel">Отмена</button>
       <button class="btn admin" id="recSave">Сохранить</button>
@@ -743,7 +717,6 @@ const settings={
   sounds:localStorage.getItem('lib-sounds')==='1'
 };
 let isAdmin=localStorage.getItem('lib-admin')==='1';
-
 function saveSettings(){
   localStorage.setItem('lib-theme',settings.themeIdx);
   localStorage.setItem('lib-accent',settings.accentIdx);
@@ -860,6 +833,48 @@ function tryAdminLogin(){
   }
 }
 function applyAdminMode(){document.getElementById('btnAddRec').style.display=isAdmin?'inline-flex':'none'}
+
+/* ===== AUTO-KEYWORDS + AUTO-THEME ===== */
+const STOPWORDS=['класс','учебник','язык','книга','pdf','год','часть','том',
+  'базовый','углублённый','уровень','уровни'];
+const TRANSLIT_MAP={
+  'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z',
+  'и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
+  'с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh',
+  'щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
+};
+function translit(s){
+  return String(s).toLowerCase().split('').map(ch=>TRANSLIT_MAP[ch]!==undefined?TRANSLIT_MAP[ch]:ch).join('');
+}
+function autoKeywords(name,className){
+  const all=String(name||'')+' '+(className||'');
+  const words=all.toLowerCase()
+    .replace(/[^a-zа-яё0-9\s]/gi,' ')
+    .split(/\s+/)
+    .filter(w=>w.length>2 && !STOPWORDS.includes(w) && !/^\d+$/.test(w));
+  const out=new Set();
+  const use=words.slice(0,3);
+  if(!use.length){
+    // fallback — просто первое слово в исходном имени
+    const w=String(name||'').toLowerCase().replace(/[^a-zа-яё0-9]/gi,'');
+    if(w) out.add(w);
+  }
+  for(const w of use){
+    out.add(w);
+    const t=translit(w);
+    if(t && t!==w) out.add(t);
+  }
+  return [...out];
+}
+function autoTheme(name){
+  const s=String(name).toLowerCase();
+  if(/физик|physics/.test(s))return 'phys';
+  if(/англ|english|spotlight|starlight|rainbow/.test(s))return 'eng';
+  if(/общ|obschest|social|society/.test(s))return 'soc';
+  let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;
+  const themes=['soc','phys','eng','admin'];
+  return themes[Math.abs(h)%themes.length];
+}
 
 /* ===== RECOMMENDED ===== */
 const REC_STORAGE='lib-recommended-v1';
@@ -1037,7 +1052,9 @@ function renderRecCard(rec,matched){
   const ph=phClass(rec);
   const cover=matched&&matched.thumb?`<img src="${matched.thumb}" alt="">`:`<div class="placeholder-cover ${ph}">${PRESET_SVG}</div>`;
   const badge=matched?`<div class="badge ok">✓ В БИБЛИОТЕКЕ</div>`:`<div class="badge rec">РЕКОМЕНДУЕМ</div>`;
-  const meta=[rec.author,rec.className].filter(Boolean).join(' · ');
+  // Автор: из PDF, если книга уже скачана; иначе из записи рекомендации (для старых записей)
+  const authorLine=(matched&&matched.author)||rec.author||'';
+  const meta=[authorLine,rec.className].filter(Boolean).join(' · ');
   const hint=matched?`<div class="hint ok">✓ Учебник уже в «Моих книгах»</div>`:`<div class="hint rec">Скачайте PDF и добавьте в «Мои книги».</div>`;
   const actions=matched
     ?`<button class="btn ok" data-act="open">Читать</button><button class="icon-btn" data-act="info" title="Ссылка">🔗</button>`
@@ -1083,12 +1100,13 @@ function renderSavedBook(b){
   const progressHtml=cur>1?`
     <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
     <div class="progress-text">стр. ${cur} / ${total} · ${pct}%</div>`:'';
+  const metaLine=[b.author,b.pages+' стр. · '+fmtSize(b.size)].filter(Boolean).join(' · ');
   card.innerHTML=`
     <div class="cover" data-cover><div class="spine"></div>
       ${b.thumb?`<img src="${b.thumb}" alt="">`:''}
       <div class="overlay">Открыть →</div></div>
     <div class="card-body"><h3>${esc(b.name)}</h3>
-      <div class="meta">${b.pages} стр. · ${fmtSize(b.size)}</div>
+      <div class="meta">${esc(metaLine)}</div>
       ${progressHtml}
       <div class="card-actions">
         <button class="btn" data-act="open">Читать</button>
@@ -1152,19 +1170,14 @@ async function renderBookmarksScreen(books){
 /* ===== REC EDITOR ===== */
 const recEditModal=document.getElementById('recEditModal');
 const recEditTitle=document.getElementById('recEditTitle');
-let editingRecId=null;let pickedTheme='soc';
-document.querySelectorAll('.theme-pick').forEach(el=>el.addEventListener('click',()=>{pickedTheme=el.dataset.th;document.querySelectorAll('.theme-pick').forEach(x=>x.classList.toggle('active',x===el))}));
-function syncThemePicker(){document.querySelectorAll('.theme-pick').forEach(el=>el.classList.toggle('active',el.dataset.th===pickedTheme))}
+let editingRecId=null;
 function openRecEditor(rec=null){
   if(!isAdmin)return;
   editingRecId=rec?rec.id:null;
-  recEditTitle.textContent=rec?'Изменить':'Новая рекомендованная книга';
+  recEditTitle.textContent=rec?'Изменить рекомендованную книгу':'Новая рекомендованная книга';
   document.getElementById('recName').value=rec?.name||'';
-  document.getElementById('recAuthor').value=rec?.author||'';
   document.getElementById('recClass').value=rec?.className||'';
   document.getElementById('recUrl').value=rec?.url||'';
-  document.getElementById('recKeywords').value=(rec?.matchAny||[]).join(', ');
-  pickedTheme=rec?.theme||'soc';syncThemePicker();
   recEditModal.classList.add('open');
   setTimeout(()=>document.getElementById('recName').focus(),100);
 }
@@ -1175,17 +1188,28 @@ document.getElementById('recSave').onclick=()=>{
   const url=document.getElementById('recUrl').value.trim();
   if(!name){toast('Нужно название');return}
   if(!url){toast('Нужна ссылка');return}
-  const author=document.getElementById('recAuthor').value.trim();
   const className=document.getElementById('recClass').value.trim();
-  const keywords=document.getElementById('recKeywords').value.split(',').map(s=>s.trim()).filter(Boolean);
   const list=getRecommended();
   if(editingRecId){
     const i=list.findIndex(r=>r.id===editingRecId);
-    if(i>=0)list[i]={...list[i],name,author,className,url,matchAny:keywords,theme:pickedTheme};
+    if(i>=0){
+      const old=list[i];
+      const newKw=autoKeywords(name,className);
+      const mergedKw=[...new Set([...(old.matchAny||[]),...newKw])];
+      list[i]={...old,name,className,url,matchAny:mergedKw,theme:autoTheme(name)};
+    }
   }else{
-    list.push({id:'rec_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name,author,className,url,matchAny:keywords,theme:pickedTheme,addedAt:Date.now()});
+    list.push({
+      id:'rec_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+      name,className,url,
+      matchAny:autoKeywords(name,className),
+      theme:autoTheme(name),
+      addedAt:Date.now()
+    });
   }
-  saveRecommended(list);recEditModal.classList.remove('open');renderAll();
+  saveRecommended(list);
+  recEditModal.classList.remove('open');
+  renderAll();
   toast(editingRecId?'Изменения сохранены':'Книга добавлена');
 };
 document.getElementById('btnAddRec').addEventListener('click',()=>openRecEditor(null));
@@ -1220,8 +1244,26 @@ async function saveAbAsBook(ab,name){
   const ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height);
   await page.render({canvasContext:ctx,viewport:vp}).promise;
   const thumb=c.toDataURL('image/jpeg',0.78);
-  const book={id:'b_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),name,size:ab.byteLength,pages:pdf.numPages,thumb,data:ab,addedAt:Date.now(),lastPage:1};
-  await dbPut(book);return book;
+
+  // Автоизвлечение автора из метаданных PDF
+  let author='';
+  try{
+    const meta=await pdf.getMetadata();
+    author=(meta?.info?.Author||'').trim();
+    // Если в метаданных мусор длиной > 200 символов — игнорируем
+    if(author.length>200)author='';
+  }catch(e){}
+
+  const book={
+    id:'b_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    name,author,
+    size:ab.byteLength,
+    pages:pdf.numPages,
+    thumb,data:ab,
+    addedAt:Date.now(),lastPage:1
+  };
+  await dbPut(book);
+  return book;
 }
 
 /* ===== ADD PDF ===== */
@@ -1277,7 +1319,8 @@ document.getElementById('searchInput').addEventListener('input',async e=>{
   const recs=getRecommended();
   const items=[];
   for(const b of books){
-    if((b.name||'').toLowerCase().includes(q))items.push({kind:'book',b});
+    const hay=((b.name||'')+' '+(b.author||'')).toLowerCase();
+    if(hay.includes(q))items.push({kind:'book',b});
   }
   for(const r of recs){
     const hay=[r.name,r.author,r.className].filter(Boolean).join(' ').toLowerCase();
@@ -1296,7 +1339,7 @@ document.getElementById('searchInput').addEventListener('input',async e=>{
         <div class="cover"><div class="spine"></div>${b.thumb?`<img src="${b.thumb}" alt="">`:''}
           <div class="overlay">Открыть →</div></div>
         <div class="card-body"><h3>${esc(b.name)}</h3>
-          <div class="meta">${b.pages} стр. · ${fmtSize(b.size)}</div>
+          <div class="meta">${esc([b.author,b.pages+' стр.'].filter(Boolean).join(' · '))}</div>
           <div class="card-actions"><button class="btn" data-act="open">Читать</button></div></div>`;
       card.querySelector('[data-act="open"]').onclick=()=>openBook(b.id);
       card.querySelector('.cover').onclick=()=>openBook(b.id);
@@ -1310,7 +1353,7 @@ document.getElementById('searchInput').addEventListener('input',async e=>{
           <div class="badge rec">РЕКОМЕНДУЕМ</div>
           <div class="overlay">${m?'Читать →':'Скачать →'}</div></div>
         <div class="card-body"><h3>${esc(r.name)}</h3>
-          <div class="meta">${esc([r.author,r.className].filter(Boolean).join(' · '))}</div>
+          <div class="meta">${esc([(m&&m.author)||r.author||'',r.className].filter(Boolean).join(' · '))}</div>
           <div class="card-actions">${m?`<button class="btn ok" data-act="open">Читать</button>`:`<button class="btn" data-act="dl">Скачать</button>`}</div></div>`;
       if(m){card.querySelector('[data-act="open"]').onclick=()=>openBook(m.id);card.querySelector('.cover').onclick=()=>openBook(m.id)}
       else{card.querySelector('[data-act="dl"]').onclick=()=>downloadRec(r);card.querySelector('.cover').onclick=()=>downloadRec(r)}
@@ -1442,13 +1485,23 @@ async function openBook(id){
   document.getElementById('rTitle').textContent=b.name;
   document.querySelector('header').style.display='none';
   showScreen('reader');
+  // Push history state, чтобы системная "назад" закрывала читалку
+  try{
+    if(!history.state || !history.state.reader){
+      history.pushState({reader:true,bookId:id},'');
+    }
+  }catch(e){}
   requestAnimationFrame(()=>requestAnimationFrame(()=>renderPage()));
 }
 async function openBookAt(id,page){
   await openBook(id);
   if(state.pdf){state.page=Math.min(Math.max(page,realMin()),state.pdf.numPages);await renderPage()}
 }
-function closeReader(){
+function closeReader(fromPopstate){
+  // Если закрываем через кнопку, но в истории есть наш маркер — идём через history.back()
+  if(!fromPopstate && history.state && history.state.reader){
+    try{history.back();return}catch(e){}
+  }
   if(state.book&&state.page){dbGet(state.book.id).then(b=>{if(b){b.lastPage=state.page;dbPut(b)}})}
   window.speechSynthesis.cancel();ttsActive=false;document.getElementById('btnSpeak').classList.remove('on');
   closeThumbs();sndClose();
@@ -1457,7 +1510,12 @@ function closeReader(){
   showScreen(lastScreenBeforeReader||'mine');
   renderAll();
 }
-document.getElementById('btnBackReader').onclick=closeReader;
+document.getElementById('btnBackReader').onclick=()=>closeReader();
+
+// Системная кнопка "назад" (Android) и Escape — закрывают читалку
+window.addEventListener('popstate',()=>{
+  if(currentScreen==='reader') closeReader(true);
+});
 
 async function renderPage(){
   if(!state.pdf)return;
@@ -1478,7 +1536,6 @@ async function renderPage(){
     else scale=Math.min((twoPage?availW/2:availW)/base.width,availH/base.height);
     const vp=page.getViewport({scale});
     const dpr=Math.min(window.devicePixelRatio||1,2);
-
     els.canvas.width=Math.floor(vp.width*dpr);els.canvas.height=Math.floor(vp.height*dpr);
     els.canvas.style.width=Math.floor(vp.width)+'px';els.canvas.style.height=Math.floor(vp.height)+'px';
     let ctx=els.canvas.getContext('2d');
@@ -1486,7 +1543,6 @@ async function renderPage(){
     ctx.setTransform(dpr,0,0,dpr,0,0);
     await page.render({canvasContext:ctx,viewport:vp}).promise;
     if(token!==state.renderToken)return;
-
     if(twoPage){
       const page2=await state.pdf.getPage(state.page+1);
       if(token!==state.renderToken)return;
@@ -1502,11 +1558,9 @@ async function renderPage(){
     }else{
       els.canvas2.style.display='none';els.wrap.classList.remove('two-page');
     }
-
     state.lastScale=vp.width/base.width;
     updatePageUI();
     els.loading.style.display='none';
-
     const vp67=realToVirtual(state.page);
     const pairs={67:['СИКСЕВЕН','67'],42:['ОТВЕТ НА ГЛАВНЫЙ ВОПРОС','42'],100:['СОТОЧКА!','100'],365:['ГОДОВОЙ ЗАПАС','365']};
     if(settings.fun&&!state.shown['p'+vp67]&&pairs[vp67]){
