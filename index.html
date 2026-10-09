@@ -444,7 +444,7 @@ header{height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0
 <section class="screen" id="screenRec">
   <div class="hero">
     <h1>Рекомендуемые книги</h1>
-    <p>Скачайте PDF — приложение распознает его автоматически и добавит в «Мои книги».</p>
+    <p>Нажмите «Найти в файлах», чтобы выбрать PDF на устройстве — приложение автоматически распознает учебник.</p>
   </div>
   <div class="grid-toolbar">
     <div class="spacer"></div>
@@ -744,105 +744,29 @@ function getBookmarkNote(bookId,page){
   const f=arr.find(b=>b.page===page);return f?f.note:'';
 }
 
-/* ===== AUTO-KEYWORDS / AUTO-THEME ===== */
-const STOPWORDS=['класс','учебник','язык','книга','pdf','год','часть','том',
-  'базовый','углублённый','уровень','уровни'];
-const TRANSLIT_MAP={
-  'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z',
-  'и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
-  'с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh',
-  'щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
-};
-function translit(s){
-  return String(s).toLowerCase().split('').map(ch=>TRANSLIT_MAP[ch]!==undefined?TRANSLIT_MAP[ch]:ch).join('');
-}
-function autoKeywords(name,className){
-  const all=String(name||'')+' '+(className||'');
-  const words=all.toLowerCase()
-    .replace(/[^a-zа-яё0-9\s]/gi,' ')
-    .split(/\s+/)
-    .filter(w=>w.length>2 && !STOPWORDS.includes(w) && !/^\d+$/.test(w));
-  const out=new Set();
-  const use=words.slice(0,3);
-  if(!use.length){
-    const w=String(name||'').toLowerCase().replace(/[^a-zа-яё0-9]/gi,'');
-    if(w) out.add(w);
-  }
-  for(const w of use){
-    out.add(w);
-    const t=translit(w);
-    if(t && t!==w) out.add(t);
-  }
-  return [...out];
-}
-
-/* ===== РЕКОМЕНДУЕМЫЕ КНИГИ ===== */
+/* ===== RECOMMENDED ===== */
 const REC_BOOKS=[
-  {
-    id:'rec_soc11',
-    name:'Обществознание. 11 класс',
-    className:'11 класс',
-    author:'Л. Н. Боголюбов (ред.)',
-    url:'https://share.google/sOP0fqwrPDpHAj9sj',
-    matchAny:['obschestvoznanie','обществознание','bogolyubov','боголюбов'],
-    theme:'soc'
-  },
-  {
-    id:'rec_phys11',
-    name:'Физика. 11 класс',
-    className:'11 класс',
-    author:'Г. Я. Мякишев, Б. Б. Буховцев, В. М. Чаругин',
-    url:'https://share.google/P6ARVA8qyMjuyEXWX',
-    matchAny:['физика','мякишев','буховцев','чаругин','myakishev','physics'],
-    theme:'phys'
-  },
-  {
-    id:'rec_eng11',
-    name:'Английский язык. 11 класс (Spotlight)',
-    className:'11 класс',
-    author:'О. В. Афанасьева, Д. Дули, И. В. Михеева, Б. Оби, В. Эванс',
-    url:'https://share.google/6WhmHd6M84dPOdGHO',
-    matchAny:['english','английский','spotlight','starlight','rainbow',
-      'afanasyeva','афанасьева','mikheeva','михеева','vaulina','ваулина',
-      'kuzovlev','кузовлев','evans','эванс','dooley','дули'],
-    theme:'eng'
-  },
-  {
-    id:'rec_rus1011',
-    name:'Русский язык. 10-11 класс',
-    className:'10-11 класс',
-    author:'В. Ф. Греков, С. Е. Крючков, Л. А. Чешко',
-    url:'https://share.google/ZBDp5uonlK2UUT2qc',
-    matchAny:['russkiy','русский','grekov','греков','kryuchkov','крючков','cheshko','чешко'],
-    theme:'russian'
-  },
-  {
-    id:'rec_bio11',
-    name:'Биология. 11 класс (базовый)',
-    className:'11 класс',
-    author:'В. В. Пасечник, А. А. Каменский, А. М. Рубцов',
-    url:'https://so.11klasov.net/index.php?do=download&id=26284',
-    matchAny:['биология','biologiya','biology','pasechnik','пасечник','kamensky','каменский','rubtsov','рубцов'],
-    theme:'bio'
-  },
-  {
-    id:'rec_bio11_prof',
-    name:'Биология. 11 класс (углублённый)',
-    className:'11 класс',
-    author:'В. В. Пасечник, А. А. Каменский, А. М. Рубцов',
-    url:'https://so.11klasov.net/index.php?do=download&id=26328',
-    matchAny:['биология углубленный','биология профиль','biologiya uglublenny','biology advanced'],
-    theme:'bio-pro'
-  },
-  {
-    id:'rec_geo11',
-    name:'География. 11 класс (Полярная звезда)',
-    className:'11 класс',
-    author:'Ю. Н. Гладкий, В. В. Николина',
-    url:'https://share.google/1F6fIuFWkL5AhfSlA',
-    matchAny:['география','geografiya','geography','gladkiy','гладкий','nikolina','николина','polyarnaya','полярная'],
-    theme:'geo'
-  }
+  {id:'rec_soc11',name:'Обществознание. 11 класс',className:'11 класс',author:'Л. Н. Боголюбов (ред.)',
+   url:'https://share.google/sOP0fqwrPDpHAj9sj',
+   matchAny:['obschestvoznanie','обществознание','bogolyubov','боголюбов'],theme:'soc'},
+  {id:'rec_phys11',name:'Физика. 11 класс',className:'11 класс',author:'Г. Я. Мякишев, Б. Б. Буховцев, В. М. Чаругин',
+   url:'https://share.google/P6ARVA8qyMjuyEXWX',
+   matchAny:['физика','мякишев','буховцев','чаругин','myakishev','physics'],theme:'phys'},
+  {id:'rec_eng11',name:'Английский язык. 11 класс (Spotlight)',className:'11 класс',author:'О. В. Афанасьева, Д. Дули, И. В. Михеева, Б. Оби, В. Эванс',
+   url:'https://share.google/6WhmHd6M84dPOdGHO',
+   matchAny:['english','английский','spotlight','starlight','rainbow','afanasyeva','афанасьева','mikheeva','михеева','vaulina','ваулина','kuzovlev','кузовлев','evans','эванс','dooley','дули'],theme:'eng'},
+  {id:'rec_rus1011',name:'Русский язык. 10-11 класс',className:'10-11 класс',author:'В. Ф. Греков, С. Е. Крючков, Л. А. Чешко',
+   url:'https://share.google/ZBDp5uonlK2UUT2qc',
+   matchAny:['russkiy','русский','grekov','греков','kryuchkov','крючков','cheshko','чешко'],theme:'russian'},
+  {id:'rec_bio11',name:'Биология. 11 класс (базовый)',className:'11 класс',author:'В. В. Пасечник, А. А. Каменский, А. М. Рубцов',
+   url:'https://so.11klasov.net/index.php?do=download&id=26284',
+   matchAny:['биология','biologiya','biology','pasechnik','пасечник','kamensky','каменский','rubtsov','рубцов'],theme:'bio'},
+  {id:'rec_bio11_prof',name:'Биология. 11 класс (углублённый)',className:'11 класс',author:'В. В. Пасечник, А. А. Каменский, А. М. Рубцов',
+   url:'https://so.11klasov.net/index.php?do=download&id=26328',
+   matchAny:['биология углубленный','биология профиль','biologiya uglublenny','biology advanced'],theme:'bio-pro'},
+  {id:'rec_geo11',name:'География. 11 класс (Полярная звезда)',className:'11 класс',author:'Ю. Н. Гладкий, В. В. Николина',
+   url:'https://share.google/1F6fIuFWkL5AhfSlA',
+   matchAny:['география','geografiya','geography','gladkiy','гладкий','nikolina','николина','polyarnaya','полярная'],theme:'geo'}
 ];
 
 function normMatch(s){return String(s||'').toLowerCase().replace(/\.pdf$/i,'').replace(/[^a-zа-яё0-9]+/gi,'')}
@@ -856,15 +780,7 @@ function findMatchingSaved(books,rec){
   return null;
 }
 function phClass(rec){
-  const map={
-    soc:'soc',
-    phys:'physics',
-    eng:'english',
-    russian:'russian',
-    bio:'bio',
-    'bio-pro':'bio-pro',
-    geo:'geo'
-  };
+  const map={soc:'soc',phys:'physics',eng:'english',russian:'russian',bio:'bio','bio-pro':'bio-pro',geo:'geo'};
   return map[rec.theme] || 'rec';
 }
 
@@ -920,7 +836,7 @@ document.querySelectorAll('.tile').forEach(t=>{
     else if(g==='bookmarks')showScreen('bookmarks');
   });
 });
-document.getElementById('btnAddMine').addEventListener('click',()=>fileInput.click());
+document.getElementById('btnAddMine').addEventListener('click',()=>{pendingPresetForPick=null;fileInput.click()});
 
 /* ===== SETTINGS POPOVER ===== */
 const settingsPop=document.getElementById('settingsPop');
@@ -942,27 +858,21 @@ document.querySelector('label[for="setSounds"]').addEventListener('click',e=>{e.
 document.getElementById('btnExport').onclick=()=>{
   const data={
     version:1,exportedAt:new Date().toISOString(),
-    settings:{
-      theme:settings.themeIdx,accent:settings.accentIdx,skipFirst:settings.skipFirst,
-      twoPage:settings.twoPage,sort:settings.sort,fun:settings.fun,sounds:settings.sounds
-    },
+    settings:{theme:settings.themeIdx,accent:settings.accentIdx,skipFirst:settings.skipFirst,
+      twoPage:settings.twoPage,sort:settings.sort,fun:settings.fun,sounds:settings.sounds},
     bookmarks:getBookmarks()
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
   a.href=url;a.download='knigi-backup-'+new Date().toISOString().slice(0,10)+'.json';
   document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),3000);
-  toast('Файл сохранён');
+  setTimeout(()=>URL.revokeObjectURL(url),3000);toast('Файл сохранён');
 };
 document.getElementById('btnImport').onclick=()=>document.getElementById('importInput').click();
 document.getElementById('importInput').onchange=async e=>{
-  const f=e.target.files[0];e.target.value='';
-  if(!f)return;
+  const f=e.target.files[0];e.target.value='';if(!f)return;
   try{
-    const txt=await f.text();
-    const d=JSON.parse(txt);
+    const txt=await f.text();const d=JSON.parse(txt);
     if(d.settings){
       settings.themeIdx=d.settings.theme??settings.themeIdx;
       settings.accentIdx=d.settings.accent??settings.accentIdx;
@@ -975,8 +885,7 @@ document.getElementById('importInput').onchange=async e=>{
     if(d.bookmarks)saveBookmarks(d.bookmarks);
     saveSettings();
     applyTheme();applyAccent();syncSortUI();syncSkipFirstUI();syncTwoPageUI();syncFunUI();syncSoundsUI();
-    renderAll();
-    toast('Импорт завершён ✅',2600);
+    renderAll();toast('Импорт завершён ✅',2600);
   }catch(err){console.error(err);toast('Ошибка импорта',2400)}
 };
 
@@ -992,10 +901,7 @@ const PRESET_SVG=`<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" 
 
 async function renderAll(){
   const books=await dbGetAll();
-  renderHome(books);
-  renderRecScreen(books);
-  renderMineScreen(books);
-  renderBookmarksScreen(books);
+  renderHome(books);renderRecScreen(books);renderMineScreen(books);renderBookmarksScreen(books);
 }
 function renderHome(books){
   document.getElementById('tileRecCount').textContent=REC_BOOKS.length;
@@ -1025,20 +931,42 @@ function renderRecCard(rec,matched){
   const meta=[authorLine,rec.className].filter(Boolean).join(' · ');
   const hint=matched
     ?`<div class="hint ok">✓ Учебник уже в «Моих книгах»</div>`
-    :`<div class="hint rec">Скачайте PDF и добавьте в «Мои книги».</div>`;
-  const actions=matched
-    ?`<button class="btn ok" data-act="open">Читать</button><button class="icon-btn" data-act="info" title="Ссылка">🔗</button>`
-    :`<button class="btn" data-act="download">Скачать</button><button class="icon-btn" data-act="info" title="Ссылка">🔗</button>`;
+    :`<div class="hint rec">Выберите файл на устройстве или скачайте по кнопке ниже.</div>`;
+
+  let actions;
+  if (matched){
+    actions = `
+      <button class="btn ok" data-act="open">Читать</button>
+      <button class="icon-btn" data-act="delete" title="Удалить навсегда">🗑</button>
+    `;
+  } else {
+    actions = `
+      <button class="btn" data-act="pick">📁 Найти в файлах</button>
+      <button class="icon-btn" data-act="download" title="Скачать PDF">⬇</button>
+    `;
+  }
+
   card.innerHTML=`
     <div class="cover" data-cover><div class="spine ${matched?'ok':'rec'}"></div>${cover}${badge}
-      <div class="overlay">${matched?'Читать →':'Скачать →'}</div></div>
+      <div class="overlay">${matched?'Читать →':'Найти файл →'}</div></div>
     <div class="card-body"><h3>${esc(rec.name)}</h3>
       <div class="meta">${esc(meta)}</div>${hint}
       <div class="card-actions">${actions}</div></div>`;
-  card.querySelector('[data-cover]').onclick=()=>{matched?openBook(matched.id):downloadRec(rec)};
-  const op=card.querySelector('[data-act="open"]');if(op)op.onclick=()=>openBook(matched.id);
-  const dl=card.querySelector('[data-act="download"]');if(dl)dl.onclick=()=>downloadRec(rec);
-  card.querySelector('[data-act="info"]').onclick=()=>window.open(rec.url,'_blank');
+
+  const coverEl = card.querySelector('[data-cover]');
+  coverEl.onclick = ()=>{
+    if (matched) openBook(matched.id);
+    else pickFileForPreset(rec);
+  };
+
+  if (matched){
+    card.querySelector('[data-act="open"]').onclick = ()=> openBook(matched.id);
+    card.querySelector('[data-act="delete"]').onclick = ()=> deleteBookEverywhere(matched, rec);
+  } else {
+    card.querySelector('[data-act="pick"]').onclick = ()=> pickFileForPreset(rec);
+    card.querySelector('[data-act="download"]').onclick = ()=> downloadRec(rec);
+  }
+
   gridRec.appendChild(card);
 }
 
@@ -1054,7 +982,7 @@ function renderMineScreen(books){
   const add=document.createElement('button');
   add.className='add-card';
   add.innerHTML=`<div class="plus">＋</div><div class="t">Добавить PDF</div><div class="s">или перетащите файл</div>`;
-  add.onclick=()=>fileInput.click();
+  add.onclick=()=>{pendingPresetForPick=null;fileInput.click()};
   gridMine.appendChild(add);
 }
 function renderSavedBook(b){
@@ -1075,18 +1003,11 @@ function renderSavedBook(b){
       ${progressHtml}
       <div class="card-actions">
         <button class="btn" data-act="open">Читать</button>
-        <button class="icon-btn" data-act="download" title="Скачать">⬇</button>
-        <button class="icon-btn" data-act="del" title="Удалить">🗑</button>
+        <button class="icon-btn" data-act="delete" title="Удалить навсегда">🗑</button>
       </div></div>`;
   card.querySelector('[data-cover]').onclick=()=>openBook(b.id);
   card.querySelector('[data-act="open"]').onclick=()=>openBook(b.id);
-  card.querySelector('[data-act="download"]').onclick=()=>downloadBook(b.id);
-  card.querySelector('[data-act="del"]').onclick=async()=>{
-    if(!confirm('Удалить «'+b.name+'»?'))return;
-    await dbDelete(b.id);
-    const all=getBookmarks();if(all[b.id]){delete all[b.id];saveBookmarks(all)}
-    toast('Книга удалена');renderAll();
-  };
+  card.querySelector('[data-act="delete"]').onclick=()=> deleteBookEverywhere(b, null);
   gridMine.appendChild(card);
 }
 
@@ -1118,42 +1039,125 @@ async function renderBookmarksScreen(books){
         ${bm.note?`<div class="hint ok">${esc(bm.note)}</div>`:''}
         <div class="card-actions">
           <button class="btn" data-act="open">Открыть</button>
-          <button class="icon-btn" data-act="del" title="Удалить">🗑</button>
+          <button class="icon-btn" data-act="del" title="Удалить закладку">🗑</button>
         </div></div>`;
     card.querySelector('[data-cover]').onclick=()=>openBookAt(book.id,bm.page);
     card.querySelector('[data-act="open"]').onclick=()=>openBookAt(book.id,bm.page);
     card.querySelector('[data-act="del"]').onclick=()=>{
-      if(!confirm('Удалить закладку?'))return;
       removeBookmark(bm.bookId,bm.page);
-      renderAll();
-      toast('Закладка удалена');
+      renderAll();toast('Закладка удалена');
     };
     gridBm.appendChild(card);
   }
 }
 
-/* ===== DOWNLOAD REC ===== */
+/* ===== DELETE BOOK (из приложения + с диска) ===== */
+async function deleteBookEverywhere(book, rec){
+  const bookName = book.name || (rec && rec.name) || 'книга';
+  if (!confirm('Удалить «'+bookName+'»?\n\nКнига будет удалена из приложения'+(book.fileHandle?' и с устройства':'')+'.')) return;
+
+  let fileDeleted = false;
+  let fileNote = '';
+
+  // Пытаемся удалить физический файл через File System Access API
+  if (book.fileHandle){
+    try{
+      let perm = 'denied';
+      if (typeof book.fileHandle.queryPermission === 'function'){
+        perm = await book.fileHandle.queryPermission({mode:'readwrite'});
+        if (perm !== 'granted' && typeof book.fileHandle.requestPermission === 'function'){
+          perm = await book.fileHandle.requestPermission({mode:'readwrite'});
+        }
+      }
+      if (perm === 'granted' && typeof book.fileHandle.remove === 'function'){
+        await book.fileHandle.remove();
+        fileDeleted = true;
+      } else {
+        fileNote = 'Браузер не дал разрешение на удаление файла с устройства.';
+      }
+    }catch(e){
+      console.warn('Cannot delete physical file:', e);
+      fileNote = 'Не удалось удалить файл с устройства.';
+    }
+  } else {
+    fileNote = 'Файл был добавлен без привязки к устройству — он остался в папке Загрузки.';
+  }
+
+  // Удаляем закладки к этой книге
+  const bms = getBookmarks();
+  if (bms[book.id]){ delete bms[book.id]; saveBookmarks(bms); }
+
+  // Удаляем из IndexedDB
+  await dbDelete(book.id);
+
+  renderAll();
+
+  if (fileDeleted){
+    toast('Книга удалена из приложения и с устройства ✅', 3000);
+  } else {
+    toast('Удалено из приложения. '+fileNote, 4200);
+  }
+}
+
+/* ===== PICK FILE FOR PRESET ===== */
+let pendingPresetForPick = null;
+
+async function pickFileForPreset(rec){
+  pendingPresetForPick = rec;
+  // Пробуем File System Access API (Chrome/Edge) — тогда сможем удалять файл с диска
+  if ('showOpenFilePicker' in window){
+    try{
+      const [handle] = await window.showOpenFilePicker({
+        types: [{description:'PDF-файл', accept:{'application/pdf':['.pdf']}}],
+        multiple: false
+      });
+      const file = await handle.getFile();
+      if (file){
+        await addFileWithHandle(file, handle, rec);
+      }
+      pendingPresetForPick = null;
+      return;
+    }catch(e){
+      if (e.name === 'AbortError'){ pendingPresetForPick = null; return; }
+      console.warn('showOpenFilePicker failed, fallback to input:', e);
+    }
+  }
+  // Fallback — обычный input
+  fileInput.click();
+}
+
+fileInput.onchange = async (e)=>{
+  const files=[...e.target.files];
+  fileInput.value='';
+  const rec = pendingPresetForPick;
+  pendingPresetForPick = null;
+  for (const f of files) await addFile(f, rec);
+};
+
+/* ===== DOWNLOAD REC (автоматическая попытка) ===== */
 async function downloadRec(rec){
-  toast('Пытаюсь скачать…',4000);
+  toast('Пытаюсь скачать автоматически…',4000);
   try{
     const resp=await fetch(rec.url,{mode:'cors',redirect:'follow'});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const blob=await resp.blob();
-    if(blob.size<1000)throw new Error('мал');
+    if(blob.size<1000)throw new Error('файл слишком мал');
     const ab=await blob.arrayBuffer();
     const head=new Uint8Array(ab.slice(0,5));
     if(!(head[0]===0x25&&head[1]===0x50&&head[2]===0x44&&head[3]===0x46))throw new Error('не PDF');
-    await saveAbAsBook(ab,rec.name);
+    await saveAbAsBook(ab, rec.name, null);
     sndAdd();
-    toast('Добавлено в «Мои книги» ✅',3000);
+    toast('Скачано и добавлено в «Мои книги» ✅',3000);
     renderAll();
   }catch(err){
     console.warn(err);
-    const open=confirm('Не удалось скачать автоматически.\n\nОткрыть ссылку в браузере, чтобы скачать вручную?\n\nПосле — «Мои книги» → «＋ Добавить PDF».');
+    const open=confirm('Автоматически скачать не удалось.\n\nОткрыть ссылку в браузере, чтобы скачать вручную?\n\nПотом нажмите «📁 Найти в файлах» на этой карточке.');
     if(open)window.open(rec.url,'_blank');
   }
 }
-async function saveAbAsBook(ab,name){
+
+/* ===== SAVE BOOK ===== */
+async function saveAbAsBook(ab, name, fileHandle){
   const pdf=await pdfjsLib.getDocument({data:ab.slice(0)}).promise;
   const page=await pdf.getPage(1);
   const base=page.getViewport({scale:1});
@@ -1172,47 +1176,62 @@ async function saveAbAsBook(ab,name){
 
   const book={
     id:'b_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
-    name,author,
+    name, author,
     size:ab.byteLength,
     pages:pdf.numPages,
-    thumb,data:ab,
-    addedAt:Date.now(),lastPage:1
+    thumb, data:ab,
+    fileHandle: fileHandle || null,
+    addedAt: Date.now(),
+    lastPage: 1
   };
   await dbPut(book);
   return book;
 }
 
-/* ===== ADD PDF ===== */
-const fileInput=document.getElementById('fileInput');
-fileInput.onchange=e=>{const fs=[...e.target.files];fileInput.value='';fs.forEach(addFile)};
-async function addFile(file){
+async function addFileWithHandle(file, handle, rec){
+  toast('Обрабатываю: '+file.name,3000);
+  try{
+    const data = await file.arrayBuffer();
+    const cleanName = rec ? rec.name : file.name.replace(/\.pdf$/i,'');
+    await saveAbAsBook(data, cleanName, handle);
+    sndAdd();
+    if (rec) toast('«'+rec.name+'» добавлена в «Мои книги» ✅',3200);
+    else toast('Книга добавлена: '+cleanName);
+    renderAll();
+    showScreen('mine');
+  }catch(err){
+    console.error(err);
+    toast('Ошибка: '+(err.message||err));
+  }
+}
+
+async function addFile(file, recContext = null){
   if(!/\.pdf$/i.test(file.name)&&file.type!=='application/pdf'){toast('Не PDF: '+file.name);return}
   toast('Обрабатываю: '+file.name,3000);
   try{
-    const data=await file.arrayBuffer();
-    const clean=file.name.replace(/\.pdf$/i,'');
-    await saveAbAsBook(data,clean);
+    const data = await file.arrayBuffer();
+    const cleanName = file.name.replace(/\.pdf$/i,'');
+    // Ищем соответствие рекомендации
+    const matchedRec = recContext || REC_BOOKS.find(r=>{
+      const t=(r.matchAny||[]).map(normMatch);
+      const n=normMatch(cleanName);
+      return t.some(x=>n.includes(x));
+    });
+    const nameToSave = matchedRec ? matchedRec.name : cleanName;
+    await saveAbAsBook(data, nameToSave, null);
     sndAdd();
-    const match=REC_BOOKS.find(r=>{const t=(r.matchAny||[]).map(normMatch);const n=normMatch(clean);return t.some(x=>n.includes(x))});
-    if(match)toast('«'+match.name+'» добавлена ✅',3200);
-    else toast('Книга добавлена: '+clean);
-    renderAll();showScreen('mine');
+    if (matchedRec) toast('«'+matchedRec.name+'» добавлена в «Мои книги» ✅',3200);
+    else toast('Книга добавлена: '+cleanName);
+    renderAll();
+    showScreen('mine');
   }catch(err){console.error(err);toast('Ошибка: '+(err.message||err))}
 }
+
 const dropOverlay=document.getElementById('dropOverlay');let dragD=0;
 window.addEventListener('dragenter',e=>{if(![...e.dataTransfer.types].includes('Files'))return;e.preventDefault();dragD++;if(currentScreen!=='reader')dropOverlay.classList.add('on')});
 window.addEventListener('dragover',e=>{if([...e.dataTransfer.types].includes('Files'))e.preventDefault()});
 window.addEventListener('dragleave',()=>{dragD=Math.max(0,dragD-1);if(!dragD)dropOverlay.classList.remove('on')});
-window.addEventListener('drop',e=>{e.preventDefault();dragD=0;dropOverlay.classList.remove('on');if(currentScreen==='reader'||currentScreen==='rec')return;[...(e.dataTransfer?.files||[])].forEach(addFile)});
-
-/* ===== DOWNLOAD OWN BOOK ===== */
-async function downloadBook(id){
-  const b=await dbGet(id);if(!b)return;
-  const blob=new Blob([b.data],{type:'application/pdf'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');
-  a.href=url;a.download=b.name+'.pdf';document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),4000);
-}
+window.addEventListener('drop',e=>{e.preventDefault();dragD=0;dropOverlay.classList.remove('on');if(currentScreen==='reader'||currentScreen==='rec')return;[...(e.dataTransfer?.files||[])].forEach(f=>addFile(f))});
 
 /* ===== SEARCH ===== */
 const searchScreen=document.createElement('section');
@@ -1261,16 +1280,24 @@ document.getElementById('searchInput').addEventListener('input',async e=>{
     }else{
       const r=it.r;const m=it.matched;const card=document.createElement('div');
       card.className='card rec'+(m?' matched':'');
+      const coverInner = m&&m.thumb?`<img src="${m.thumb}" alt="">`:`<div class="placeholder-cover ${phClass(r)}">${PRESET_SVG}</div>`;
+      const actions = m
+        ?`<button class="btn ok" data-act="open">Читать</button>`
+        :`<button class="btn" data-act="pick">📁 Найти</button>`;
       card.innerHTML=`
-        <div class="cover"><div class="spine ${m?'ok':'rec'}"></div>
-          ${m&&m.thumb?`<img src="${m.thumb}" alt="">`:`<div class="placeholder-cover ${phClass(r)}">${PRESET_SVG}</div>`}
+        <div class="cover"><div class="spine ${m?'ok':'rec'}"></div>${coverInner}
           <div class="badge rec">РЕКОМЕНДУЕМ</div>
-          <div class="overlay">${m?'Читать →':'Скачать →'}</div></div>
+          <div class="overlay">${m?'Читать →':'Найти →'}</div></div>
         <div class="card-body"><h3>${esc(r.name)}</h3>
           <div class="meta">${esc([(m&&m.author)||r.author||'',r.className].filter(Boolean).join(' · '))}</div>
-          <div class="card-actions">${m?`<button class="btn ok" data-act="open">Читать</button>`:`<button class="btn" data-act="dl">Скачать</button>`}</div></div>`;
-      if(m){card.querySelector('[data-act="open"]').onclick=()=>openBook(m.id);card.querySelector('.cover').onclick=()=>openBook(m.id)}
-      else{card.querySelector('[data-act="dl"]').onclick=()=>downloadRec(r);card.querySelector('.cover').onclick=()=>downloadRec(r)}
+          <div class="card-actions">${actions}</div></div>`;
+      if(m){
+        card.querySelector('[data-act="open"]').onclick=()=>openBook(m.id);
+        card.querySelector('.cover').onclick=()=>openBook(m.id);
+      } else {
+        card.querySelector('[data-act="pick"]').onclick=()=>pickFileForPreset(r);
+        card.querySelector('.cover').onclick=()=>pickFileForPreset(r);
+      }
       grid.appendChild(card);
     }
   }
@@ -1388,8 +1415,7 @@ function closeReader(){
   if(state.book&&state.page){
     dbGet(state.book.id).then(b=>{if(b){b.lastPage=state.page;dbPut(b)}});
   }
-  closeThumbs();
-  sndClose();
+  closeThumbs();sndClose();
   state.pdf=null;state.book=null;state.thumbCache={};state.shown={};
   document.querySelector('header').style.display='flex';
   showScreen(lastScreenBeforeReader||'mine');
@@ -1466,8 +1492,7 @@ async function goToPage(realN,direction){
   wrap.classList.add('animating');
   wrap.style.transform=`translateX(${-dir*40}px)`;wrap.style.opacity='0';
   await new Promise(r=>setTimeout(r,160));
-  state.page=realN;
-  sndPage();
+  state.page=realN;sndPage();
   await renderPage();
   wrap.classList.remove('animating');
   wrap.style.transform=`translateX(${dir*40}px)`;wrap.style.opacity='0';
